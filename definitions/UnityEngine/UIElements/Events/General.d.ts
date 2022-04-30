@@ -6,7 +6,9 @@ declare module "UnityEngine/UIElements" {
     import { Vector2 } from "UnityEngine"
     import { EventModifiers } from "IMGUI"
 
-    export class EventBaseAny implements IDisposable {
+    export class EventBase<T = void> implements IDisposable {
+        static TypeId(): number
+        static GetPooled<T>(): T
         eventTypeId: number
         timestamp: number
         bubbles: boolean
@@ -23,13 +25,6 @@ declare module "UnityEngine/UIElements" {
         StopPropagation(): void
         StopImmediatePropagation(): void
         PreventDefault(): void
-        Dispose(): void
-    }
-
-    export class EventBase<T> extends EventBaseAny implements IDisposable {
-        static TypeId(): number
-        static GetPooled<T>(): T
-        eventTypeId: number
         Dispose(): void
     }
 

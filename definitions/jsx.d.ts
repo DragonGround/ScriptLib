@@ -1,8 +1,9 @@
 
 
+
 declare module "preact/jsx" {
     import { Enum } from "System"
-    import { MutableRef } from "preact/hooks"
+    import { Ref } from "preact"
     import { Bounds, BoundsInt, Rect, RectInt, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
     import { AttachToPanelEvent, BlurEvent, ClickEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent } from "UnityEngine/UIElements"
 
@@ -12,8 +13,8 @@ declare module "preact/jsx" {
          * Base elements
          */
 
-        interface VisualElement {
-            ref?: MutableRef<any>
+        export interface VisualElement {
+            ref?: Ref<any>
 
             children?: (string | number | Element) | (string | number | Element)[]
 

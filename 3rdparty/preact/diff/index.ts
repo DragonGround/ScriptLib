@@ -33,6 +33,7 @@ export function diff(
 	oldDom,
 	isHydrating
 ) {
+
 	let tmp,
 		newType = newVNode.type;
 
@@ -48,7 +49,6 @@ export function diff(
 		newVNode._hydrating = null;
 		excessDomChildren = [oldDom];
 	}
-
 	if ((tmp = options._diff)) tmp(newVNode);
 
 	try {
@@ -241,6 +241,7 @@ export function diff(
 
 		if ((tmp = options.diffed)) tmp(newVNode);
 	} catch (e) {
+		log(e.stack)
 		newVNode._original = null;
 		// if hydrating or creating initial tree, bailout preserves DOM:
 		if (isHydrating || excessDomChildren != null) {

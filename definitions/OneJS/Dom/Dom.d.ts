@@ -1,6 +1,6 @@
 
 
-declare module "OneJS" {
+declare module "OneJS/Dom" {
     import { Vector2 } from "UnityEngine"
     import { EventBase, IStyle, VisualElement } from "UnityEngine/UIElements"
 
@@ -8,7 +8,7 @@ declare module "OneJS" {
         ve: VisualElement
         parentNode: Dom
         nextSibling: Dom
-        style: IStyle
+        style: DomStyle
         value: any
         checked: boolean
         data: any

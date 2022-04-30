@@ -71,12 +71,12 @@ declare module "preact/jsx" {
         textShadow?: TextShadowInfo // StyleTextShadow
 
         top?: number | string  // StyleLength
-        transformOrigin?: float3 | number[] // StyleTransformOrigin
+        transformOrigin?: float2 | number[] // StyleTransformOrigin
         transitionDelay?: number[]  // StyleList<TimeValue>
         transitionDuration?: number[]  // StyleList<TimeValue>
         transitionProperty?: (keyof Style)[]   // StyleList<StylePropertyName>
         transitionTimingFunction?: (keyof typeof EasingFunction)[]  // StyleList<EasingFunction>
-        translate?: float3 | number[] // StyleTranslate
+        translate?: float2 | number[] // StyleTranslate
         unityBackgroundImageTintColor?: ColorInfo   // StyleColor
         unityBackgroundScaleMode?: keyof typeof ScaleMode
 

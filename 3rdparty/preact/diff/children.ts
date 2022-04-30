@@ -151,7 +151,7 @@ export function diffChildren(
 		newDom = childVNode._dom;
 
 		if ((j = childVNode.ref) && oldVNode.ref != j) {
-			if (!refs) refs = [];
+			if (refs === null || typeof refs === "undefined") refs = [];
 			if (oldVNode.ref) refs.push(oldVNode.ref, null, childVNode);
 			refs.push(j, childVNode._component || newDom, childVNode);
 		}

@@ -17,9 +17,10 @@ declare type LowercaseMapping<A, B> = {
     [Property in keyof A as `${Lowercase<string & Property>}`]: B
 };
 
-// declare function jsx(): any
-
 declare interface HTMLElement {
     clearChildren()
 }
 
+declare interface CSSStyleDeclaration {
+    setProperty(property: string, value: any): void;
+}

@@ -1,5 +1,7 @@
+
+
 declare module "Unity/Mathematics" {
-    import { Color, Color32 } from "UnityEngine"
+    import { Color32, Color } from "UnityEngine"
 
     export interface float4 {
         ToColor32(): Color32

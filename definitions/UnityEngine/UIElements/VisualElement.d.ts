@@ -1,7 +1,9 @@
 
 
+
 declare module "UnityEngine/UIElements" {
-    import { Comparison, IDisposable, IEquatable } from "System"
+    import { ISerializable } from "System/Runtime/Serialization"
+    import { AsyncCallback, Comparison, IAsyncResult, ICloneable, IDisposable, IEquatable, IntPtr, MulticastDelegate } from "System"
     import { IEnumerable, List } from "System/Collections/Generic"
     import { Color, Font, FontStyle, Matrix4x4, Quaternion, Rect, ScriptableObject, Sprite, Texture2D, Vector2, Vector3 } from "UnityEngine"
     import { StylePropertyId } from "UnityEngine/UIElements/StyleSheets"
@@ -17,15 +19,34 @@ declare module "UnityEngine/UIElements" {
     }
 
     export interface IEventHandler {
-        SendEvent(e: EventBaseAny): void
-        HandleEvent(evt: EventBaseAny): void
+        SendEvent(e: EventBase): void
+        HandleEvent(evt: EventBase): void
         HasTrickleDownHandlers(): boolean
         HasBubbleUpHandlers(): boolean
     }
 
+    export class EventCallback<TEventType, TCallbackArgs = void> extends MulticastDelegate implements ISerializable, ICloneable {
+        constructor(object: any, method: IntPtr)
+        Invoke(evt: TEventType): void
+        Invoke(evt: TEventType, userArgs: TCallbackArgs): void
+        BeginInvoke(evt: TEventType, callback: AsyncCallback, object: any): IAsyncResult
+        BeginInvoke(evt: TEventType, userArgs: TCallbackArgs, callback: AsyncCallback, object: any): IAsyncResult
+        EndInvoke(result: IAsyncResult): void
+        EndInvoke(result: IAsyncResult): void
+    }
+
+    export enum TrickleDown {
+        NoTrickleDown,
+        TrickleDown,
+    }
+
     export class CallbackEventHandler implements IEventHandler {
-        SendEvent(e: EventBaseAny): void
-        HandleEvent(evt: EventBaseAny): void
+        RegisterCallback<TEventType>(callback: EventCallback<TEventType>, useTrickleDown: TrickleDown): void
+        RegisterCallback<TEventType, TUserArgsType>(callback: EventCallback<TEventType, TUserArgsType>, userArgs: TUserArgsType, useTrickleDown: TrickleDown): void
+        UnregisterCallback<TEventType>(callback: EventCallback<TEventType>, useTrickleDown: TrickleDown): void
+        UnregisterCallback<TEventType, TUserArgsType>(callback: EventCallback<TEventType, TUserArgsType>, useTrickleDown: TrickleDown): void
+        SendEvent(e: EventBase): void
+        HandleEvent(evt: EventBase): void
         HasTrickleDownHandlers(): boolean
         HasBubbleUpHandlers(): boolean
     }
@@ -47,7 +68,7 @@ declare module "UnityEngine/UIElements" {
     }
 
     export interface IFocusRing {
-        GetFocusChangeDirection(currentFocusable: Focusable, e: EventBaseAny): FocusChangeDirection
+        GetFocusChangeDirection(currentFocusable: Focusable, e: EventBase): FocusChangeDirection
         GetNextFocusable(currentFocusable: Focusable, direction: FocusChangeDirection): Focusable
     }
 
@@ -107,8 +128,8 @@ declare module "UnityEngine/UIElements" {
     }
 
     export class ContextualMenuManager {
-        DisplayMenuIfEventMatches(evt: EventBaseAny, eventHandler: IEventHandler): void
-        DisplayMenu(triggerEvent: EventBaseAny, target: IEventHandler): void
+        DisplayMenuIfEventMatches(evt: EventBase, eventHandler: IEventHandler): void
+        DisplayMenu(triggerEvent: EventBase, target: IEventHandler): void
     }
 
     export interface IPanel extends IDisposable {
@@ -152,7 +173,7 @@ declare module "UnityEngine/UIElements" {
         GetHashCode(): number
     }
 
-    export class VisualElement extends Focusable implements IStylePropertyAnimations, ITransform, ITransitionAnimations, IExperimentalFeatures, IVisualElementScheduler, IResolvedStyle {
+    export class VisualElement extends Focusable implements IStylePropertyAnimations, ITransform, ITransitionAnimations, IExperimentalFeatures, IVisualElementScheduler {
         static disabledUssClassName: string
 
         Execute(timerUpdateEvent: (ts: TimerState) => void): IVisualElementScheduledItem
@@ -200,81 +221,10 @@ declare module "UnityEngine/UIElements" {
         CancelAnimation(id: StylePropertyId): void
         CancelAllAnimations(): void
 
-        alignContent: Align
-        alignItems: Align
-        alignSelf: Align
-        backgroundColor: Color
-        backgroundImage: Background
-        borderBottomColor: Color
-        borderBottomLeftRadius: number
-        borderBottomRightRadius: number
-        borderBottomWidth: number
-        borderLeftColor: Color
-        borderLeftWidth: number
-        borderRightColor: Color
-        borderRightWidth: number
-        borderTopColor: Color
-        borderTopLeftRadius: number
-        borderTopRightRadius: number
-        borderTopWidth: number
-        bottom: number
-        color: Color
-        display: DisplayStyle
-        flexBasis: StyleFloat
-        flexDirection: FlexDirection
-        flexGrow: number
-        flexShrink: number
-        flexWrap: Wrap
-        fontSize: number
-        height: number
-        justifyContent: Justify
-        left: number
-        letterSpacing: number
-        marginBottom: number
-        marginLeft: number
-        marginRight: number
-        marginTop: number
-        matrix: Matrix4x4
-        maxHeight: StyleFloat
-        maxWidth: StyleFloat
-        minHeight: StyleFloat
-        minWidth: StyleFloat
-        opacity: number
-        paddingBottom: number
-        paddingLeft: number
-        paddingRight: number
-        paddingTop: number
-        position: Position & Vector3
-        right: number
-        rotate: Rotate
+        position: Vector3
         rotation: Quaternion
-        scale: Scale & Vector3
-        textOverflow: TextOverflow
-        top: number
-        transformOrigin: Vector3
-        transitionDelay: IEnumerable<TimeValue>
-        transitionDuration: IEnumerable<TimeValue>
-        transitionProperty: IEnumerable<StylePropertyName>
-        transitionTimingFunction: IEnumerable<EasingFunction>
-        translate: Vector3
-        unityBackgroundImageTintColor: Color
-        unityBackgroundScaleMode: ScaleMode
-        unityFont: Font
-        unityFontDefinition: FontDefinition
-        unityFontStyleAndWeight: FontStyle
-        unityParagraphSpacing: number
-        unitySliceBottom: number
-        unitySliceLeft: number
-        unitySliceRight: number
-        unitySliceTop: number
-        unityTextAlign: TextAnchor
-        unityTextOutlineColor: Color
-        unityTextOutlineWidth: number
-        unityTextOverflowPosition: TextOverflowPosition
-        visibility: Visibility
-        whiteSpace: WhiteSpace
-        width: number
-        wordSpacing: number
+        scale: Vector3
+        matrix: Matrix4x4
 
         animation: ITransitionAnimations
 
@@ -312,7 +262,7 @@ declare module "UnityEngine/UIElements" {
         resolvedStyle: IResolvedStyle
         constructor()
         Focus(): void
-        SendEvent(e: EventBaseAny): void
+        SendEvent(e: EventBase): void
         SetEnabled(value: boolean): void
         MarkDirtyRepaint(): void
         ContainsPoint(localPoint: Vector2): boolean
