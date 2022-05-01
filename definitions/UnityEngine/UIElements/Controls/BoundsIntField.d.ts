@@ -5,7 +5,7 @@ declare module "UnityEngine/UIElements" {
     import { BoundsInt } from "UnityEngine"
     import { ITransitionAnimations } from "UnityEngine.UIElements.Experimental"
 
-    export class BoundsIntField extends BaseField<BoundsInt> implements IEventHandler, IBindable, IExperimentalFeatures, IStylePropertyAnimations, ITransform, ITransitionAnimations, IMixedValueSupport, INotifyValueChanged<BoundsInt>, IVisualElementScheduler {
+    export class BoundsIntField extends BaseField<BoundsInt> implements IEventHandler, IBindable, IExperimentalFeatures, ITransform, IMixedValueSupport, INotifyValueChanged<BoundsInt>, IVisualElementScheduler {
         static ussClassName: string
         static labelUssClassName: string
         static inputUssClassName: string

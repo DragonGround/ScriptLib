@@ -1,11 +1,12 @@
 
 
-declare module "preact/jsx" {
-    import { Color, Font, Texture, Texture2D, FontStyle } from "UnityEngine"
-    import { float2, float3, float4 } from "Unity/Mathematics"
-    import { Align, DisplayStyle, EasingFunction, FlexDirection, FontDefinition, Justify, Overflow, OverflowClipBox, Position, ScaleMode, TextAnchor, TextOverflow, TextOverflowPosition, Visibility, WhiteSpace, Wrap } from "UnityEngine/UIElements"
 
-    type ColorInfo = float4 | number[] | string | Color
+declare module "preact/jsx" {
+    import { Color, Font, Texture, Texture2D, FontStyle, ScaleMode } from "UnityEngine"
+    import { float2, float3, float4 } from "Unity/Mathematics"
+    import { Align, DisplayStyle, EasingFunction, FlexDirection, FontDefinition, Justify, Overflow, OverflowClipBox, Position, TextAnchor, TextOverflow, TextOverflowPosition, Visibility, WhiteSpace, Wrap } from "UnityEngine/UIElements"
+
+    export type ColorInfo = float4 | number[] | string | Color
     type TextShadowInfo = { offset: float2 | number[], blurRadius: number, color: ColorInfo }
     type CursorInfo = { hotspot: float2 | number[], texture: Texture2D }
 

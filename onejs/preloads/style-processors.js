@@ -70,7 +70,7 @@ setStyleListPropertyName("transitionProperty", UIElements_1.StylePropertyName);
 setStyleListEasingFunction("transitionTimingFunction", UIElements_1.EasingFunction);
 setStyleTranslate("translate");
 setStyleColor("unityBackgroundImageTintColor");
-setStyleEnum("unityBackgroundScaleMode", UIElements_1.ScaleMode);
+setStyleEnum("unityBackgroundScaleMode", UnityEngine_1.ScaleMode);
 setStyleFont("unityFont");
 setStyleFontDefinition("unityFontDefinition");
 setStyleEnum("unityFontStyleAndWeight", UnityEngine_1.FontStyle);

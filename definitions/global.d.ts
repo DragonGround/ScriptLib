@@ -4,6 +4,7 @@ declare function log(obj: any): void
 declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
 
+declare var __dirname: string
 declare type float = number
 declare type int = number
 

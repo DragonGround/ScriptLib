@@ -165,4 +165,11 @@ declare module "UnityEngine/Experimental/Rendering" {
         Crunch,
         DontUploadUponCreate,
     }
+
+    export enum RayTracingMode {
+        Off,
+        Static,
+        DynamicTransform,
+        DynamicGeometry,
+    }
 }

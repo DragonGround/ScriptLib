@@ -7,7 +7,7 @@ declare module "Unity/Collections" {
     import { IEnumerable, IEnumerator } from "System/Collections/Generic"
     import { JobHandle } from "Unity/Jobs"
 
-    export class NativeArrayEnumerator<T> implements IEnumerator<T>, IEnumeratorAny, IDisposable {
+    export class NativeArrayEnumerator<T> implements IEnumerator<T>, IDisposable {
         Current: T
         constructor(array: NativeArray<T>)
         Dispose(): void
@@ -15,7 +15,7 @@ declare module "Unity/Collections" {
         Reset(): void
     }
 
-    export class NativeArrayReadOnly<T> implements IEnumerable<T>, IEnumerableAny {
+    export class NativeArrayReadOnly<T> implements IEnumerable<T> {
         Length: number
         Item: T
         IsCreated: boolean

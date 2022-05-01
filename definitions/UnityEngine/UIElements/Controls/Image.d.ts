@@ -1,7 +1,7 @@
 
 
 declare module "UnityEngine/UIElements" {
-    import { Texture, Sprite, Rect, Color } from "UnityEngine"
+    import { Texture, Sprite, Rect, Color, ScaleMode } from "UnityEngine"
 
     export class Image extends VisualElement {
         static ussClassName: string

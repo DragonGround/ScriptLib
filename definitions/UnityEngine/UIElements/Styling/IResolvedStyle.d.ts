@@ -2,7 +2,7 @@
 
 declare module "UnityEngine/UIElements" {
     import { IEnumerable } from "System/Collections/Generic"
-    import { Color, Vector3, Font, FontStyle } from "UnityEngine"
+    import { Color, Vector3, Font, FontStyle, ScaleMode } from "UnityEngine"
 
     export interface IResolvedStyle {
         alignContent: Align

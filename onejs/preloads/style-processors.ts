@@ -3,8 +3,8 @@ import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
 import { List } from "System/Collections/Generic"
-import { FontStyle } from "UnityEngine"
-import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, ScaleMode, OverflowClipBox, TextAnchor, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle } from "UnityEngine/UIElements"
+import { FontStyle, ScaleMode } from "UnityEngine"
+import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextAnchor, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle } from "UnityEngine/UIElements"
 
 /**
  * Unity Specific Style processors

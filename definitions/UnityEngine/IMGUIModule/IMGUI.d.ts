@@ -9,4 +9,13 @@ declare module "IMGUI" {
         CapsLock,
         FunctionKey,
     }
+
+}
+
+declare module "UnityEngine" {
+    export enum ScaleMode {
+        StretchToFill,
+        ScaleAndCrop,
+        ScaleToFit,
+    }
 }

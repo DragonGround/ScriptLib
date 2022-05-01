@@ -58,12 +58,6 @@ declare module "UnityEngine/UIElements" {
         Ellipsis,
     }
 
-    export enum ScaleMode {
-        StretchToFill,
-        ScaleAndCrop,
-        ScaleToFit,
-    }
-
     export enum OverflowClipBox {
         PaddingBox,
         ContentBox,

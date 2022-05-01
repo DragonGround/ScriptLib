@@ -3,12 +3,11 @@
 declare module "System/Collections/Generic" {
     import { IEnumeratorAny } from "System/Collections"
 
-    export interface IEnumerable<T> {
+    export interface IEnumerable<T = void> {
         GetEnumerator(): IEnumerator<T>
-        GetEnumerator(): IEnumeratorAny
     }
 
-    export interface IEnumerator<T> {
+    export interface IEnumerator<T = void> {
         Current: T
     }
 }

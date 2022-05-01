@@ -41,6 +41,9 @@ declare module "UnityEngine/UIElements" {
     }
 
     export class CallbackEventHandler implements IEventHandler {
+        HasPointerCapture(pointerId: number): boolean
+        CapturePointer(pointerId: number): void
+        ReleasePointer(pointerId: number): void
         RegisterCallback<TEventType>(callback: EventCallback<TEventType>, useTrickleDown: TrickleDown): void
         RegisterCallback<TEventType, TUserArgsType>(callback: EventCallback<TEventType, TUserArgsType>, userArgs: TUserArgsType, useTrickleDown: TrickleDown): void
         UnregisterCallback<TEventType>(callback: EventCallback<TEventType>, useTrickleDown: TrickleDown): void
@@ -173,53 +176,11 @@ declare module "UnityEngine/UIElements" {
         GetHashCode(): number
     }
 
-    export class VisualElement extends Focusable implements IStylePropertyAnimations, ITransform, ITransitionAnimations, IExperimentalFeatures, IVisualElementScheduler {
+    export class VisualElement extends Focusable implements ITransform, IExperimentalFeatures, IVisualElementScheduler {
         static disabledUssClassName: string
 
         Execute(timerUpdateEvent: (ts: TimerState) => void): IVisualElementScheduledItem
         Execute(updateEvent: Function): IVisualElementScheduledItem
-
-        Start(from: number, to: number, durationMs: number, onValueChanged: (ve: VisualElement, v: number) => void): ValueAnimation<number>
-        Start(from: Rect, to: Rect, durationMs: number, onValueChanged: (ve: VisualElement, v: Rect) => void): ValueAnimation<Rect>
-        Start(from: Color, to: Color, durationMs: number, onValueChanged: (ve: VisualElement, v: Color) => void): ValueAnimation<Color>
-        Start(from: Vector3, to: Vector3, durationMs: number, onValueChanged: (ve: VisualElement, v: Vector3) => void): ValueAnimation<Vector3>
-        Start(from: Vector2, to: Vector2, durationMs: number, onValueChanged: (ve: VisualElement, v: Vector2) => void): ValueAnimation<Vector2>
-        Start(from: Quaternion, to: Quaternion, durationMs: number, onValueChanged: (ve: VisualElement, v: Quaternion) => void): ValueAnimation<Quaternion>
-        Start(from: StyleValues, to: StyleValues, durationMs: number): ValueAnimation<StyleValues>
-        Start(to: StyleValues, durationMs: number): ValueAnimation<StyleValues>
-        Start(fromValueGetter: (ve: VisualElement) => number, to: number, durationMs: number, onValueChanged: (ve: VisualElement, v: number) => void): ValueAnimation<number>
-        Start(fromValueGetter: (ve: VisualElement) => Rect, to: Rect, durationMs: number, onValueChanged: (ve: VisualElement, v: Rect) => void): ValueAnimation<Rect>
-        Start(fromValueGetter: (ve: VisualElement) => Color, to: Color, durationMs: number, onValueChanged: (ve: VisualElement, v: Color) => void): ValueAnimation<Color>
-        Start(fromValueGetter: (ve: VisualElement) => Vector3, to: Vector3, durationMs: number, onValueChanged: (ve: VisualElement, v: Vector3) => void): ValueAnimation<Vector3>
-        Start(fromValueGetter: (ve: VisualElement) => Vector2, to: Vector2, durationMs: number, onValueChanged: (ve: VisualElement, v: Vector2) => void): ValueAnimation<Vector2>
-        Start(fromValueGetter: (ve: VisualElement) => Quaternion, to: Quaternion, durationMs: number, onValueChanged: (ve: VisualElement, v: Quaternion) => void): ValueAnimation<Quaternion>
-        Layout(to: Rect, durationMs: number): ValueAnimation<Rect>
-        TopLeft(to: Vector2, durationMs: number): ValueAnimation<Vector2>
-        Size(to: Vector2, durationMs: number): ValueAnimation<Vector2>
-        Scale(to: number, duration: number): ValueAnimation<number>
-        Position(to: Vector3, duration: number): ValueAnimation<Vector3>
-        Rotation(to: Quaternion, duration: number): ValueAnimation<Quaternion>
-
-        runningAnimationCount: number
-        completedAnimationCount: number
-        Start(id: StylePropertyId, from: number, to: number, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: number, to: number, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Length, to: Length, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Color, to: Color, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        StartEnum(id: StylePropertyId, from: number, to: number, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Background, to: Background, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: FontDefinition, to: FontDefinition, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Font, to: Font, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: TextShadow, to: TextShadow, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Scale, to: Scale, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Translate, to: Translate, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: Rotate, to: Rotate, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        Start(id: StylePropertyId, from: TransformOrigin, to: TransformOrigin, durationMs: number, delayMs: number, easingCurve: (n: number) => number): boolean
-        HasRunningAnimation(id: StylePropertyId): boolean
-        UpdateAnimation(id: StylePropertyId): void
-        GetAllAnimations(outPropertyIds: List<StylePropertyId>): void
-        CancelAnimation(id: StylePropertyId): void
-        CancelAllAnimations(): void
 
         position: Vector3
         rotation: Quaternion

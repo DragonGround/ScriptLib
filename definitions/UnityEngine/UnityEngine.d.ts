@@ -20,12 +20,12 @@ declare module "UnityEngine" {
 
     }
 
-    export class Transform extends Component {
-        position: float3
-        rotation: quaternion
-        localScale: float3
-        parent: Transform
-    }
+    // export class Transform extends Component {
+    //     position: float3
+    //     rotation: quaternion
+    //     localScale: float3
+    //     parent: Transform
+    // }
 
     export enum FontStyle {
         Normal,
@@ -44,16 +44,4 @@ declare module "UnityEngine" {
         sharedMesh: Mesh
     }
 
-    export class MeshRenderer extends Component {
-        sharedMaterial: Material
-    }
-
-    export class Random {
-        static rotation: quaternion
-
-        /**
-         * [minInclusive..maxExclusive]
-         */
-        static Range(a: number, b: number): number
-    }
 }
