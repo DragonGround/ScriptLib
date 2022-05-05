@@ -111,7 +111,7 @@ function setStyleEnum(propertyName: keyof Style, enumType) {
 
 function setStyleColor(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value).ToColor())
+        style[propertyName] = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
     }
 }
 
@@ -181,7 +181,7 @@ function setStyleTextShadow(propertyName: keyof Style) {
         let ts = new TextShadow()
         ts.offset = parseFloat2(value.offset)
         ts.blurRadius = value.blurRadius
-        ts.color = parseColor(value.color).ToColor()
+        ts.color = parseColor(value.color)
         style[propertyName] = value == null ? new StyleTextShadow(StyleKeyword.Initial) : new StyleTextShadow(ts)
     }
 }
@@ -244,10 +244,10 @@ function setStyleFontDefinition(propertyName: keyof Style) {
 
 function setStyleBorderColor(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style: IStyle, value) => {
-        style.borderTopColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value).ToColor())
-        style.borderRightColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value).ToColor())
-        style.borderBottomColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value).ToColor())
-        style.borderLeftColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value).ToColor())
+        style.borderTopColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderRightColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderBottomColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderLeftColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
     }
 }
 

@@ -1,5 +1,6 @@
 import { float4, float3, quaternion } from "Unity/Mathematics";
 import { float4 as f4, float3 as f3, PI } from "math"
+import { Color } from "UnityEngine";
 
 /*
 https://github.com/deanm/css-color-parser-js
@@ -205,16 +206,15 @@ function parseCSSColor(css_str: string): number[] {
     return null;
 }
 
-function namedColor(name: keyof typeof kCSSColorTable): float4 {
+function namedColor(name: keyof typeof kCSSColorTable): Color {
     var c = kCSSColorTable[name]
-    return f4(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
+    return new Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
 }
 
-function namedColors(...names: (keyof typeof kCSSColorTable)[]): float4[] {
-    let res = [] as float4[]
+function namedColors(...names: (keyof typeof kCSSColorTable)[]): Color[] {
+    let res = [] as Color[]
     for (const name of names) {
-        let c = kCSSColorTable[name]
-        res.push(f4(c[0] / 255, c[1] / 255, c[2] / 255, c[3]))
+        res.push(namedColor(name))
     }
     return res
 }
@@ -230,13 +230,14 @@ export function colorStrToF4(str: string): float4 {
 /**
  * Can parse any css color, array of 4 values [0 to 1.0], or a plain float4
  */
-export function parseColor(input: string | number[] | float4): float4 {
+export function parseColor(input: string | number[] | float4): Color {
     if (Array.isArray(input)) {
-        return f4(input[0], input[1], input[2], input[3])
+        return new Color(input[0], input[1], input[2], input[3])
     } else if (typeof input === "string") {
-        return colorStrToF4(input)
+        var c = parseCSSColor(input)
+        return new Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
     }
-    return input
+    return new Color(input[0], input[1], input[2], input[3])
 }
 
 export { parseCSSColor, namedColor, namedColors }

@@ -97,7 +97,7 @@ function setStyleEnum(propertyName, enumType) {
 }
 function setStyleColor(propertyName) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value).ToColor());
+        style[propertyName] = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
     };
 }
 function setStyleBackground(propertyName) {
@@ -160,7 +160,7 @@ function setStyleTextShadow(propertyName) {
         let ts = new UIElements_1.TextShadow();
         ts.offset = (0, float_parser_1.parseFloat2)(value.offset);
         ts.blurRadius = value.blurRadius;
-        ts.color = (0, color_parser_1.parseColor)(value.color).ToColor();
+        ts.color = (0, color_parser_1.parseColor)(value.color);
         style[propertyName] = value == null ? new UIElements_1.StyleTextShadow(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTextShadow(ts);
     };
 }
@@ -215,10 +215,10 @@ function setStyleFontDefinition(propertyName) {
 }
 function setStyleBorderColor(propertyName) {
     styleProcessors[propertyName] = (style, value) => {
-        style.borderTopColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value).ToColor());
-        style.borderRightColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value).ToColor());
-        style.borderBottomColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value).ToColor());
-        style.borderLeftColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value).ToColor());
+        style.borderTopColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderRightColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderBottomColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderLeftColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
     };
 }
 function setStyleBorderWidth(propertyName) {
