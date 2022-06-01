@@ -239,10 +239,10 @@ function setStyleBorderWidth(propertyName) {
         else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value;
         }
-        style.borderTopWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFloat(vals[0]);
-        style.borderRightWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFloat(vals[1]);
-        style.borderBottomWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFloat(vals[2]);
-        style.borderLeftWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFloat(vals[3]);
+        style.borderTopWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[0]);
+        style.borderRightWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[1]);
+        style.borderBottomWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[2]);
+        style.borderLeftWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[3]);
     };
 }
 function setStyleBorderRadius(propertyName) {

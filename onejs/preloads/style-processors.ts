@@ -271,10 +271,10 @@ function setStyleBorderWidth(propertyName: keyof Style) {
         } else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value
         }
-        style.borderTopWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : new StyleFloat(vals[0])
-        style.borderRightWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : new StyleFloat(vals[1])
-        style.borderBottomWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : new StyleFloat(vals[2])
-        style.borderLeftWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : new StyleFloat(vals[3])
+        style.borderTopWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[0])
+        style.borderRightWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[1])
+        style.borderBottomWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[2])
+        style.borderLeftWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[3])
     }
 }
 
