@@ -28,7 +28,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
         else {
             childVNode = newParentVNode._children[i] = childVNode;
         }
-        if (childVNode == null) {
+        if (childVNode === null || typeof childVNode === "undefined") {
             continue;
         }
         childVNode._parent = newParentVNode;

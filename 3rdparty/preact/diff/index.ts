@@ -193,7 +193,7 @@ export function diff(
 			}
 
 			let isTopLevelFragment =
-				tmp != null && tmp.type === Fragment && tmp.key == null;
+				tmp !== null && tmp.type === Fragment && tmp.key == null;
 			let renderResult = isTopLevelFragment ? tmp.props.children : tmp;
 
 			diffChildren(

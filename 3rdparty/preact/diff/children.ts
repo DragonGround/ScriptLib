@@ -94,7 +94,7 @@ export function diffChildren(
 
 		// Terser removes the `continue` here and wraps the loop body
 		// in a `if (childVNode) { ... } condition
-		if (childVNode == null) {
+		if (childVNode === null || typeof childVNode === "undefined") {
 			continue;
 		}
 
