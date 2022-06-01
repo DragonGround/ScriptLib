@@ -4,7 +4,7 @@ import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
 import { List } from "System/Collections/Generic"
 import { FontStyle, ScaleMode, TextAnchor } from "UnityEngine"
-import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle } from "UnityEngine/UIElements"
+import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode } from "UnityEngine/UIElements"
 
 /**
  * Unity Specific Style processors
@@ -59,7 +59,7 @@ setStyleLength("maxWidth")
 setStyleLength("minHeight")
 setStyleLength("minWidth")
 setStyleLength("opacity")
-setStyleFloat("overflow")
+setStyleEnum("overflow", Overflow)
 setStylePadding("padding")
 setStyleLength("paddingBottom")
 setStyleLength("paddingLeft")
@@ -195,8 +195,12 @@ function setStyleTransformOrigin(propertyName: keyof Style) {
 
 function setStyleListTimeValue(propertyName: keyof Style, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = (value as number[]).map(a => new TimeValue(a))
-        let list = new List<TimeValue>(vals)
+        let UnityEngine = importNamespace("UnityEngine")
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.TimeValue)
+        let list = new listType()
+        for (let i = 0; i < value.length; i++)
+            list.Add(new TimeValue(value[i]));
+
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
         style[propertyName] = value == null ? styleListNull : styleList
@@ -205,8 +209,12 @@ function setStyleListTimeValue(propertyName: keyof Style, valueType) {
 
 function setStyleListPropertyName(propertyName: keyof Style, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = (value as string[]).map(a => new StylePropertyName(a))
-        let list = new List<StylePropertyName>(vals)
+        let UnityEngine = importNamespace("UnityEngine")
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.StylePropertyName)
+        let list = new listType()
+        for (let i = 0; i < value.length; i++)
+            list.Add(new StylePropertyName(value[i]));
+
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
         style[propertyName] = value == null ? styleListNull : styleList
@@ -215,8 +223,12 @@ function setStyleListPropertyName(propertyName: keyof Style, valueType) {
 
 function setStyleListEasingFunction(propertyName: keyof Style, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = (value as (keyof typeof EasingFunction)[]).map(a => EasingFunction[a])
-        let list = new List<StylePropertyName>(vals)
+        let UnityEngine = importNamespace("UnityEngine")
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.EasingFunction)
+        let list = new listType()
+        for (let i = 0; i < value.length; i++)
+            list.Add(new EasingFunction(EasingMode[value[i] as string]));
+
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
         style[propertyName] = value == null ? styleListNull : styleList

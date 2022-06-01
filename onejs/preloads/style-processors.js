@@ -2,7 +2,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Utils_1 = require("OneJS/Utils");
 const color_parser_1 = require("onejs/utils/color-parser");
 const float_parser_1 = require("onejs/utils/float-parser");
-const Generic_1 = require("System/Collections/Generic");
 const UnityEngine_1 = require("UnityEngine");
 const UIElements_1 = require("UnityEngine/UIElements");
 let styleProcessors = {};
@@ -50,7 +49,7 @@ setStyleLength("maxWidth");
 setStyleLength("minHeight");
 setStyleLength("minWidth");
 setStyleLength("opacity");
-setStyleFloat("overflow");
+setStyleEnum("overflow", UIElements_1.Overflow);
 setStylePadding("padding");
 setStyleLength("paddingBottom");
 setStyleLength("paddingLeft");
@@ -172,8 +171,11 @@ function setStyleTransformOrigin(propertyName) {
 }
 function setStyleListTimeValue(propertyName, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = value.map(a => new UIElements_1.TimeValue(a));
-        let list = new Generic_1.List(vals);
+        let UnityEngine = importNamespace("UnityEngine");
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.TimeValue);
+        let list = new listType();
+        for (let i = 0; i < value.length; i++)
+            list.Add(new UIElements_1.TimeValue(value[i]));
         let styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         let styleList = document.createStyleList(list, getType(valueType));
         style[propertyName] = value == null ? styleListNull : styleList;
@@ -181,8 +183,11 @@ function setStyleListTimeValue(propertyName, valueType) {
 }
 function setStyleListPropertyName(propertyName, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = value.map(a => new UIElements_1.StylePropertyName(a));
-        let list = new Generic_1.List(vals);
+        let UnityEngine = importNamespace("UnityEngine");
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.StylePropertyName);
+        let list = new listType();
+        for (let i = 0; i < value.length; i++)
+            list.Add(new UIElements_1.StylePropertyName(value[i]));
         let styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         let styleList = document.createStyleList(list, getType(valueType));
         style[propertyName] = value == null ? styleListNull : styleList;
@@ -190,8 +195,11 @@ function setStyleListPropertyName(propertyName, valueType) {
 }
 function setStyleListEasingFunction(propertyName, valueType) {
     styleProcessors[propertyName] = (style, value) => {
-        let vals = value.map(a => UIElements_1.EasingFunction[a]);
-        let list = new Generic_1.List(vals);
+        let UnityEngine = importNamespace("UnityEngine");
+        let listType = System.Collections.Generic.List(UnityEngine.UIElements.EasingFunction);
+        let list = new listType();
+        for (let i = 0; i < value.length; i++)
+            list.Add(new UIElements_1.EasingFunction(UIElements_1.EasingMode[value[i]]));
         let styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         let styleList = document.createStyleList(list, getType(valueType));
         style[propertyName] = value == null ? styleListNull : styleList;
