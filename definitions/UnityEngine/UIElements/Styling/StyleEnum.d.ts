@@ -63,18 +63,6 @@ declare module "UnityEngine/UIElements" {
         ContentBox,
     }
 
-    export enum TextAnchor {
-        UpperLeft,
-        UpperCenter,
-        UpperRight,
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-        LowerLeft,
-        LowerCenter,
-        LowerRight,
-    }
-
     export enum TextOverflowPosition {
         End,
         Start,

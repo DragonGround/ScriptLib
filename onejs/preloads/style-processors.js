@@ -80,7 +80,7 @@ setStyleInt("unitySliceBottom");
 setStyleInt("unitySliceLeft");
 setStyleInt("unitySliceRight");
 setStyleInt("unitySliceTop");
-setStyleEnum("unityTextAlign", UIElements_1.TextAnchor);
+setStyleEnum("unityTextAlign", UnityEngine_1.TextAnchor);
 setStyleColor("unityTextOutlineColor");
 setStyleFloat("unityTextOutlineWidth");
 setStyleEnum("unityTextOverflowPosition", UIElements_1.TextOverflowPosition);

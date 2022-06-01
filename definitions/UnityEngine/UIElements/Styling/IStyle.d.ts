@@ -1,7 +1,7 @@
 
 
 declare module "UnityEngine/UIElements" {
-    import { Color, Font, FontStyle, RenderTexture, ScaleMode, Sprite, Texture2D } from "UnityEngine"
+    import { Color, Font, FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture2D } from "UnityEngine"
 
     // (Custom) ones are just here to show that they exist on the javascript side. 
     // They are not provided by IStyle.

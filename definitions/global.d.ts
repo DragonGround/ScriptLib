@@ -5,8 +5,13 @@ declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
 
 declare var __dirname: string
+declare var System: any
 declare type float = number
 declare type int = number
+
+type CamelToSlug<T extends string, P extends string = ""> = string extends T ? string :
+    T extends `${infer C0}${infer R}` ?
+    CamelToSlug<R, `${P}${C0 extends Lowercase<C0> ? "" : "-"}${Lowercase<C0>}`> : P
 
 declare type EnumKeysLower<A> = keyof LowercaseKeys<A>
 

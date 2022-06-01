@@ -4,7 +4,7 @@
 declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
-    import { Bounds, BoundsInt, Rect, RectInt, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
+    import { Bounds, BoundsInt, Color, Rect, RectInt, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
     import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent } from "UnityEngine/UIElements"
 
     namespace JSXInternal {
@@ -196,6 +196,7 @@ declare module "preact/jsx" {
         interface ProgressBar extends BindableElementNoChildren {
             "low-value"?: number
             "high-value"?: number
+            value?: number
             title?: string
         }
 
@@ -312,6 +313,18 @@ declare module "preact/jsx" {
 
         }
 
+        /**
+         * OneJS Elements
+         */
+
+        interface GradientRect extends VisualElement  {
+            colors?: Color[]
+        }
+
+        /**
+         * All-in-one
+         */
+
         export interface IntrinsicElements {
             div: VisualElement
             box: Box
@@ -349,6 +362,8 @@ declare module "preact/jsx" {
             scrollview: ScrollView
             treeview: TreeView
             popupwindow: PopupWindow
+
+            gradientrect: GradientRect
         }
     }
 }
