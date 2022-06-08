@@ -165,7 +165,7 @@ function useContext(context) {
     const provider = currentComponent.context[context._id];
     const state = getHookState(currentIndex++, 9);
     state._context = context;
-    if (!provider)
+    if (typeof provider == "undefined" || provider === null)
         return context._defaultValue;
     if (state._value == null) {
         state._value = true;

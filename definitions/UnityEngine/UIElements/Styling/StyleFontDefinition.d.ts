@@ -8,7 +8,7 @@ declare module "UnityEngine/UIElements" {
 
         font: Font
         
-        constructor(x: Length, y: Length, z: number)
+        constructor()
     }
 
     export class StyleFontDefinition implements IStyleValue<FontDefinition> {

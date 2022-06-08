@@ -48,7 +48,7 @@ setStyleLength("maxHeight");
 setStyleLength("maxWidth");
 setStyleLength("minHeight");
 setStyleLength("minWidth");
-setStyleLength("opacity");
+setStyleFloat("opacity");
 setStyleEnum("overflow", UIElements_1.Overflow);
 setStylePadding("padding");
 setStyleLength("paddingBottom");

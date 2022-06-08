@@ -243,7 +243,7 @@ export function useContext(context) {
 	// be able to pull of the default value when no provider
 	// is present in the tree.
 	state._context = context;
-	if (!provider) return context._defaultValue;
+	if (typeof provider == "undefined" || provider === null) return context._defaultValue;
 	// This is probably not safe to convert to "!"
 	if (state._value == null) {
 		state._value = true;

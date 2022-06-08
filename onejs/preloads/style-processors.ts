@@ -4,7 +4,7 @@ import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
 import { List } from "System/Collections/Generic"
 import { FontStyle, ScaleMode, TextAnchor } from "UnityEngine"
-import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode } from "UnityEngine/UIElements"
+import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition } from "UnityEngine/UIElements"
 
 /**
  * Unity Specific Style processors
@@ -58,7 +58,7 @@ setStyleLength("maxHeight")
 setStyleLength("maxWidth")
 setStyleLength("minHeight")
 setStyleLength("minWidth")
-setStyleLength("opacity")
+setStyleFloat("opacity")
 setStyleEnum("overflow", Overflow)
 setStylePadding("padding")
 setStyleLength("paddingBottom")
