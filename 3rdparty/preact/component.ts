@@ -139,7 +139,8 @@ function renderComponent(component) {
 		);
 		commitRoot(commitQueue, vnode);
 
-		if (vnode._dom != oldDom) {
+		if (vnode._dom !== oldDom) {
+			// parentDom.removeChild(oldDom)	// MODDED
 			updateParentDomPointers(vnode);
 		}
 	}
@@ -149,11 +150,11 @@ function renderComponent(component) {
  * @param {import('./internal').VNode} vnode
  */
 function updateParentDomPointers(vnode) {
-	if ((vnode = vnode._parent) != null && vnode._component != null) {
+	if ((vnode = vnode._parent) !== null && vnode._component !== null) {
 		vnode._dom = vnode._component.base = null;
 		for (let i = 0; i < vnode._children.length; i++) {
 			let child = vnode._children[i];
-			if (child != null && child._dom != null) {
+			if (child !== null && child._dom !== null) {
 				vnode._dom = vnode._component.base = child._dom;
 				break;
 			}

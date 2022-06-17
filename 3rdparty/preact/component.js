@@ -64,17 +64,17 @@ function renderComponent(component) {
         oldVNode._original = vnode._original + 1;
         (0, index_1.diff)(parentDom, vnode, oldVNode, component._globalContext, parentDom.ownerSVGElement !== undefined, vnode._hydrating != null ? [oldDom] : null, commitQueue, oldDom == null ? getDomSibling(vnode) : oldDom, vnode._hydrating);
         (0, index_1.commitRoot)(commitQueue, vnode);
-        if (vnode._dom != oldDom) {
+        if (vnode._dom !== oldDom) {
             updateParentDomPointers(vnode);
         }
     }
 }
 function updateParentDomPointers(vnode) {
-    if ((vnode = vnode._parent) != null && vnode._component != null) {
+    if ((vnode = vnode._parent) !== null && vnode._component !== null) {
         vnode._dom = vnode._component.base = null;
         for (let i = 0; i < vnode._children.length; i++) {
             let child = vnode._children[i];
-            if (child != null && child._dom != null) {
+            if (child !== null && child._dom !== null) {
                 vnode._dom = vnode._component.base = child._dom;
                 break;
             }
