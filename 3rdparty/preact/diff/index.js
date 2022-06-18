@@ -286,7 +286,7 @@ function unmount(vnode, parentVNode, skipRemove = false) {
         if (!r.current || r.current === vnode._dom)
             applyRef(r, null, parentVNode);
     }
-    if ((r = vnode._component) != null) {
+    if ((r = vnode._component) !== null) {
         if (r.componentWillUnmount) {
             try {
                 r.componentWillUnmount();
