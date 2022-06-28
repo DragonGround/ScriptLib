@@ -90,8 +90,8 @@ function setProperty(dom, name, value, oldValue, isSvg) {
 }
 exports.setProperty = setProperty;
 function eventProxy(e) {
-    this._listeners[getType(e).Name.replace("Event", "") + false](options_1.default.event ? options_1.default.event(e) : e);
+    this.CallListener(getType(e).Name.replace("Event", "") + false, options_1.default.event ? options_1.default.event(e) : e);
 }
 function eventProxyCapture(e) {
-    this._listeners[getType(e).Name.replace("Event", "") + true](options_1.default.event ? options_1.default.event(e) : e);
+    this.CallListener(getType(e).Name.replace("Event", "") + true, options_1.default.event ? options_1.default.event(e) : e);
 }

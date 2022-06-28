@@ -146,9 +146,11 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
  * @private
  */
 function eventProxy(e) {
-	this._listeners[getType(e).Name.replace("Event", "") + false](options.event ? options.event(e) : e);
+	// this._listeners[getType(e).Name.replace("Event", "") + false](options.event ? options.event(e) : e);
+	this.CallListener(getType(e).Name.replace("Event", "") + false, options.event ? options.event(e) : e)
 }
 
 function eventProxyCapture(e) {
-	this._listeners[getType(e).Name.replace("Event", "") + true](options.event ? options.event(e) : e);
+	// this._listeners[getType(e).Name.replace("Event", "") + true](options.event ? options.event(e) : e);
+	this.CallListener(getType(e).Name.replace("Event", "") + true, options.event ? options.event(e) : e)
 }
