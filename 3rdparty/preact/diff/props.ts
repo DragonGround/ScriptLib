@@ -147,10 +147,15 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
  */
 function eventProxy(e) {
 	// this._listeners[getType(e).Name.replace("Event", "") + false](options.event ? options.event(e) : e);
-	this.CallListener(getType(e).Name.replace("Event", "") + false, options.event ? options.event(e) : e)
+	// this.CallListener(getType(e).Name.replace("Event", "") + false, options.event ? options.event(e) : e)
+	let eventName = getType(e).Name.replace("Event", "")
+	eventName = eventName === "Change`1" ? "ValueChanged" : eventName
+	this.CallListener(eventName + false, options.event ? options.event(e) : e)
 }
 
 function eventProxyCapture(e) {
 	// this._listeners[getType(e).Name.replace("Event", "") + true](options.event ? options.event(e) : e);
-	this.CallListener(getType(e).Name.replace("Event", "") + true, options.event ? options.event(e) : e)
+	let eventName = getType(e).Name.replace("Event", "")
+	eventName = eventName === "Change`1" ? "ValueChanged" : eventName
+	this.CallListener(eventName + true, options.event ? options.event(e) : e)
 }

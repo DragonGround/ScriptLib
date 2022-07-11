@@ -5,7 +5,7 @@ declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
     import { Bounds, BoundsInt, Color, Rect, RectInt, Texture, Texture2D, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
-    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent } from "UnityEngine/UIElements"
+    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent } from "UnityEngine/UIElements"
 
     namespace JSXInternal {
 
@@ -145,6 +145,7 @@ declare module "preact/jsx" {
 
         interface BaseFieldTraits<ValueType, UxmlType> extends BaseField<ValueType> {
             value?: ValueType
+            onValueChanged?: (e: ChangeEvent<ValueType>) => void
         }
 
         interface Button extends TextElement {
@@ -167,17 +168,22 @@ declare module "preact/jsx" {
             value?: number
         }
 
+        enum SliderDirection {
+            Horizontal,
+            Vertical
+        }
+
         interface Slider extends BaseFieldTraits<float, UxmlFloatAttributeDescription> {
             "low-value"?: number
             "high-value"?: number
-            direction?: "Horizontal" | "Vertical"
+            direction?: SliderDirection
             "page-size"?: number
         }
 
         interface SliderInt extends BaseFieldTraits<int, UxmlIntAttributeDescription> {
             "low-value"?: number
             "high-value"?: number
-            direction?: "Horizontal" | "Vertical"
+            direction?: SliderDirection
             "page-size"?: number
         }
 
