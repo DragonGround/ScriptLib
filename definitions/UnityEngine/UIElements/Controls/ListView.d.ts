@@ -42,10 +42,6 @@ declare module "UnityEngine/UIElements" {
         static itemAlternativeBackgroundUssClassName: string
         static listScrollViewUssClassName: string
         itemsSource: IListAny
-        makeItem: () => VisualElement
-        bindItem: (ve: VisualElement) => number
-        unbindItem: (ve: VisualElement) => number
-        destroyItem: (ve: VisualElement) => void
         contentContainer: VisualElement
         selectionType: SelectionType
         selectedItem: any
@@ -53,29 +49,24 @@ declare module "UnityEngine/UIElements" {
         selectedIndex: number
         selectedIndices: IEnumerable<number>
         viewController: CollectionViewController
-        resolvedItemHeight: number
         showBorder: boolean
         reorderable: boolean
         horizontalScrollingEnabled: boolean
         showAlternatingRowBackgrounds: AlternatingRowBackground
         virtualizationMethod: CollectionVirtualizationMethod
-        itemHeight: number
         fixedItemHeight: number
         constructor()
         constructor(itemsSource: IListAny, itemHeight: number)
-        constructor(itemsSource: IListAny, itemHeight: number, makeItem: () => VisualElement, bindItem: (ve: VisualElement) => number)
+        constructor(itemsSource: IListAny, itemHeight: number, makeItem: () => VisualElement, bindItem: (ve: VisualElement, i: number) => void)
         SetViewController(controller: CollectionViewController): void
         GetRootElementForId(id: number): VisualElement
         GetRootElementForIndex(index: number): VisualElement
         RefreshItem(index: number): void
         RefreshItems(): void
-        Refresh(): void
         Rebuild(): void
         ScrollTo(visualElement: VisualElement): void
         ScrollToItem(index: number): void
-        ScrollToId(id: number): void
         ScrollToItemById(id: number): void
-        OnKeyDown(evt: KeyDownEvent): void
         AddToSelection(index: number): void
         RemoveFromSelection(index: number): void
         SetSelection(index: number): void
@@ -127,7 +118,7 @@ declare module "UnityEngine/UIElements" {
 
     export class ListView extends BaseListView {
         makeItem: () => VisualElement
-        bindItem: (ve: VisualElement) => number
+        bindItem: (ve: VisualElement, i: number) => void
         unbindItem: (ve: VisualElement) => number
         destroyItem: (ve: VisualElement) => void
         constructor()

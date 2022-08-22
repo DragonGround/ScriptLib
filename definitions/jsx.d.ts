@@ -5,7 +5,7 @@ declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
     import { Bounds, BoundsInt, Color, Rect, RectInt, Texture, Texture2D, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
-    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent } from "UnityEngine/UIElements"
+    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent, ScrollerVisibility } from "UnityEngine/UIElements"
 
     namespace JSXInternal {
 
@@ -305,8 +305,8 @@ declare module "preact/jsx" {
 
         interface ScrollView extends VisualElement {
             mode?: ScrollViewMode
-            "show-horizontal-scroller"?: boolean
-            "show-vertical-scroller"?: boolean
+            "horizontal-scroller-visibility"?: ScrollerVisibility
+            "vertical-scroller-visibility"?: ScrollerVisibility
             "horizontal-page-size"?: number
             "vertical-page-size"?: number
         }
@@ -333,6 +333,11 @@ declare module "preact/jsx" {
             interval?: number
             "num-per-row"?: number
             "random-rotation"?: boolean
+        }
+
+        interface SimpleListView extends ListView  {
+            itemsSource?: any[]
+            foo?: any
         }
 
         /**
@@ -379,6 +384,7 @@ declare module "preact/jsx" {
 
             gradientrect: GradientRect
             flipbook: Flipbook
+            simplelistview: SimpleListView
         }
     }
 }

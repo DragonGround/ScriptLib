@@ -13,6 +13,12 @@ declare module "UnityEngine/UIElements" {
         VerticalAndHorizontal,
     }
 
+    export enum ScrollerVisibility {
+        Auto,
+        AlwaysVisible,
+        Hidden,
+    }
+
     export class Scroller extends VisualElement {
         static ussClassName: string
         static horizontalVariantUssClassName: string
@@ -42,6 +48,12 @@ declare module "UnityEngine/UIElements" {
         Clamped,
     }
 
+    export enum ScrollView_NestedInteractionKind {
+        Default,
+        StopScrolling,
+        ForwardScrolling,
+    }
+
     export class ScrollView extends VisualElement {
         static ussClassName: string
         static viewportUssClassName: string
@@ -61,14 +73,13 @@ declare module "UnityEngine/UIElements" {
         static scrollVariantUssClassName: string
         horizontalScrollerVisibility: ScrollerVisibility
         verticalScrollerVisibility: ScrollerVisibility
-        showHorizontal: boolean
-        showVertical: boolean
         scrollOffset: Vector2
         horizontalPageSize: number
         verticalPageSize: number
         scrollDecelerationRate: number
         elasticity: number
         touchScrollBehavior: TouchScrollBehavior
+        nestedInteractionKind: ScrollView_NestedInteractionKind
         contentViewport: VisualElement
         horizontalScroller: Scroller
         verticalScroller: Scroller
