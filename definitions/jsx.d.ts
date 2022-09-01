@@ -9,11 +9,16 @@ declare module "preact/jsx" {
 
     namespace JSXInternal {
 
+        interface IntrinsicAttributes {
+            id?: string
+        }
+
         /**
          * Base elements
          */
 
         export interface VisualElement {
+            id?: string
             ref?: Ref<any>
 
             children?: (string | number | Element) | (string | number | Element)[]
@@ -303,6 +308,11 @@ declare module "preact/jsx" {
             "item-height"?: number
         }
 
+        interface SimpleListView extends ListView {
+            make?: () => any
+            bind?: (e: any, i: number) => void
+        }
+
         interface ScrollView extends VisualElement {
             mode?: ScrollViewMode
             "horizontal-scroller-visibility"?: ScrollerVisibility
@@ -333,11 +343,6 @@ declare module "preact/jsx" {
             interval?: number
             "num-per-row"?: number
             "random-rotation"?: boolean
-        }
-
-        interface SimpleListView extends ListView  {
-            itemsSource?: any[]
-            foo?: any
         }
 
         /**
@@ -382,6 +387,7 @@ declare module "preact/jsx" {
             treeview: TreeView
             popupwindow: PopupWindow
 
+            /* OneJS Custom */
             gradientrect: GradientRect
             flipbook: Flipbook
             simplelistview: SimpleListView

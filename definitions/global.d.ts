@@ -23,10 +23,16 @@ declare type LowercaseMapping<A, B> = {
     [Property in keyof A as `${Lowercase<string & Property>}`]: B
 };
 
+declare interface Document {
+    addRuntimeCSS(css: string): any // returns the created Unity StyleSheet ScriptableObject
+    removeRuntimeStyleSheet(sheet: any): void
+    clearRuntimeStyleSheets(): void
+}
+
 declare interface HTMLElement {
     clearChildren()
 }
 
 declare interface CSSStyleDeclaration {
-    setProperty(property: string, value: any): void;
+    setProperty(property: string, value: any): void
 }

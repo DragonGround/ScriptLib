@@ -5,6 +5,7 @@ declare module "OneJS/Dom" {
     import { EventBase, IStyle, VisualElement } from "UnityEngine/UIElements"
 
     export class Dom {
+        id: string
         ve: VisualElement
         parentNode: Dom
         nextSibling: Dom
