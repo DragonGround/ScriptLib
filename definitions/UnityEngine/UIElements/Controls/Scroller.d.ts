@@ -33,6 +33,8 @@ declare module "UnityEngine/UIElements" {
         lowValue: number
         highValue: number
         direction: SliderDirection
+        add_valueChanged(handler: (scrollTop: number) => void): void
+        remove_valueChanged(handler: any)
         constructor()
         constructor(lowValue: number, highValue: number, valueChanged: (n: number) => void, direction: SliderDirection)
         Adjust(factor: number): void
