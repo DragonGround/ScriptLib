@@ -9,3 +9,4 @@ export declare function useCallback(callback: any, args: any): any;
 export declare function useContext(context: any): any;
 export declare function useDebugValue(value: any, formatter: any): void;
 export declare function useErrorBoundary(cb: any): any[];
+export declare function useId(): any;
