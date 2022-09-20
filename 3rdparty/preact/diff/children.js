@@ -23,7 +23,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
             childVNode = newParentVNode._children[i] = (0, create_element_1.createVNode)(create_element_1.Fragment, { children: childVNode }, null, null, null);
         }
         else if (typeof childVNode !== "undefined" && childVNode._depth > 0) {
-            childVNode = newParentVNode._children[i] = (0, create_element_1.createVNode)(childVNode.type, childVNode.props, childVNode.key, null, childVNode._original);
+            childVNode = newParentVNode._children[i] = (0, create_element_1.createVNode)(childVNode.type, childVNode.props, childVNode.key, childVNode.ref ? childVNode.ref : null, childVNode._original);
         }
         else {
             childVNode = newParentVNode._children[i] = childVNode;
@@ -91,7 +91,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
                 oldChildren[i]._dom == newParentVNode._nextDom) {
                 newParentVNode._nextDom = (0, component_1.getDomSibling)(oldParentVNode, i + 1);
             }
-            (0, index_1.unmount)(oldChildren[i], oldChildren[i], false);
+            (0, index_1.unmount)(oldChildren[i], oldChildren[i]);
         }
     }
     if (refs) {

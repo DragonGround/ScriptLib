@@ -26,17 +26,25 @@ function setStyle(style, key, value) {
 function setProperty(dom, name, value, oldValue, isSvg) {
     let useCapture;
     o: if (name === 'style') {
-        if (oldValue) {
-            for (name in oldValue) {
-                if (!(value && name in value)) {
-                    setStyle(dom.style, name, null);
+        if (typeof value == 'string') {
+            dom.style.cssText = value;
+        }
+        else {
+            if (typeof oldValue == 'string') {
+                dom.style.cssText = oldValue = '';
+            }
+            if (oldValue) {
+                for (name in oldValue) {
+                    if (!(value && name in value)) {
+                        setStyle(dom.style, name, '');
+                    }
                 }
             }
-        }
-        if (value) {
-            for (name in value) {
-                if (!oldValue || value[name] !== oldValue[name]) {
-                    setStyle(dom.style, name, value[name]);
+            if (value) {
+                for (name in value) {
+                    if (!oldValue || value[name] !== oldValue[name]) {
+                        setStyle(dom.style, name, value[name]);
+                    }
                 }
             }
         }
@@ -63,7 +71,7 @@ function setProperty(dom, name, value, oldValue, isSvg) {
     }
     else if (name !== 'dangerouslySetInnerHTML') {
         if (isSvg) {
-            name = name.replace(/xlink[H:h]/, 'h').replace(/sName$/, 's');
+            name = name.replace(/xlink(H|:h)/, 'h').replace(/sName$/, 's');
         }
         else if (name !== 'href' &&
             name !== 'list' &&

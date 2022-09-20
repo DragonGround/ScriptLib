@@ -1,5 +1,4 @@
 
-
 declare module "preact/hooks" {
 
 	import { PreactContext, Ref as PreactRef } from 'preact'
@@ -139,6 +138,8 @@ declare module "preact/hooks" {
 	export function useDebugValue<T>(value: T, formatter?: (value: T) => any): void;
 
 	export function useErrorBoundary(
-		callback?: (error: any) => Promise<void> | void
+		callback?: (error: any, errorInfo: any) => Promise<void> | void
 	): [any, () => void];
+
+	export function useId(): string;
 }

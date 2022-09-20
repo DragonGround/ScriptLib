@@ -1,10 +1,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useErrorBoundary = exports.useDebugValue = exports.useContext = exports.useCallback = exports.useMemo = exports.useImperativeHandle = exports.useRef = exports.useLayoutEffect = exports.useEffect = exports.useReducer = exports.useState = void 0;
+exports.useId = exports.useErrorBoundary = exports.useDebugValue = exports.useContext = exports.useCallback = exports.useMemo = exports.useImperativeHandle = exports.useRef = exports.useLayoutEffect = exports.useEffect = exports.useReducer = exports.useState = void 0;
 const preact_1 = require("preact/");
 let currentIndex;
 let currentComponent;
+let previousComponent;
 let currentHook = 0;
 let afterPaintEffects = [];
+let EMPTY = [];
 let oldBeforeDiff = preact_1.options._diff;
 let oldBeforeRender = preact_1.options._render;
 let oldAfterDiff = preact_1.options.diffed;
@@ -13,6 +15,19 @@ let oldBeforeUnmount = preact_1.options.unmount;
 const RAF_TIMEOUT = 100;
 let prevRaf;
 preact_1.options._diff = vnode => {
+    if (typeof vnode.type === 'function' &&
+        !vnode._mask &&
+        vnode.type !== preact_1.Fragment) {
+        vnode._mask =
+            (vnode._parent && vnode._parent._mask ? vnode._parent._mask : '') +
+                (vnode._parent && vnode._parent._children
+                    ? vnode._parent._children.indexOf(vnode)
+                    : 0);
+    }
+    else if (!vnode._mask) {
+        vnode._mask =
+            vnode._parent && vnode._parent._mask ? vnode._parent._mask : '';
+    }
     currentComponent = null;
     if (oldBeforeDiff)
         oldBeforeDiff(vnode);
@@ -24,19 +39,44 @@ preact_1.options._render = vnode => {
     currentIndex = 0;
     const hooks = currentComponent.__hooks;
     if (hooks) {
-        hooks._pendingEffects.forEach(invokeCleanup);
-        hooks._pendingEffects.forEach(invokeEffect);
-        hooks._pendingEffects = [];
+        if (previousComponent === currentComponent) {
+            hooks._pendingEffects = [];
+            currentComponent._renderCallbacks = [];
+            hooks._list.forEach(hookItem => {
+                if (hookItem._nextValue) {
+                    hookItem._value = hookItem._nextValue;
+                }
+                hookItem._pendingValue = EMPTY;
+                hookItem._nextValue = hookItem._pendingArgs = undefined;
+            });
+        }
+        else {
+            hooks._pendingEffects.forEach(invokeCleanup);
+            hooks._pendingEffects.forEach(invokeEffect);
+            hooks._pendingEffects = [];
+        }
     }
+    previousComponent = currentComponent;
 };
 preact_1.options.diffed = vnode => {
     if (oldAfterDiff)
         oldAfterDiff(vnode);
     const c = vnode._component;
-    if (c && c.__hooks && c.__hooks._pendingEffects.length) {
-        afterPaint(afterPaintEffects.push(c));
+    if (c && c.__hooks) {
+        if (c.__hooks._pendingEffects.length)
+            afterPaint(afterPaintEffects.push(c));
+        c.__hooks._list.forEach(hookItem => {
+            if (hookItem._pendingArgs) {
+                hookItem._args = hookItem._pendingArgs;
+            }
+            if (hookItem._pendingValue !== EMPTY) {
+                hookItem._value = hookItem._pendingValue;
+            }
+            hookItem._pendingArgs = undefined;
+            hookItem._pendingValue = EMPTY;
+        });
     }
-    currentComponent = null;
+    previousComponent = currentComponent = null;
 };
 preact_1.options._commit = (vnode, commitQueue) => {
     commitQueue.some(component => {
@@ -70,6 +110,7 @@ preact_1.options.unmount = vnode => {
                 hasErrored = e;
             }
         });
+        c.__hooks = undefined;
         if (hasErrored)
             preact_1.options._catchError(hasErrored, c._vnode);
     }
@@ -85,7 +126,7 @@ function getHookState(index, type) {
             _pendingEffects: []
         });
     if (index >= hooks._list.length) {
-        hooks._list.push({});
+        hooks._list.push({ _pendingValue: EMPTY });
     }
     return hooks._list[index];
 }
@@ -101,23 +142,54 @@ function useReducer(reducer, initialState, init) {
         hookState._value = [
             !init ? invokeOrReturn(undefined, initialState) : init(initialState),
             action => {
-                const nextValue = hookState._reducer(hookState._value[0], action);
-                if (hookState._value[0] !== nextValue) {
-                    hookState._value = [nextValue, hookState._value[1]];
+                const currentValue = hookState._nextValue
+                    ? hookState._nextValue[0]
+                    : hookState._value[0];
+                const nextValue = hookState._reducer(currentValue, action);
+                if (currentValue !== nextValue) {
+                    hookState._nextValue = [nextValue, hookState._value[1]];
                     hookState._component.setState({});
                 }
             }
         ];
         hookState._component = currentComponent;
+        if (!currentComponent._hasScuFromHooks) {
+            currentComponent._hasScuFromHooks = true;
+            const prevScu = currentComponent.shouldComponentUpdate;
+            currentComponent.shouldComponentUpdate = function (p, s, c) {
+                if (typeof hookState._component.__hooks == "undefined" || hookState._component.__hooks === null)
+                    return true;
+                const stateHooks = hookState._component.__hooks._list.filter(x => x._component);
+                const allHooksEmpty = stateHooks.every(x => !x._nextValue);
+                if (allHooksEmpty) {
+                    return prevScu ? prevScu.call(this, p, s, c) : true;
+                }
+                let shouldUpdate = false;
+                stateHooks.forEach(hookItem => {
+                    if (hookItem._nextValue) {
+                        const currentValue = hookItem._value[0];
+                        hookItem._value = hookItem._nextValue;
+                        hookItem._nextValue = undefined;
+                        if (currentValue !== hookItem._value[0])
+                            shouldUpdate = true;
+                    }
+                });
+                return shouldUpdate
+                    ? prevScu
+                        ? prevScu.call(this, p, s, c)
+                        : true
+                    : false;
+            };
+        }
     }
-    return hookState._value;
+    return hookState._nextValue || hookState._value;
 }
 exports.useReducer = useReducer;
 function useEffect(callback, args) {
     const state = getHookState(currentIndex++, 3);
     if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
-        state._args = args;
+        state._pendingArgs = args;
         currentComponent.__hooks._pendingEffects.push(state);
     }
 }
@@ -126,7 +198,7 @@ function useLayoutEffect(callback, args) {
     const state = getHookState(currentIndex++, 4);
     if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
-        state._args = args;
+        state._pendingArgs = args;
         currentComponent._renderCallbacks.push(state);
     }
 }
@@ -139,19 +211,24 @@ exports.useRef = useRef;
 function useImperativeHandle(ref, createHandle, args) {
     currentHook = 6;
     useLayoutEffect(() => {
-        if (typeof ref == 'function')
+        if (typeof ref == 'function') {
             ref(createHandle());
-        else if (ref)
+            return () => ref(null);
+        }
+        else if (ref) {
             ref.current = createHandle();
+            return () => (ref.current = null);
+        }
     }, args == null ? args : args.concat(ref));
 }
 exports.useImperativeHandle = useImperativeHandle;
 function useMemo(factory, args) {
     const state = getHookState(currentIndex++, 7);
     if (argsChanged(state._args, args)) {
-        state._value = factory();
-        state._args = args;
+        state._pendingValue = factory();
+        state._pendingArgs = args;
         state._factory = factory;
+        return state._pendingValue;
     }
     return state._value;
 }
@@ -185,9 +262,9 @@ function useErrorBoundary(cb) {
     const errState = useState();
     state._value = cb;
     if (!currentComponent.componentDidCatch) {
-        currentComponent.componentDidCatch = err => {
+        currentComponent.componentDidCatch = (err, errorInfo) => {
             if (state._value)
-                state._value(err);
+                state._value(err, errorInfo);
             errState[1](err);
         };
     }
@@ -199,11 +276,25 @@ function useErrorBoundary(cb) {
     ];
 }
 exports.useErrorBoundary = useErrorBoundary;
+function hash(s) {
+    let h = 0, i = s.length;
+    while (i > 0) {
+        h = ((h << 5) - h + s.charCodeAt(--i)) | 0;
+    }
+    return h;
+}
+function useId() {
+    const state = getHookState(currentIndex++, 11);
+    if (!state._value) {
+        state._value = 'P' + hash(currentComponent._vnode._mask) + currentIndex;
+    }
+    return state._value;
+}
+exports.useId = useId;
 function flushAfterPaintEffects() {
     let component;
-    afterPaintEffects.sort((a, b) => a._vnode._depth - b._vnode._depth);
-    while (component = afterPaintEffects.pop()) {
-        if (!component._parentDom)
+    while ((component = afterPaintEffects.shift())) {
+        if (!component._parentDom || typeof component.__hooks == "undefined" || component.__hooks === null)
             continue;
         try {
             component.__hooks._pendingEffects.forEach(invokeCleanup);

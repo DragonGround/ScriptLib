@@ -83,7 +83,6 @@ function updateParentDomPointers(vnode) {
     }
 }
 let rerenderQueue = [];
-const defer = setTimeout;
 let prevDebounce;
 function enqueueRender(c) {
     if ((!c._dirty &&
@@ -92,7 +91,7 @@ function enqueueRender(c) {
         !process._rerenderCount++) ||
         prevDebounce !== options_1.default.debounceRendering) {
         prevDebounce = options_1.default.debounceRendering;
-        (prevDebounce || defer)(process);
+        (prevDebounce || setTimeout)(process);
     }
 }
 exports.enqueueRender = enqueueRender;

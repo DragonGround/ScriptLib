@@ -110,13 +110,25 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             c.context = componentContext;
             c.props = newProps;
-            c.state = c._nextState;
-            if ((tmp = preact_1.options._render))
-                tmp(newVNode);
-            c._dirty = false;
             c._vnode = newVNode;
             c._parentDom = parentDom;
-            tmp = c.render(c.props, c.state, c.context);
+            let renderHook = preact_1.options._render, count = 0;
+            if ('prototype' in newType && newType.prototype.render) {
+                c.state = c._nextState;
+                c._dirty = false;
+                if (renderHook)
+                    renderHook(newVNode);
+                tmp = c.render(c.props, c.state, c.context);
+            }
+            else {
+                do {
+                    c._dirty = false;
+                    if (renderHook)
+                        renderHook(newVNode);
+                    tmp = c.render(c.props, c.state, c.context);
+                    c.state = c._nextState;
+                } while (c._dirty && ++count < 25);
+            }
             c.state = c._nextState;
             if (c.getChildContext != null) {
                 globalContext = (0, util_1.assign)((0, util_1.assign)({}, globalContext), c.getChildContext());
@@ -137,7 +149,8 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             c._force = false;
         }
-        else if (excessDomChildren == null && newVNode._original === oldVNode._original) {
+        else if (excessDomChildren == null &&
+            newVNode._original === oldVNode._original) {
             newVNode._children = oldVNode._children;
             newVNode._dom = oldVNode._dom;
         }
@@ -148,6 +161,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             tmp(newVNode);
     }
     catch (e) {
+        log(e.message);
         log(e.stack);
         newVNode._original = null;
         if (isHydrating || excessDomChildren != null) {
@@ -252,9 +266,9 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
         if (!isHydrating) {
             if ('value' in newProps &&
                 (i = newProps.value) !== undefined &&
-                (i !== oldProps.value ||
-                    i !== dom.value ||
-                    (nodeType === 'progress' && !i))) {
+                (i !== dom.value ||
+                    (nodeType === 'progress' && !i) ||
+                    (nodeType === 'option' && i !== oldProps.value))) {
                 (0, props_1.setProperty)(dom, 'value', i, oldProps.value, false);
             }
             if ('checked' in newProps &&
@@ -283,8 +297,9 @@ function unmount(vnode, parentVNode, skipRemove = false) {
     if (preact_1.options.unmount)
         preact_1.options.unmount(vnode);
     if ((r = vnode.ref)) {
-        if (!r.current || r.current === vnode._dom)
+        if (!r.current || r.current === vnode._dom) {
             applyRef(r, null, parentVNode);
+        }
     }
     if ((r = vnode._component) !== null) {
         if (r.componentWillUnmount) {
@@ -296,6 +311,7 @@ function unmount(vnode, parentVNode, skipRemove = false) {
             }
         }
         r.base = r._parentDom = null;
+        vnode._component = undefined;
     }
     if ((r = vnode._children)) {
         for (let i = 0; i < r.length; i++) {
@@ -304,9 +320,10 @@ function unmount(vnode, parentVNode, skipRemove = false) {
             }
         }
     }
-    if (!skipRemove && vnode._dom != null)
+    if (!skipRemove && vnode._dom != null) {
         (0, util_1.removeNode)(vnode._dom);
-    vnode._dom = vnode._nextDom = undefined;
+    }
+    vnode._parent = vnode._dom = vnode._nextDom = undefined;
 }
 exports.unmount = unmount;
 function doRender(props, state, context) {

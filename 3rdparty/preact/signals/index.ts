@@ -80,10 +80,10 @@ function Text(this: ComponentType, { data }: { data: Signal }) {
 
 	const s = useMemo(() => {
 		// mark the parent component as having computeds so it gets optimized
-		let v = this.__v;
-		while ((v = v.__!)) {
-			if (v.__c) {
-				hasComputeds.add(v.__c);
+		let v = this._vnode;
+		while ((v = v._parent!)) {
+			if (v._component) {
+				hasComputeds.add(v._component);
 				break;
 			}
 		}
@@ -144,7 +144,7 @@ hook(OptionsTypes.DIFF, (old, vnode) => {
 hook(OptionsTypes.RENDER, (old, vnode) => {
 	let updater;
 
-	let component = vnode.__c;
+	let component = vnode._component;
 	if (component) {
 		hasPendingUpdate.delete(component);
 
@@ -179,7 +179,7 @@ hook(OptionsTypes.DIFFED, (old, vnode) => {
 
 	// vnode._dom is undefined during string rendering,
 	// so we use this to skip prop subscriptions during SSR.
-	if (typeof vnode.type === "string" && (dom = vnode.__e as Element)) {
+	if (typeof vnode.type === "string" && (dom = vnode._dom as Element)) {
 		let props = vnode.__np;
 		if (props) {
 			let updaters = dom._updaters;
@@ -231,7 +231,7 @@ function createPropUpdater(dom: Element, prop: string, signal: Signal) {
 
 /** Unsubscribe from Signals when unmounting components/vnodes */
 hook(OptionsTypes.UNMOUNT, (old, vnode: VNode) => {
-	let component = vnode.__c;
+	let component = vnode._component;
 	const updater = component && updaterForComponent.get(component);
 	if (updater) {
 		updaterForComponent.delete(component);
@@ -239,7 +239,7 @@ hook(OptionsTypes.UNMOUNT, (old, vnode: VNode) => {
 	}
 
 	if (typeof vnode.type === "string") {
-		const dom = vnode.__e as Element;
+		const dom = vnode._dom as Element;
 
 		const updaters = dom._updaters;
 		if (updaters) {

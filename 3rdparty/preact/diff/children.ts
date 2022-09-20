@@ -45,7 +45,6 @@ export function diffChildren(
 	let oldChildrenLength = oldChildren.length;
 
 	newParentVNode._children = [];
-
 	for (i = 0; i < renderResult.length; i++) {
 		childVNode = renderResult[i];
 
@@ -76,6 +75,7 @@ export function diffChildren(
 				null,
 				null
 			);
+		// } else if (childVNode._depth > 0) {
 		} else if (typeof childVNode !== "undefined" && childVNode._depth > 0) {	// MODDED
 			// VNode is already in use, clone it. This can happen in the following
 			// scenario:
@@ -85,7 +85,7 @@ export function diffChildren(
 				childVNode.type,
 				childVNode.props,
 				childVNode.key,
-				null,
+				childVNode.ref ? childVNode.ref : null,
 				childVNode._original
 			);
 		} else {
@@ -203,6 +203,7 @@ export function diffChildren(
 	}
 
 	newParentVNode._dom = firstChildDom;
+
 	// Remove remaining oldChildren if there are any.
 	for (i = oldChildrenLength; i--;) {
 		if (typeof oldChildren[i] !== "undefined" && oldChildren[i] !== null) {
@@ -217,7 +218,7 @@ export function diffChildren(
 				newParentVNode._nextDom = getDomSibling(oldParentVNode, i + 1);
 			}
 
-			unmount(oldChildren[i], oldChildren[i], false);
+			unmount(oldChildren[i], oldChildren[i]);
 		}
 	}
 
@@ -245,14 +246,7 @@ function reorderChildren(childVNode, oldDom, parentDom) {
 			if (typeof vnode.type == 'function') {
 				oldDom = reorderChildren(vnode, oldDom, parentDom);
 			} else {
-				oldDom = placeChild(
-					parentDom,
-					vnode,
-					vnode,
-					c,
-					vnode._dom,
-					oldDom
-				);
+				oldDom = placeChild(parentDom, vnode, vnode, c, vnode._dom, oldDom);
 			}
 		}
 	}

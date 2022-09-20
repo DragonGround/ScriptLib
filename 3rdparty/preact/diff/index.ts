@@ -33,7 +33,6 @@ export function diff(
 	oldDom,
 	isHydrating
 ) {
-
 	let tmp,
 		newType = newVNode.type;
 
@@ -49,10 +48,10 @@ export function diff(
 		newVNode._hydrating = null;
 		excessDomChildren = [oldDom];
 	}
+
 	if ((tmp = options._diff)) tmp(newVNode);
 
 	try {
-		// outer here is for breaking purposes
 		outer: if (typeof newType == 'function') {
 			let c, isNew, oldProps, oldState, snapshot, clearProcessingException;
 			let newProps = newVNode.props;
@@ -171,15 +170,29 @@ export function diff(
 
 			c.context = componentContext;
 			c.props = newProps;
-			c.state = c._nextState;
-
-			if ((tmp = options._render)) tmp(newVNode);
-
-			c._dirty = false;
 			c._vnode = newVNode;
 			c._parentDom = parentDom;
 
-			tmp = c.render(c.props, c.state, c.context);
+			let renderHook = options._render,
+				count = 0;
+			if ('prototype' in newType && newType.prototype.render) {
+				c.state = c._nextState;
+				c._dirty = false;
+
+				if (renderHook) renderHook(newVNode);
+
+				tmp = c.render(c.props, c.state, c.context);
+			} else {
+				do {
+					c._dirty = false;
+					if (renderHook) renderHook(newVNode);
+
+					tmp = c.render(c.props, c.state, c.context);
+
+					// Handle setState called in render, see #2553
+					c.state = c._nextState;
+				} while (c._dirty && ++count < 25);
+			}
 
 			// Handle setState called in render, see #2553
 			c.state = c._nextState;
@@ -223,7 +236,10 @@ export function diff(
 			}
 
 			c._force = false;
-		} else if (excessDomChildren == null && newVNode._original === oldVNode._original) {
+		} else if (
+			excessDomChildren == null &&
+			newVNode._original === oldVNode._original
+		) {
 			newVNode._children = oldVNode._children;
 			newVNode._dom = oldVNode._dom;
 		} else {
@@ -241,6 +257,7 @@ export function diff(
 
 		if ((tmp = options.diffed)) tmp(newVNode);
 	} catch (e) {
+		log(e.message)
 		log(e.stack)
 		newVNode._original = null;
 		// if hydrating or creating initial tree, bailout preserves DOM:
@@ -432,9 +449,12 @@ function diffElementNodes(
 				// despite the attribute not being present. When the attribute
 				// is missing the progress bar is treated as indeterminate.
 				// To fix that we'll always update it when it is 0 for progress elements
-				(i !== oldProps.value ||
-					i !== dom.value ||
-					(nodeType === 'progress' && !i))
+				(i !== dom.value ||
+					(nodeType === 'progress' && !i) ||
+					// This is only for IE 11 to fix <select> value not being updated.
+					// To avoid a stale select value we need to set the option.value
+					// again, which triggers IE11 to re-evaluate the select value
+					(nodeType === 'option' && i !== oldProps.value))
 			) {
 				setProperty(dom, 'value', i, oldProps.value, false);
 			}
@@ -479,7 +499,9 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 	if (options.unmount) options.unmount(vnode);
 
 	if ((r = vnode.ref)) {
-		if (!r.current || r.current === vnode._dom) applyRef(r, null, parentVNode);
+		if (!r.current || r.current === vnode._dom) {
+			applyRef(r, null, parentVNode);
+		}
 	}
 
 	if ((r = vnode._component) !== null) {
@@ -492,6 +514,7 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 		}
 
 		r.base = r._parentDom = null;
+		vnode._component = undefined;
 	}
 
 	if ((r = vnode._children)) {
@@ -502,11 +525,13 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 		}
 	}
 
-	if (!skipRemove && vnode._dom != null) removeNode(vnode._dom);
+	if (!skipRemove && vnode._dom != null) {
+		removeNode(vnode._dom);
+	}
 
 	// Must be set to `undefined` to properly clean up `_nextDom`
 	// for which `null` is a valid value. See comment in `create-element.js`
-	vnode._dom = vnode._nextDom = undefined;
+	vnode._parent = vnode._dom = vnode._nextDom = undefined;
 }
 
 /** The `.render()` method for a PFC backing instance. */

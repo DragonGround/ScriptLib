@@ -36,10 +36,10 @@ function Text({ data }) {
     const currentSignal = useSignal(data);
     currentSignal.value = data;
     const s = (0, hooks_1.useMemo)(() => {
-        let v = this.__v;
-        while ((v = v.__)) {
-            if (v.__c) {
-                hasComputeds.add(v.__c);
+        let v = this._vnode;
+        while ((v = v._parent)) {
+            if (v._component) {
+                hasComputeds.add(v._component);
                 break;
             }
         }
@@ -66,7 +66,7 @@ Object.defineProperties(signals_core_1.Signal.prototype, {
     },
     __b: { configurable: true, value: 1 },
 });
-hook("__b", (old, vnode) => {
+hook("_diff", (old, vnode) => {
     if (typeof vnode.type === "string") {
         let signalProps;
         let props = vnode.props;
@@ -84,9 +84,9 @@ hook("__b", (old, vnode) => {
     }
     old(vnode);
 });
-hook("__r", (old, vnode) => {
+hook("_render", (old, vnode) => {
     let updater;
-    let component = vnode.__c;
+    let component = vnode._component;
     if (component) {
         hasPendingUpdate.delete(component);
         updater = updaterForComponent.get(component);
@@ -111,7 +111,7 @@ hook("diffed", (old, vnode) => {
     setCurrentUpdater();
     currentComponent = undefined;
     let dom;
-    if (typeof vnode.type === "string" && (dom = vnode.__e)) {
+    if (typeof vnode.type === "string" && (dom = vnode._dom)) {
         let props = vnode.__np;
         if (props) {
             let updaters = dom._updaters;
@@ -162,14 +162,14 @@ function createPropUpdater(dom, prop, signal) {
     });
 }
 hook("unmount", (old, vnode) => {
-    let component = vnode.__c;
+    let component = vnode._component;
     const updater = component && updaterForComponent.get(component);
     if (updater) {
         updaterForComponent.delete(component);
         updater._dispose();
     }
     if (typeof vnode.type === "string") {
-        const dom = vnode.__e;
+        const dom = vnode._dom;
         const updaters = dom._updaters;
         if (updaters) {
             dom._updaters = null;
@@ -182,7 +182,7 @@ hook("unmount", (old, vnode) => {
     }
     old(vnode);
 });
-hook("__h", (old, component, index, type) => {
+hook("_hook", (old, component, index, type) => {
     if (type < 3)
         hasHookState.add(component);
     old(component, index, type);

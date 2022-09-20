@@ -18,25 +18,25 @@ export interface AugmentedElement extends HTMLElement {
 
 export interface VNode<P = any> extends PVNode<P> {
 	/** The component instance for this VNode */
-	__c: Component;
+	_component: Component;
 	/** The parent VNode */
-	__?: VNode;
+	_parent?: VNode;
 	/** The DOM node for this VNode */
-	__e?: Element | Text;
+	_dom?: Element | Text;
 	/** Props that had Signal values before diffing (used after diffing to subscribe) */
 	__np?: Record<string, any> | null;
 }
 
 export interface ComponentType extends Component {
 	/** This component's owner VNode */
-	__v: VNode;
+	_vnode: VNode;
 }
 
 export const enum OptionsTypes {
-	HOOK = "__h",
-	DIFF = "__b",
+	HOOK = "_hook",
+	DIFF = "_diff",
 	DIFFED = "diffed",
-	RENDER = "__r",
+	RENDER = "_render",
 	CATCH_ERROR = "__e",
 	UNMOUNT = "unmount",
 }
