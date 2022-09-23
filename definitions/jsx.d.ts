@@ -157,6 +157,14 @@ declare module "preact/jsx" {
 
         }
 
+        interface RadioButton extends BaseFieldTraits<boolean, UxmlBoolAttributeDescription> {
+            text?: string
+        }
+
+        interface RadioButtonGroup extends BindableElement {
+            label?: string
+        }
+
         interface RepeatButton extends TextElement {
             delay?: number
             interva?: number
@@ -368,6 +376,8 @@ declare module "preact/jsx" {
             instance: Instance
             templatecontainer: TemplateContainer
             button: Button
+            radiobutton: RadioButton
+            radiobuttongroup: RadioButtonGroup
             repeatbutton: RepeatButton
             toggle: Toggle
             scroller: Scroller
