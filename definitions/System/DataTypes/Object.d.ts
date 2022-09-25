@@ -3,8 +3,8 @@ declare module "System" {
         GetType(): Type
     }
 
-    export class float {}
-    export class int {}
-    export class Single {}
-    export class Int32 {}
+    export class float { static MaxValue: number }
+    export class int { }
+    export class Single { }
+    export class Int32 { }
 }

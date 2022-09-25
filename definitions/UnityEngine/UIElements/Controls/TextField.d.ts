@@ -1,8 +1,10 @@
-import { Char } from "System"
-import { Color, Vector2 } from "UnityEngine"
+
 
 
 declare module "UnityEngine/UIElements" {
+    import { Char } from "System"
+    import { Color, Vector2 } from "UnityEngine"
+    import { MeasureMode } from "UnityEngine/UIElements/VisualElement"
 
 
     export interface IMixedValueSupport {

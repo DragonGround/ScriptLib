@@ -1,5 +1,11 @@
 
-
+declare module "UnityEngine/UIElements/VisualElement" {
+    export enum MeasureMode {
+        Undefined,
+        Exactly,
+        AtMost,
+    }
+}
 
 declare module "UnityEngine/UIElements" {
     import { ISerializable } from "System/Runtime/Serialization"

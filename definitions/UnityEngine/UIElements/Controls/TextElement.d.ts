@@ -1,9 +1,10 @@
 
 
+
 declare module "UnityEngine/UIElements" {
     import { Char } from "System"
     import { Color, Vector2 } from "UnityEngine"
-
+    import { MeasureMode } from "UnityEngine/UIElements/VisualElement"
 
     export interface ITextSelection {
         cursorColor: Color
@@ -32,12 +33,6 @@ declare module "UnityEngine/UIElements" {
         isPassword: boolean
     }
 
-    export enum MeasureMode {
-        Undefined,
-        Exactly,
-        AtMost,
-    }
-
     export class TextElement extends BindableElement implements ITextElement, INotifyValueChanged<string>, ITextEdition, ITextSelection {
         static ussClassName: string
 
@@ -52,7 +47,7 @@ declare module "UnityEngine/UIElements" {
         SelectAll(): void
         SelectNone(): void
         SelectRange(cursorIndex: number, selectionIndex: number): void
-        
+
         isReadOnly: boolean
         maxLength: number
         isDelayed: boolean
