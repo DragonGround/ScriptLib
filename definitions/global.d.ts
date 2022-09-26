@@ -24,7 +24,7 @@ declare type LowercaseMapping<A, B> = {
 };
 
 declare interface Document {
-    addRuntimeCSS(css: string): any // returns the created Unity StyleSheet ScriptableObject
+    addRuntimeUSS(uss: string): any // returns the created Unity StyleSheet ScriptableObject
     removeRuntimeStyleSheet(sheet: any): void
     clearRuntimeStyleSheets(): void
 }
