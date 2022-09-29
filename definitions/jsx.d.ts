@@ -23,6 +23,10 @@ declare module "preact/jsx" {
 
             children?: (string | number | Element) | (string | number | Element)[]
 
+            dangerouslySetInnerHTML?: {
+                __html: string;
+            }
+
             name?: string
             class?: string
             style?: Style

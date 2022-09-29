@@ -39,9 +39,6 @@ declare class Computed<T = any> extends Signal<T> {
     get value(): T;
 }
 declare function Computed(this: Computed, compute: () => unknown): void;
-declare namespace Computed {
-    var prototype: Computed<any>;
-}
 interface ReadonlySignal<T = any> extends Signal<T> {
     readonly value: T;
 }

@@ -424,7 +424,7 @@ function Computed(this: Computed, compute: () => unknown) {
 	this._flags = OUTDATED;
 }
 
-Computed.prototype = new Signal() as any;
+(Computed as any).prototype = new Signal() as any;
 
 // @ts-ignore
 Computed.prototype._refresh = function () {
