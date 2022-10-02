@@ -230,9 +230,9 @@ declare module "preact/jsx" {
         interface TextInputBaseField<TValueType> extends BaseFieldTraits<string, UxmlStringAttributeDescription> {
             text?: string
             "max-length"?: number
-            password?: string
-            "mask-character"?: string
-            readonly?: boolean
+            "is-password-field"?: boolean
+            "mask-char"?: string
+            "is-read-only"?: boolean
         }
 
         interface TextField extends TextInputBaseField<string> {
