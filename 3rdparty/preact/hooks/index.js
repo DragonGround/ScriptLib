@@ -327,6 +327,8 @@ function afterPaint(newQueueLength) {
         (prevRaf || afterNextFrame)(flushAfterPaintEffects);
     }
 }
+preact_1.options.debounceRendering = requestAnimationFrame;
+preact_1.options.requestAnimationFrame = requestAnimationFrame;
 function invokeCleanup(hook) {
     const comp = currentComponent;
     let cleanup = hook._cleanup;

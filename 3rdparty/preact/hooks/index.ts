@@ -457,6 +457,9 @@ function afterPaint(newQueueLength) {
 	}
 }
 
+options.debounceRendering = requestAnimationFrame	// ADDED
+options.requestAnimationFrame = requestAnimationFrame	// ADDED
+
 /**
  * @param {import('./internal').EffectHookState} hook
  */
