@@ -1,20 +1,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hydrate = exports.render = void 0;
-const constants_1 = require("./constants");
-const index_1 = require("./diff/index");
-const create_element_1 = require("./create-element");
-const options_1 = require("./options");
-const util_1 = require("./util");
+var constants_1 = require("./constants");
+var index_1 = require("./diff/index");
+var create_element_1 = require("./create-element");
+var options_1 = require("./options");
+var util_1 = require("./util");
 function render(vnode, parentDom, replaceNode) {
     if (options_1.default._root)
         options_1.default._root(vnode, parentDom);
-    let isHydrating = typeof replaceNode === 'function';
-    let oldVNode = isHydrating
+    var isHydrating = typeof replaceNode === 'function';
+    var oldVNode = isHydrating
         ? null
         : (replaceNode && replaceNode._children) || parentDom._children;
     vnode = ((!isHydrating && replaceNode) ||
         parentDom)._children = (0, create_element_1.createElement)(create_element_1.Fragment, null, [vnode]);
-    let commitQueue = [];
+    var commitQueue = [];
     (0, index_1.diff)(parentDom, vnode, oldVNode || constants_1.EMPTY_OBJ, constants_1.EMPTY_OBJ, parentDom.ownerSVGElement !== undefined, !isHydrating && replaceNode
         ? [replaceNode]
         : oldVNode

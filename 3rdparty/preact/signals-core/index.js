@@ -3,16 +3,16 @@ exports.Signal = exports.batch = exports.effect = exports.computed = exports.sig
 function cycleDetected() {
     throw new Error("Cycle detected");
 }
-const RUNNING = 1 << 0;
-const NOTIFIED = 1 << 1;
-const OUTDATED = 1 << 2;
-const DISPOSED = 1 << 3;
-const HAS_ERROR = 1 << 4;
-const IS_EFFECT = 1 << 5;
-const AUTO_DISPOSE = 1 << 6;
-const AUTO_SUBSCRIBE = 1 << 7;
-const NODE_FREE = 1 << 0;
-const NODE_SUBSCRIBED = 1 << 1;
+var RUNNING = 1 << 0;
+var NOTIFIED = 1 << 1;
+var OUTDATED = 1 << 2;
+var DISPOSED = 1 << 3;
+var HAS_ERROR = 1 << 4;
+var IS_EFFECT = 1 << 5;
+var AUTO_DISPOSE = 1 << 6;
+var AUTO_SUBSCRIBE = 1 << 7;
+var NODE_FREE = 1 << 0;
+var NODE_SUBSCRIBED = 1 << 1;
 function startBatch() {
     batchDepth++;
 }
@@ -21,19 +21,19 @@ function endBatch() {
         batchDepth--;
         return;
     }
-    let error;
-    let hasError = false;
+    var error;
+    var hasError = false;
     while (batchedEffect !== undefined) {
-        let effect = batchedEffect;
+        var effect_1 = batchedEffect;
         batchedEffect = undefined;
         batchIteration++;
-        while (effect !== undefined) {
-            const next = effect._nextBatchedEffect;
-            effect._nextBatchedEffect = undefined;
-            effect._flags &= ~NOTIFIED;
-            if (!(effect._flags & DISPOSED) && effect._flags & OUTDATED) {
+        while (effect_1 !== undefined) {
+            var next = effect_1._nextBatchedEffect;
+            effect_1._nextBatchedEffect = undefined;
+            effect_1._flags &= ~NOTIFIED;
+            if (!(effect_1._flags & DISPOSED) && effect_1._flags & OUTDATED) {
                 try {
-                    effect._callback();
+                    effect_1._callback();
                 }
                 catch (err) {
                     if (!hasError) {
@@ -42,7 +42,7 @@ function endBatch() {
                     }
                 }
             }
-            effect = next;
+            effect_1 = next;
         }
     }
     batchIteration = 0;
@@ -64,16 +64,16 @@ function batch(callback) {
     }
 }
 exports.batch = batch;
-let evalContext = undefined;
-let batchedEffect = undefined;
-let batchDepth = 0;
-let batchIteration = 0;
-let globalVersion = 0;
+var evalContext = undefined;
+var batchedEffect = undefined;
+var batchDepth = 0;
+var batchIteration = 0;
+var globalVersion = 0;
 function addDependency(signal) {
     if (evalContext === undefined) {
         return undefined;
     }
-    let node = signal._node;
+    var node = signal._node;
     if (node === undefined || node._target !== evalContext) {
         node = {
             _flags: 0,
@@ -95,10 +95,10 @@ function addDependency(signal) {
     }
     else if (node._flags & NODE_FREE) {
         node._flags &= ~NODE_FREE;
-        const head = evalContext._sources;
+        var head = evalContext._sources;
         if (node !== head) {
-            const prev = node._prevSource;
-            const next = node._nextSource;
+            var prev = node._prevSource;
+            var next = node._nextSource;
             if (prev !== undefined) {
                 prev._nextSource = next;
             }
@@ -139,8 +139,8 @@ Signal.prototype._subscribe = function (node) {
 Signal.prototype._unsubscribe = function (node) {
     if (node._flags & NODE_SUBSCRIBED) {
         node._flags &= ~NODE_SUBSCRIBED;
-        const prev = node._prevTarget;
-        const next = node._nextTarget;
+        var prev = node._prevTarget;
+        var next = node._nextTarget;
         if (prev !== undefined) {
             prev._nextTarget = next;
             node._prevTarget = undefined;
@@ -155,7 +155,8 @@ Signal.prototype._unsubscribe = function (node) {
     }
 };
 Signal.prototype.subscribe = function (fn) {
-    return effect(() => fn(this.value));
+    var _this = this;
+    return effect(function () { return fn(_this.value); });
 };
 Signal.prototype.valueOf = function () {
     return this.value;
@@ -167,14 +168,14 @@ Signal.prototype.peek = function () {
     return this._value;
 };
 Object.defineProperty(Signal.prototype, "value", {
-    get() {
-        const node = addDependency(this);
+    get: function () {
+        var node = addDependency(this);
         if (node !== undefined) {
             node._version = this._version;
         }
         return this._value;
     },
-    set(value) {
+    set: function (value) {
         if (value !== this._value) {
             if (batchIteration > 100) {
                 cycleDetected();
@@ -184,7 +185,7 @@ Object.defineProperty(Signal.prototype, "value", {
             globalVersion++;
             startBatch();
             try {
-                for (let node = this._targets; node !== undefined; node = node._nextTarget) {
+                for (var node = this._targets; node !== undefined; node = node._nextTarget) {
                     node._target._notify();
                 }
             }
@@ -199,8 +200,8 @@ function signal(value) {
 }
 exports.signal = signal;
 function prepareSources(target) {
-    for (let node = target._sources; node !== undefined; node = node._nextSource) {
-        const rollbackNode = node._source._node;
+    for (var node = target._sources; node !== undefined; node = node._nextSource) {
+        var rollbackNode = node._source._node;
         if (rollbackNode !== undefined) {
             node._rollbackNode = rollbackNode;
         }
@@ -209,10 +210,10 @@ function prepareSources(target) {
     }
 }
 function cleanupSources(target) {
-    let node = target._sources;
-    let sources = undefined;
+    var node = target._sources;
+    var sources = undefined;
     while (node !== undefined) {
-        const next = node._nextSource;
+        var next = node._nextSource;
         if (node._flags & NODE_FREE) {
             node._source._unsubscribe(node);
             node._nextSource = undefined;
@@ -234,9 +235,9 @@ function cleanupSources(target) {
     target._sources = sources;
 }
 function cleanupContext(context) {
-    let hasError = false;
-    let error;
-    let nested = context._effects;
+    var hasError = false;
+    var error;
+    var nested = context._effects;
     if (nested !== undefined) {
         context._effects = undefined;
         while (nested !== undefined) {
@@ -251,11 +252,11 @@ function cleanupContext(context) {
         }
     }
     if (context._flags & IS_EFFECT) {
-        const cleanup = context._cleanup;
+        var cleanup = context._cleanup;
         context._cleanup = undefined;
         if (typeof cleanup === "function") {
             startBatch();
-            const prevContext = evalContext;
+            var prevContext = evalContext;
             evalContext = undefined;
             try {
                 cleanup();
@@ -295,11 +296,11 @@ Computed.prototype._refresh = function () {
         return true;
     }
     this._globalVersion = globalVersion;
-    const prevContext = evalContext;
+    var prevContext = evalContext;
     try {
         this._flags |= RUNNING;
         if (this._version > 0) {
-            let node = this._sources;
+            var node = this._sources;
             while (node !== undefined) {
                 if (!node._source._refresh() ||
                     node._source._version !== node._version) {
@@ -314,7 +315,7 @@ Computed.prototype._refresh = function () {
         prepareSources(this);
         cleanupContext(this);
         evalContext = this;
-        const value = this._compute();
+        var value = this._compute();
         if (this._flags & HAS_ERROR ||
             this._value !== value ||
             this._version === 0) {
@@ -338,8 +339,8 @@ Computed.prototype._refresh = function () {
 Computed.prototype._subscribe = function (node) {
     if (this._targets === undefined) {
         this._flags |= OUTDATED | AUTO_SUBSCRIBE;
-        for (let node = this._sources; node !== undefined; node = node._nextSource) {
-            node._source._subscribe(node);
+        for (var node_1 = this._sources; node_1 !== undefined; node_1 = node_1._nextSource) {
+            node_1._source._subscribe(node_1);
         }
     }
     Signal.prototype._subscribe.call(this, node);
@@ -348,15 +349,15 @@ Computed.prototype._unsubscribe = function (node) {
     Signal.prototype._unsubscribe.call(this, node);
     if (this._targets === undefined) {
         this._flags &= ~AUTO_SUBSCRIBE;
-        for (let node = this._sources; node !== undefined; node = node._nextSource) {
-            node._source._unsubscribe(node);
+        for (var node_2 = this._sources; node_2 !== undefined; node_2 = node_2._nextSource) {
+            node_2._source._unsubscribe(node_2);
         }
     }
 };
 Computed.prototype._notify = function () {
     if (!(this._flags & NOTIFIED)) {
         this._flags |= OUTDATED | NOTIFIED;
-        for (let node = this._targets; node !== undefined; node = node._nextTarget) {
+        for (var node = this._targets; node !== undefined; node = node._nextTarget) {
             node._target._notify();
         }
     }
@@ -371,11 +372,11 @@ Computed.prototype.peek = function () {
     return this._value;
 };
 Object.defineProperty(Computed.prototype, "value", {
-    get() {
+    get: function () {
         if (this._flags & RUNNING) {
             cycleDetected();
         }
-        const node = addDependency(this);
+        var node = addDependency(this);
         this._refresh();
         if (node !== undefined) {
             node._version = this._version;
@@ -391,7 +392,7 @@ function computed(compute) {
 }
 exports.computed = computed;
 function disposeEffect(effect) {
-    for (let node = effect._sources; node !== undefined; node = node._nextSource) {
+    for (var node = effect._sources; node !== undefined; node = node._nextSource) {
         node._source._unsubscribe(node);
     }
     effect._sources = undefined;
@@ -423,7 +424,7 @@ function Effect(compute, flags) {
     }
 }
 Effect.prototype._callback = function () {
-    const finish = this._start();
+    var finish = this._start();
     try {
         if (!(this._flags & DISPOSED)) {
             this._cleanup = this._compute();
@@ -443,7 +444,7 @@ Effect.prototype._start = function () {
     cleanupContext(this);
     startBatch();
     this._flags &= ~OUTDATED;
-    const prevContext = evalContext;
+    var prevContext = evalContext;
     evalContext = this;
     return endEffect.bind(this, prevContext);
 };
@@ -461,7 +462,7 @@ Effect.prototype._dispose = function () {
     }
 };
 function effect(compute) {
-    const effect = new Effect(compute, AUTO_DISPOSE | AUTO_SUBSCRIBE);
+    var effect = new Effect(compute, AUTO_DISPOSE | AUTO_SUBSCRIBE);
     effect._callback();
     return effect._dispose.bind(effect);
 }

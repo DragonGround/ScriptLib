@@ -1,7 +1,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._catchError = void 0;
 function _catchError(error, vnode, oldVNode, errorInfo) {
-    let component, ctor, handled;
+    var component, ctor, handled;
     for (; (vnode = vnode._parent);) {
         if ((component = vnode._component) && !component._processingException) {
             try {

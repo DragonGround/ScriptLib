@@ -1,2 +1,2 @@
-declare function getTag(value: any): string;
+declare function getTag(value: any): any;
 export default getTag;

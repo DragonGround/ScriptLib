@@ -1,10 +1,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidElement = exports.Fragment = exports.createRef = exports.createVNode = exports.createElement = void 0;
-const util_1 = require("./util");
-const options_1 = require("./options");
-let vnodeId = 0;
+var util_1 = require("./util");
+var options_1 = require("./options");
+var vnodeId = 0;
 function createElement(type, props, children) {
-    let normalizedProps = {}, key, ref, i;
+    var normalizedProps = {}, key, ref, i;
     for (i in props) {
         if (i == 'key')
             key = props[i];
@@ -28,11 +28,11 @@ function createElement(type, props, children) {
 }
 exports.createElement = createElement;
 function createVNode(type, props, key, ref, original) {
-    const vnode = {
-        type,
-        props,
-        key,
-        ref,
+    var vnode = {
+        type: type,
+        props: props,
+        key: key,
+        ref: ref,
         _children: null,
         _parent: null,
         _depth: 0,
@@ -56,5 +56,7 @@ function Fragment(props) {
     return props.children;
 }
 exports.Fragment = Fragment;
-const isValidElement = vnode => vnode != null && vnode.constructor === undefined;
+var isValidElement = function (vnode) {
+    return vnode != null && vnode.constructor === undefined;
+};
 exports.isValidElement = isValidElement;

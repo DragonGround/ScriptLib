@@ -1,8 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setProperty = exports.diffProps = void 0;
-const options_1 = require("../options");
+var options_1 = require("../options");
 function diffProps(dom, newProps, oldProps, isSvg, hydrate) {
-    let i;
+    var i;
     for (i in oldProps) {
         if (i !== 'children' && i !== 'key' && !(i in newProps)) {
             setProperty(dom, i, null, oldProps[i], isSvg);
@@ -24,7 +24,7 @@ function setStyle(style, key, value) {
     globalThis.__setStyleProperty(style.GetVEStyle(), key, value);
 }
 function setProperty(dom, name, value, oldValue, isSvg) {
-    let useCapture;
+    var useCapture;
     o: if (name === 'style') {
         if (typeof value == 'string') {
             dom.style.cssText = value;
@@ -60,12 +60,12 @@ function setProperty(dom, name, value, oldValue, isSvg) {
         dom._listeners[name + useCapture] = value;
         if (value) {
             if (!oldValue) {
-                const handler = useCapture ? eventProxyCapture : eventProxy;
+                var handler = useCapture ? eventProxyCapture : eventProxy;
                 dom.addEventListener(name, handler, useCapture);
             }
         }
         else {
-            const handler = useCapture ? eventProxyCapture : eventProxy;
+            var handler = useCapture ? eventProxyCapture : eventProxy;
             dom.removeEventListener(name, handler, useCapture);
         }
     }
@@ -98,12 +98,12 @@ function setProperty(dom, name, value, oldValue, isSvg) {
 }
 exports.setProperty = setProperty;
 function eventProxy(e) {
-    let eventName = getType(e).Name.replace("Event", "");
+    var eventName = getType(e).Name.replace("Event", "");
     eventName = eventName === "Change`1" ? "ValueChanged" : eventName;
     this.CallListener(eventName + false, options_1.default.event ? options_1.default.event(e) : e);
 }
 function eventProxyCapture(e) {
-    let eventName = getType(e).Name.replace("Event", "");
+    var eventName = getType(e).Name.replace("Event", "");
     eventName = eventName === "Change`1" ? "ValueChanged" : eventName;
     this.CallListener(eventName + true, options_1.default.event ? options_1.default.event(e) : e);
 }

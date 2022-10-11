@@ -1,9 +1,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cloneElement = void 0;
-const util_1 = require("./util");
-const create_element_1 = require("./create-element");
+var util_1 = require("./util");
+var create_element_1 = require("./create-element");
 function cloneElement(vnode, props, children) {
-    let normalizedProps = (0, util_1.assign)({}, vnode.props), key, ref, i;
+    var normalizedProps = (0, util_1.assign)({}, vnode.props), key, ref, i;
     for (i in props) {
         if (i == 'key')
             key = props[i];

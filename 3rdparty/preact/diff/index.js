@@ -1,14 +1,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmount = exports.applyRef = exports.commitRoot = exports.diff = void 0;
-const constants_1 = require("../constants");
-const component_1 = require("../component");
-const create_element_1 = require("../create-element");
-const children_1 = require("./children");
-const props_1 = require("./props");
-const util_1 = require("../util");
-const preact_1 = require("preact/");
+var constants_1 = require("../constants");
+var component_1 = require("../component");
+var create_element_1 = require("../create-element");
+var children_1 = require("./children");
+var props_1 = require("./props");
+var util_1 = require("../util");
+var preact_1 = require("preact/");
 function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
-    let tmp, newType = newVNode.type;
+    var tmp, newType = newVNode.type;
     if (newVNode.constructor !== undefined)
         return null;
     if (oldVNode._hydrating != null) {
@@ -21,133 +21,133 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
         tmp(newVNode);
     try {
         outer: if (typeof newType == 'function') {
-            let c, isNew, oldProps, oldState, snapshot, clearProcessingException;
-            let newProps = newVNode.props;
+            var c_1, isNew = void 0, oldProps_1, oldState_1, snapshot_1, clearProcessingException = void 0;
+            var newProps = newVNode.props;
             tmp = newType.contextType;
-            let provider = tmp && globalContext[tmp._id];
-            let componentContext = tmp
+            var provider = tmp && globalContext[tmp._id];
+            var componentContext = tmp
                 ? provider
                     ? provider.props.value
                     : tmp._defaultValue
                 : globalContext;
             if (oldVNode._component) {
-                c = newVNode._component = oldVNode._component;
-                clearProcessingException = c._processingException = c._pendingError;
+                c_1 = newVNode._component = oldVNode._component;
+                clearProcessingException = c_1._processingException = c_1._pendingError;
             }
             else {
                 if ('prototype' in newType && newType.prototype.render) {
-                    newVNode._component = c = new newType(newProps, componentContext);
+                    newVNode._component = c_1 = new newType(newProps, componentContext);
                 }
                 else {
-                    newVNode._component = c = new component_1.Component(newProps, componentContext);
-                    c.constructor = newType;
-                    c.render = doRender;
+                    newVNode._component = c_1 = new component_1.Component(newProps, componentContext);
+                    c_1.constructor = newType;
+                    c_1.render = doRender;
                 }
                 if (provider)
-                    provider.sub(c);
-                c.props = newProps;
-                if (!c.state)
-                    c.state = {};
-                c.context = componentContext;
-                c._globalContext = globalContext;
-                isNew = c._dirty = true;
-                c._renderCallbacks = [];
+                    provider.sub(c_1);
+                c_1.props = newProps;
+                if (!c_1.state)
+                    c_1.state = {};
+                c_1.context = componentContext;
+                c_1._globalContext = globalContext;
+                isNew = c_1._dirty = true;
+                c_1._renderCallbacks = [];
             }
-            if (c._nextState == null) {
-                c._nextState = c.state;
+            if (c_1._nextState == null) {
+                c_1._nextState = c_1.state;
             }
             if (newType.getDerivedStateFromProps != null) {
-                if (c._nextState == c.state) {
-                    c._nextState = (0, util_1.assign)({}, c._nextState);
+                if (c_1._nextState == c_1.state) {
+                    c_1._nextState = (0, util_1.assign)({}, c_1._nextState);
                 }
-                (0, util_1.assign)(c._nextState, newType.getDerivedStateFromProps(newProps, c._nextState));
+                (0, util_1.assign)(c_1._nextState, newType.getDerivedStateFromProps(newProps, c_1._nextState));
             }
-            oldProps = c.props;
-            oldState = c.state;
+            oldProps_1 = c_1.props;
+            oldState_1 = c_1.state;
             if (isNew) {
                 if (newType.getDerivedStateFromProps == null &&
-                    c.componentWillMount != null) {
-                    c.componentWillMount();
+                    c_1.componentWillMount != null) {
+                    c_1.componentWillMount();
                 }
-                if (c.componentDidMount != null) {
-                    c._renderCallbacks.push(c.componentDidMount);
+                if (c_1.componentDidMount != null) {
+                    c_1._renderCallbacks.push(c_1.componentDidMount);
                 }
             }
             else {
                 if (newType.getDerivedStateFromProps == null &&
-                    newProps !== oldProps &&
-                    c.componentWillReceiveProps != null) {
-                    c.componentWillReceiveProps(newProps, componentContext);
+                    newProps !== oldProps_1 &&
+                    c_1.componentWillReceiveProps != null) {
+                    c_1.componentWillReceiveProps(newProps, componentContext);
                 }
-                if ((!c._force &&
-                    c.shouldComponentUpdate != null &&
-                    c.shouldComponentUpdate(newProps, c._nextState, componentContext) === false) ||
+                if ((!c_1._force &&
+                    c_1.shouldComponentUpdate != null &&
+                    c_1.shouldComponentUpdate(newProps, c_1._nextState, componentContext) === false) ||
                     newVNode._original === oldVNode._original) {
-                    c.props = newProps;
-                    c.state = c._nextState;
+                    c_1.props = newProps;
+                    c_1.state = c_1._nextState;
                     if (newVNode._original !== oldVNode._original)
-                        c._dirty = false;
-                    c._vnode = newVNode;
+                        c_1._dirty = false;
+                    c_1._vnode = newVNode;
                     newVNode._dom = oldVNode._dom;
                     newVNode._children = oldVNode._children;
-                    newVNode._children.forEach(vnode => {
+                    newVNode._children.forEach(function (vnode) {
                         if (vnode)
                             vnode._parent = newVNode;
                     });
-                    if (c._renderCallbacks.length) {
-                        commitQueue.push(c);
+                    if (c_1._renderCallbacks.length) {
+                        commitQueue.push(c_1);
                     }
                     break outer;
                 }
-                if (c.componentWillUpdate != null) {
-                    c.componentWillUpdate(newProps, c._nextState, componentContext);
+                if (c_1.componentWillUpdate != null) {
+                    c_1.componentWillUpdate(newProps, c_1._nextState, componentContext);
                 }
-                if (c.componentDidUpdate != null) {
-                    c._renderCallbacks.push(() => {
-                        c.componentDidUpdate(oldProps, oldState, snapshot);
+                if (c_1.componentDidUpdate != null) {
+                    c_1._renderCallbacks.push(function () {
+                        c_1.componentDidUpdate(oldProps_1, oldState_1, snapshot_1);
                     });
                 }
             }
-            c.context = componentContext;
-            c.props = newProps;
-            c._vnode = newVNode;
-            c._parentDom = parentDom;
-            let renderHook = preact_1.options._render, count = 0;
+            c_1.context = componentContext;
+            c_1.props = newProps;
+            c_1._vnode = newVNode;
+            c_1._parentDom = parentDom;
+            var renderHook = preact_1.options._render, count = 0;
             if ('prototype' in newType && newType.prototype.render) {
-                c.state = c._nextState;
-                c._dirty = false;
+                c_1.state = c_1._nextState;
+                c_1._dirty = false;
                 if (renderHook)
                     renderHook(newVNode);
-                tmp = c.render(c.props, c.state, c.context);
+                tmp = c_1.render(c_1.props, c_1.state, c_1.context);
             }
             else {
                 do {
-                    c._dirty = false;
+                    c_1._dirty = false;
                     if (renderHook)
                         renderHook(newVNode);
-                    tmp = c.render(c.props, c.state, c.context);
-                    c.state = c._nextState;
-                } while (c._dirty && ++count < 25);
+                    tmp = c_1.render(c_1.props, c_1.state, c_1.context);
+                    c_1.state = c_1._nextState;
+                } while (c_1._dirty && ++count < 25);
             }
-            c.state = c._nextState;
-            if (c.getChildContext != null) {
-                globalContext = (0, util_1.assign)((0, util_1.assign)({}, globalContext), c.getChildContext());
+            c_1.state = c_1._nextState;
+            if (c_1.getChildContext != null) {
+                globalContext = (0, util_1.assign)((0, util_1.assign)({}, globalContext), c_1.getChildContext());
             }
-            if (!isNew && c.getSnapshotBeforeUpdate != null) {
-                snapshot = c.getSnapshotBeforeUpdate(oldProps, oldState);
+            if (!isNew && c_1.getSnapshotBeforeUpdate != null) {
+                snapshot_1 = c_1.getSnapshotBeforeUpdate(oldProps_1, oldState_1);
             }
-            let isTopLevelFragment = tmp !== null && tmp.type === create_element_1.Fragment && tmp.key == null;
-            let renderResult = isTopLevelFragment ? tmp.props.children : tmp;
+            var isTopLevelFragment = tmp !== null && tmp.type === create_element_1.Fragment && tmp.key == null;
+            var renderResult = isTopLevelFragment ? tmp.props.children : tmp;
             (0, children_1.diffChildren)(parentDom, Array.isArray(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
-            c.base = newVNode._dom;
+            c_1.base = newVNode._dom;
             newVNode._hydrating = null;
-            if (c._renderCallbacks.length) {
-                commitQueue.push(c);
+            if (c_1._renderCallbacks.length) {
+                commitQueue.push(c_1);
             }
             if (clearProcessingException) {
-                c._pendingError = c._processingException = null;
+                c_1._pendingError = c_1._processingException = null;
             }
-            c._force = false;
+            c_1._force = false;
         }
         else if (excessDomChildren == null &&
             newVNode._original === oldVNode._original) {
@@ -176,11 +176,11 @@ exports.diff = diff;
 function commitRoot(commitQueue, root) {
     if (preact_1.options._commit)
         preact_1.options._commit(root, commitQueue);
-    commitQueue.some(c => {
+    commitQueue.some(function (c) {
         try {
             commitQueue = c._renderCallbacks;
             c._renderCallbacks = [];
-            commitQueue.some(cb => {
+            commitQueue.some(function (cb) {
                 cb.call(c);
             });
         }
@@ -191,15 +191,15 @@ function commitRoot(commitQueue, root) {
 }
 exports.commitRoot = commitRoot;
 function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, isHydrating) {
-    let oldProps = oldVNode.props;
-    let newProps = newVNode.props;
-    let nodeType = newVNode.type;
-    let i = 0;
+    var oldProps = oldVNode.props;
+    var newProps = newVNode.props;
+    var nodeType = newVNode.type;
+    var i = 0;
     if (nodeType === 'svg')
         isSvg = true;
     if (excessDomChildren != null) {
         for (; i < excessDomChildren.length; i++) {
-            const child = excessDomChildren[i];
+            var child = excessDomChildren[i];
             if (child &&
                 'setAttribute' in child === !!nodeType &&
                 (nodeType ? child.localName === nodeType : child.nodeType === 3)) {
@@ -230,8 +230,8 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
     else {
         excessDomChildren = excessDomChildren && util_1.slice.call(dom.childNodes);
         oldProps = oldVNode.props || constants_1.EMPTY_OBJ;
-        let oldHtml = oldProps.dangerouslySetInnerHTML;
-        let newHtml = newProps.dangerouslySetInnerHTML;
+        var oldHtml = oldProps.dangerouslySetInnerHTML;
+        var newHtml = newProps.dangerouslySetInnerHTML;
         if (!isHydrating) {
             if (excessDomChildren != null) {
                 oldProps = {};
@@ -292,8 +292,9 @@ function applyRef(ref, value, vnode) {
     }
 }
 exports.applyRef = applyRef;
-function unmount(vnode, parentVNode, skipRemove = false) {
-    let r;
+function unmount(vnode, parentVNode, skipRemove) {
+    if (skipRemove === void 0) { skipRemove = false; }
+    var r;
     if (preact_1.options.unmount)
         preact_1.options.unmount(vnode);
     if ((r = vnode.ref)) {
@@ -314,7 +315,7 @@ function unmount(vnode, parentVNode, skipRemove = false) {
         vnode._component = undefined;
     }
     if ((r = vnode._children)) {
-        for (let i = 0; i < r.length; i++) {
+        for (var i = 0; i < r.length; i++) {
             if (r[i]) {
                 unmount(r[i], parentVNode, typeof vnode.type != 'function');
             }

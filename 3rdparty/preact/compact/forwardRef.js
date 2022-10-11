@@ -1,9 +1,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forwardRef = exports.REACT_FORWARD_SYMBOL = void 0;
-const preact_1 = require("preact");
-const util_1 = require("./util");
-let oldDiffHook = preact_1.options._diff;
-preact_1.options._diff = vnode => {
+var preact_1 = require("preact");
+var util_1 = require("./util");
+var oldDiffHook = preact_1.options._diff;
+preact_1.options._diff = function (vnode) {
     if (vnode.type && vnode.type._forwarded && vnode.ref) {
         vnode.props.ref = vnode.ref;
         vnode.ref = null;
@@ -17,7 +17,7 @@ exports.REACT_FORWARD_SYMBOL = (typeof Symbol != 'undefined' &&
     0xf47;
 function forwardRef(fn) {
     function Forwarded(props) {
-        let clone = (0, util_1.assign)({}, props);
+        var clone = (0, util_1.assign)({}, props);
         delete clone.ref;
         return fn(clone, props.ref || null);
     }

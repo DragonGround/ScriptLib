@@ -1,6 +1,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseFloat4 = exports.parseFloat3 = exports.parseFloat2 = void 0;
-const math_1 = require("math");
+var math_1 = require("math");
 function parseFloat2(input) {
     var _a, _b, _c, _d;
     if (Array.isArray(input))

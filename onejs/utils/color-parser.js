@@ -1,7 +1,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.namedColors = exports.namedColor = exports.parseCSSColor = exports.parseColor = exports.colorStrToF4 = void 0;
-const math_1 = require("math");
-const UnityEngine_1 = require("UnityEngine");
+var math_1 = require("math");
+var UnityEngine_1 = require("UnityEngine");
 var kCSSColorTable = {
     "transparent": [0, 0, 0, 0], "aliceblue": [240, 248, 255, 1],
     "antiquewhite": [250, 235, 215, 1], "aqua": [0, 255, 255, 1],
@@ -179,10 +179,15 @@ function namedColor(name) {
     return new UnityEngine_1.Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3]);
 }
 exports.namedColor = namedColor;
-function namedColors(...names) {
-    let res = [];
-    for (const name of names) {
-        res.push(namedColor(name));
+function namedColors() {
+    var names = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        names[_i] = arguments[_i];
+    }
+    var res = [];
+    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
+        var name_1 = names_1[_a];
+        res.push(namedColor(name_1));
     }
     return res;
 }
@@ -190,7 +195,7 @@ exports.namedColors = namedColors;
 function colorStrToF4(str) {
     var c = parseCSSColor(str);
     if (c == null)
-        throw `Color ${str} cannot be parsed`;
+        throw "Color ".concat(str, " cannot be parsed");
     return (0, math_1.float4)(c[0] / 255, c[1] / 255, c[2] / 255, c[3]);
 }
 exports.colorStrToF4 = colorStrToF4;

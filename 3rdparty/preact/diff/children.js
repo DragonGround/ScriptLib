@@ -1,13 +1,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toChildArray = exports.diffChildren = void 0;
-const index_1 = require("./index");
-const create_element_1 = require("../create-element");
-const constants_1 = require("../constants");
-const component_1 = require("../component");
+var index_1 = require("./index");
+var create_element_1 = require("../create-element");
+var constants_1 = require("../constants");
+var component_1 = require("../component");
 function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
-    let i, j, oldVNode, childVNode, newDom, firstChildDom, refs;
-    let oldChildren = (oldParentVNode && oldParentVNode._children) || constants_1.EMPTY_ARR;
-    let oldChildrenLength = oldChildren.length;
+    var i, j, oldVNode, childVNode, newDom, firstChildDom, refs;
+    var oldChildren = (oldParentVNode && oldParentVNode._children) || constants_1.EMPTY_ARR;
+    var oldChildrenLength = oldChildren.length;
     newParentVNode._children = [];
     for (i = 0; i < renderResult.length; i++) {
         childVNode = renderResult[i];
@@ -102,10 +102,10 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
 }
 exports.diffChildren = diffChildren;
 function reorderChildren(childVNode, oldDom, parentDom) {
-    let c = childVNode._children;
-    let tmp = 0;
+    var c = childVNode._children;
+    var tmp = 0;
     for (; c && tmp < c.length; tmp++) {
-        let vnode = c[tmp];
+        var vnode = c[tmp];
         if (vnode) {
             vnode._parent = childVNode;
             if (typeof vnode.type == 'function') {
@@ -123,7 +123,7 @@ function toChildArray(children, out) {
     if (children == null || typeof children == 'boolean') {
     }
     else if (Array.isArray(children)) {
-        children.some(child => {
+        children.some(function (child) {
             toChildArray(child, out);
         });
     }
@@ -134,7 +134,7 @@ function toChildArray(children, out) {
 }
 exports.toChildArray = toChildArray;
 function placeChild(parentDom, childVNode, oldVNode, oldChildren, newDom, oldDom) {
-    let nextDom;
+    var nextDom;
     if (childVNode._nextDom !== undefined) {
         nextDom = childVNode._nextDom;
         childVNode._nextDom = undefined;
@@ -147,7 +147,7 @@ function placeChild(parentDom, childVNode, oldVNode, oldChildren, newDom, oldDom
             nextDom = null;
         }
         else {
-            for (let sibDom = oldDom, j = 0; (sibDom = sibDom.nextSibling) && j < oldChildren.length; j += 2) {
+            for (var sibDom = oldDom, j = 0; (sibDom = sibDom.nextSibling) && j < oldChildren.length; j += 2) {
                 if (sibDom == newDom) {
                     break outer;
                 }

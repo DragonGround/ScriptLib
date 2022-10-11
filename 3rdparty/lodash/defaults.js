@@ -1,14 +1,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-const eq_js_1 = require("./eq.js");
-const objectProto = Object.prototype;
-const hasOwnProperty = objectProto.hasOwnProperty;
-function defaults(object, ...sources) {
+var eq_js_1 = require("./eq.js");
+var objectProto = Object.prototype;
+var hasOwnProperty = objectProto.hasOwnProperty;
+function defaults(object) {
+    var sources = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        sources[_i - 1] = arguments[_i];
+    }
     object = Object(object);
-    sources.forEach((source) => {
+    sources.forEach(function (source) {
         if (source != null) {
             source = Object(source);
-            for (const key in source) {
-                const value = object[key];
+            for (var key in source) {
+                var value = object[key];
                 if (value === undefined ||
                     ((0, eq_js_1.default)(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
                     object[key] = source[key];

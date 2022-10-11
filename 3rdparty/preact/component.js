@@ -1,16 +1,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enqueueRender = exports.getDomSibling = exports.Component = void 0;
-const util_1 = require("./util");
-const index_1 = require("./diff/index");
-const options_1 = require("./options");
-const create_element_1 = require("./create-element");
+var util_1 = require("./util");
+var index_1 = require("./diff/index");
+var options_1 = require("./options");
+var create_element_1 = require("./create-element");
 function Component(props, context) {
     this.props = props;
     this.context = context;
 }
 exports.Component = Component;
 Component.prototype.setState = function (update, callback) {
-    let s;
+    var s;
     if (this._nextState != null && this._nextState !== this.state) {
         s = this._nextState;
     }
@@ -46,7 +46,7 @@ function getDomSibling(vnode, childIndex) {
             ? getDomSibling(vnode._parent, vnode._parent._children.indexOf(vnode) + 1)
             : null;
     }
-    let sibling;
+    var sibling;
     for (; childIndex < vnode._children.length; childIndex++) {
         sibling = vnode._children[childIndex];
         if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) {
@@ -57,10 +57,10 @@ function getDomSibling(vnode, childIndex) {
 }
 exports.getDomSibling = getDomSibling;
 function renderComponent(component) {
-    let vnode = component._vnode, oldDom = vnode._dom, parentDom = component._parentDom;
+    var vnode = component._vnode, oldDom = vnode._dom, parentDom = component._parentDom;
     if (parentDom) {
-        let commitQueue = [];
-        const oldVNode = (0, util_1.assign)({}, vnode);
+        var commitQueue = [];
+        var oldVNode = (0, util_1.assign)({}, vnode);
         oldVNode._original = vnode._original + 1;
         (0, index_1.diff)(parentDom, vnode, oldVNode, component._globalContext, parentDom.ownerSVGElement !== undefined, vnode._hydrating != null ? [oldDom] : null, commitQueue, oldDom == null ? getDomSibling(vnode) : oldDom, vnode._hydrating);
         (0, index_1.commitRoot)(commitQueue, vnode);
@@ -72,8 +72,8 @@ function renderComponent(component) {
 function updateParentDomPointers(vnode) {
     if ((vnode = vnode._parent) !== null && vnode._component !== null) {
         vnode._dom = vnode._component.base = null;
-        for (let i = 0; i < vnode._children.length; i++) {
-            let child = vnode._children[i];
+        for (var i = 0; i < vnode._children.length; i++) {
+            var child = vnode._children[i];
             if (child !== null && child._dom !== null) {
                 vnode._dom = vnode._component.base = child._dom;
                 break;
@@ -82,8 +82,8 @@ function updateParentDomPointers(vnode) {
         return updateParentDomPointers(vnode);
     }
 }
-let rerenderQueue = [];
-let prevDebounce;
+var rerenderQueue = [];
+var prevDebounce;
 function enqueueRender(c) {
     if ((!c._dirty &&
         (c._dirty = true) &&
@@ -96,11 +96,11 @@ function enqueueRender(c) {
 }
 exports.enqueueRender = enqueueRender;
 function process() {
-    let queue;
+    var queue;
     while ((process._rerenderCount = rerenderQueue.length)) {
-        queue = rerenderQueue.sort((a, b) => a._vnode._depth - b._vnode._depth);
+        queue = rerenderQueue.sort(function (a, b) { return a._vnode._depth - b._vnode._depth; });
         rerenderQueue = [];
-        queue.some(c => {
+        queue.some(function (c) {
             if (c._dirty)
                 renderComponent(c);
         });

@@ -1,12 +1,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-const isSymbol_js_1 = require("../isSymbol.js");
-const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-const reIsPlainProp = /^\w*$/;
+var isSymbol_js_1 = require("../isSymbol.js");
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+var reIsPlainProp = /^\w*$/;
 function isKey(value, object) {
     if (Array.isArray(value)) {
         return false;
     }
-    const type = typeof value;
+    var type = typeof value;
     if (type === 'number' || type === 'boolean' || value == null || (0, isSymbol_js_1.default)(value)) {
         return true;
     }

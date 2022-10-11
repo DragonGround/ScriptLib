@@ -1,31 +1,31 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createContext = exports.i = void 0;
-const component_1 = require("./component");
+var component_1 = require("./component");
 exports.i = 0;
 function createContext(defaultValue, contextId) {
     contextId = '__cC' + exports.i++;
-    const context = {
+    var context = {
         _id: contextId,
         _defaultValue: defaultValue,
-        Consumer(props, contextValue) {
+        Consumer: function (props, contextValue) {
             return props.children(contextValue);
         },
-        Provider(props) {
+        Provider: function (props) {
             if (!this.getChildContext) {
-                let subs = [];
-                let ctx = {};
-                ctx[contextId] = this;
-                this.getChildContext = () => ctx;
+                var subs_1 = [];
+                var ctx_1 = {};
+                ctx_1[contextId] = this;
+                this.getChildContext = function () { return ctx_1; };
                 this.shouldComponentUpdate = function (_props) {
                     if (this.props.value !== _props.value) {
-                        subs.some(component_1.enqueueRender);
+                        subs_1.some(component_1.enqueueRender);
                     }
                 };
-                this.sub = c => {
-                    subs.push(c);
-                    let old = c.componentWillUnmount;
-                    c.componentWillUnmount = () => {
-                        subs.splice(subs.indexOf(c), 1);
+                this.sub = function (c) {
+                    subs_1.push(c);
+                    var old = c.componentWillUnmount;
+                    c.componentWillUnmount = function () {
+                        subs_1.splice(subs_1.indexOf(c), 1);
                         if (old)
                             old.call(c);
                     };

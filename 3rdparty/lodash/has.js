@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-const hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
 function has(object, key) {
     return object != null && hasOwnProperty.call(object, key);
 }

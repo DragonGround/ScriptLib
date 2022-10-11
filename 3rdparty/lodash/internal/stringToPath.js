@@ -1,20 +1,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-const memoizeCapped_js_1 = require("./memoizeCapped.js");
-const charCodeOfDot = '.'.charCodeAt(0);
-const reEscapeChar = /\\(\\)?/g;
-const rePropName = RegExp('[^.[\\]]+' + '|' +
+var memoizeCapped_js_1 = require("./memoizeCapped.js");
+var charCodeOfDot = '.'.charCodeAt(0);
+var reEscapeChar = /\\(\\)?/g;
+var rePropName = RegExp('[^.[\\]]+' + '|' +
     '\\[(?:' +
     '([^"\'][^[]*)' + '|' +
     '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
     ')\\]' + '|' +
     '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))', 'g');
-const stringToPath = (0, memoizeCapped_js_1.default)((string) => {
-    const result = [];
+var stringToPath = (0, memoizeCapped_js_1.default)(function (string) {
+    var result = [];
     if (string.charCodeAt(0) === charCodeOfDot) {
         result.push('');
     }
-    string.replace(rePropName, (match, expression, quote, subString) => {
-        let key = match;
+    string.replace(rePropName, function (match, expression, quote, subString) {
+        var key = match;
         if (quote) {
             key = subString.replace(reEscapeChar, '$1');
         }

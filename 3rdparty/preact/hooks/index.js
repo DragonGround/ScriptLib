@@ -1,20 +1,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useId = exports.useErrorBoundary = exports.useDebugValue = exports.useContext = exports.useCallback = exports.useMemo = exports.useImperativeHandle = exports.useRef = exports.useLayoutEffect = exports.useEffect = exports.useReducer = exports.useState = void 0;
-const preact_1 = require("preact/");
-let currentIndex;
-let currentComponent;
-let previousComponent;
-let currentHook = 0;
-let afterPaintEffects = [];
-let EMPTY = [];
-let oldBeforeDiff = preact_1.options._diff;
-let oldBeforeRender = preact_1.options._render;
-let oldAfterDiff = preact_1.options.diffed;
-let oldCommit = preact_1.options._commit;
-let oldBeforeUnmount = preact_1.options.unmount;
-const RAF_TIMEOUT = 100;
-let prevRaf;
-preact_1.options._diff = vnode => {
+var preact_1 = require("preact/");
+var currentIndex;
+var currentComponent;
+var previousComponent;
+var currentHook = 0;
+var afterPaintEffects = [];
+var EMPTY = [];
+var oldBeforeDiff = preact_1.options._diff;
+var oldBeforeRender = preact_1.options._render;
+var oldAfterDiff = preact_1.options.diffed;
+var oldCommit = preact_1.options._commit;
+var oldBeforeUnmount = preact_1.options.unmount;
+var RAF_TIMEOUT = 100;
+var prevRaf;
+preact_1.options._diff = function (vnode) {
     if (typeof vnode.type === 'function' &&
         !vnode._mask &&
         vnode.type !== preact_1.Fragment) {
@@ -32,17 +32,17 @@ preact_1.options._diff = vnode => {
     if (oldBeforeDiff)
         oldBeforeDiff(vnode);
 };
-preact_1.options._render = vnode => {
+preact_1.options._render = function (vnode) {
     if (oldBeforeRender)
         oldBeforeRender(vnode);
     currentComponent = vnode._component;
     currentIndex = 0;
-    const hooks = currentComponent.__hooks;
+    var hooks = currentComponent.__hooks;
     if (hooks) {
         if (previousComponent === currentComponent) {
             hooks._pendingEffects = [];
             currentComponent._renderCallbacks = [];
-            hooks._list.forEach(hookItem => {
+            hooks._list.forEach(function (hookItem) {
                 if (hookItem._nextValue) {
                     hookItem._value = hookItem._nextValue;
                 }
@@ -58,14 +58,14 @@ preact_1.options._render = vnode => {
     }
     previousComponent = currentComponent;
 };
-preact_1.options.diffed = vnode => {
+preact_1.options.diffed = function (vnode) {
     if (oldAfterDiff)
         oldAfterDiff(vnode);
-    const c = vnode._component;
+    var c = vnode._component;
     if (c && c.__hooks) {
         if (c.__hooks._pendingEffects.length)
             afterPaint(afterPaintEffects.push(c));
-        c.__hooks._list.forEach(hookItem => {
+        c.__hooks._list.forEach(function (hookItem) {
             if (hookItem._pendingArgs) {
                 hookItem._args = hookItem._pendingArgs;
             }
@@ -78,14 +78,16 @@ preact_1.options.diffed = vnode => {
     }
     previousComponent = currentComponent = null;
 };
-preact_1.options._commit = (vnode, commitQueue) => {
-    commitQueue.some(component => {
+preact_1.options._commit = function (vnode, commitQueue) {
+    commitQueue.some(function (component) {
         try {
             component._renderCallbacks.forEach(invokeCleanup);
-            component._renderCallbacks = component._renderCallbacks.filter(cb => cb._value ? invokeEffect(cb) : true);
+            component._renderCallbacks = component._renderCallbacks.filter(function (cb) {
+                return cb._value ? invokeEffect(cb) : true;
+            });
         }
         catch (e) {
-            commitQueue.some(c => {
+            commitQueue.some(function (c) {
                 if (c._renderCallbacks)
                     c._renderCallbacks = [];
             });
@@ -96,23 +98,23 @@ preact_1.options._commit = (vnode, commitQueue) => {
     if (oldCommit)
         oldCommit(vnode, commitQueue);
 };
-preact_1.options.unmount = vnode => {
+preact_1.options.unmount = function (vnode) {
     if (oldBeforeUnmount)
         oldBeforeUnmount(vnode);
-    const c = vnode._component;
+    var c = vnode._component;
     if (c && c.__hooks) {
-        let hasErrored;
-        c.__hooks._list.forEach(s => {
+        var hasErrored_1;
+        c.__hooks._list.forEach(function (s) {
             try {
                 invokeCleanup(s);
             }
             catch (e) {
-                hasErrored = e;
+                hasErrored_1 = e;
             }
         });
         c.__hooks = undefined;
-        if (hasErrored)
-            preact_1.options._catchError(hasErrored, c._vnode);
+        if (hasErrored_1)
+            preact_1.options._catchError(hasErrored_1, c._vnode);
     }
 };
 function getHookState(index, type) {
@@ -120,7 +122,7 @@ function getHookState(index, type) {
         preact_1.options._hook(currentComponent, index, currentHook || type);
     }
     currentHook = 0;
-    const hooks = currentComponent.__hooks ||
+    var hooks = currentComponent.__hooks ||
         (currentComponent.__hooks = {
             _list: [],
             _pendingEffects: []
@@ -136,16 +138,16 @@ function useState(initialState) {
 }
 exports.useState = useState;
 function useReducer(reducer, initialState, init) {
-    const hookState = getHookState(currentIndex++, 2);
+    var hookState = getHookState(currentIndex++, 2);
     hookState._reducer = reducer;
     if (typeof hookState._component === "undefined" || hookState._component === null) {
         hookState._value = [
             !init ? invokeOrReturn(undefined, initialState) : init(initialState),
-            action => {
-                const currentValue = hookState._nextValue
+            function (action) {
+                var currentValue = hookState._nextValue
                     ? hookState._nextValue[0]
                     : hookState._value[0];
-                const nextValue = hookState._reducer(currentValue, action);
+                var nextValue = hookState._reducer(currentValue, action);
                 if (currentValue !== nextValue) {
                     hookState._nextValue = [nextValue, hookState._value[1]];
                     hookState._component.setState({});
@@ -155,19 +157,19 @@ function useReducer(reducer, initialState, init) {
         hookState._component = currentComponent;
         if (!currentComponent._hasScuFromHooks) {
             currentComponent._hasScuFromHooks = true;
-            const prevScu = currentComponent.shouldComponentUpdate;
+            var prevScu_1 = currentComponent.shouldComponentUpdate;
             currentComponent.shouldComponentUpdate = function (p, s, c) {
                 if (typeof hookState._component.__hooks == "undefined" || hookState._component.__hooks === null)
                     return true;
-                const stateHooks = hookState._component.__hooks._list.filter(x => x._component);
-                const allHooksEmpty = stateHooks.every(x => !x._nextValue);
+                var stateHooks = hookState._component.__hooks._list.filter(function (x) { return x._component; });
+                var allHooksEmpty = stateHooks.every(function (x) { return !x._nextValue; });
                 if (allHooksEmpty) {
-                    return prevScu ? prevScu.call(this, p, s, c) : true;
+                    return prevScu_1 ? prevScu_1.call(this, p, s, c) : true;
                 }
-                let shouldUpdate = false;
-                stateHooks.forEach(hookItem => {
+                var shouldUpdate = false;
+                stateHooks.forEach(function (hookItem) {
                     if (hookItem._nextValue) {
-                        const currentValue = hookItem._value[0];
+                        var currentValue = hookItem._value[0];
                         hookItem._value = hookItem._nextValue;
                         hookItem._nextValue = undefined;
                         if (currentValue !== hookItem._value[0])
@@ -175,8 +177,8 @@ function useReducer(reducer, initialState, init) {
                     }
                 });
                 return shouldUpdate
-                    ? prevScu
-                        ? prevScu.call(this, p, s, c)
+                    ? prevScu_1
+                        ? prevScu_1.call(this, p, s, c)
                         : true
                     : false;
             };
@@ -186,7 +188,7 @@ function useReducer(reducer, initialState, init) {
 }
 exports.useReducer = useReducer;
 function useEffect(callback, args) {
-    const state = getHookState(currentIndex++, 3);
+    var state = getHookState(currentIndex++, 3);
     if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
         state._pendingArgs = args;
@@ -195,7 +197,7 @@ function useEffect(callback, args) {
 }
 exports.useEffect = useEffect;
 function useLayoutEffect(callback, args) {
-    const state = getHookState(currentIndex++, 4);
+    var state = getHookState(currentIndex++, 4);
     if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
         state._pendingArgs = args;
@@ -205,25 +207,25 @@ function useLayoutEffect(callback, args) {
 exports.useLayoutEffect = useLayoutEffect;
 function useRef(initialValue) {
     currentHook = 5;
-    return useMemo(() => ({ current: initialValue }), []);
+    return useMemo(function () { return ({ current: initialValue }); }, []);
 }
 exports.useRef = useRef;
 function useImperativeHandle(ref, createHandle, args) {
     currentHook = 6;
-    useLayoutEffect(() => {
+    useLayoutEffect(function () {
         if (typeof ref == 'function') {
             ref(createHandle());
-            return () => ref(null);
+            return function () { return ref(null); };
         }
         else if (ref) {
             ref.current = createHandle();
-            return () => (ref.current = null);
+            return function () { return (ref.current = null); };
         }
     }, args == null ? args : args.concat(ref));
 }
 exports.useImperativeHandle = useImperativeHandle;
 function useMemo(factory, args) {
-    const state = getHookState(currentIndex++, 7);
+    var state = getHookState(currentIndex++, 7);
     if (argsChanged(state._args, args)) {
         state._pendingValue = factory();
         state._pendingArgs = args;
@@ -235,12 +237,12 @@ function useMemo(factory, args) {
 exports.useMemo = useMemo;
 function useCallback(callback, args) {
     currentHook = 8;
-    return useMemo(() => callback, args);
+    return useMemo(function () { return callback; }, args);
 }
 exports.useCallback = useCallback;
 function useContext(context) {
-    const provider = currentComponent.context[context._id];
-    const state = getHookState(currentIndex++, 9);
+    var provider = currentComponent.context[context._id];
+    var state = getHookState(currentIndex++, 9);
     state._context = context;
     if (typeof provider == "undefined" || provider === null)
         return context._defaultValue;
@@ -258,11 +260,11 @@ function useDebugValue(value, formatter) {
 }
 exports.useDebugValue = useDebugValue;
 function useErrorBoundary(cb) {
-    const state = getHookState(currentIndex++, 10);
-    const errState = useState();
+    var state = getHookState(currentIndex++, 10);
+    var errState = useState();
     state._value = cb;
     if (!currentComponent.componentDidCatch) {
-        currentComponent.componentDidCatch = (err, errorInfo) => {
+        currentComponent.componentDidCatch = function (err, errorInfo) {
             if (state._value)
                 state._value(err, errorInfo);
             errState[1](err);
@@ -270,21 +272,21 @@ function useErrorBoundary(cb) {
     }
     return [
         errState[0],
-        () => {
+        function () {
             errState[1](undefined);
         }
     ];
 }
 exports.useErrorBoundary = useErrorBoundary;
 function hash(s) {
-    let h = 0, i = s.length;
+    var h = 0, i = s.length;
     while (i > 0) {
         h = ((h << 5) - h + s.charCodeAt(--i)) | 0;
     }
     return h;
 }
 function useId() {
-    const state = getHookState(currentIndex++, 11);
+    var state = getHookState(currentIndex++, 11);
     if (!state._value) {
         state._value = 'P' + hash(currentComponent._vnode._mask) + currentIndex;
     }
@@ -292,7 +294,7 @@ function useId() {
 }
 exports.useId = useId;
 function flushAfterPaintEffects() {
-    let component;
+    var component;
     while ((component = afterPaintEffects.shift())) {
         if (!component._parentDom || typeof component.__hooks == "undefined" || component.__hooks === null)
             continue;
@@ -307,16 +309,16 @@ function flushAfterPaintEffects() {
         }
     }
 }
-let HAS_RAF = typeof requestAnimationFrame == 'function';
+var HAS_RAF = typeof requestAnimationFrame == 'function';
 function afterNextFrame(callback) {
-    const done = () => {
+    var done = function () {
         clearTimeout(timeout);
         if (HAS_RAF)
             cancelAnimationFrame(raf);
         setTimeout(callback);
     };
-    const timeout = setTimeout(done, RAF_TIMEOUT);
-    let raf;
+    var timeout = setTimeout(done, RAF_TIMEOUT);
+    var raf;
     if (HAS_RAF) {
         raf = requestAnimationFrame(done);
     }
@@ -330,8 +332,8 @@ function afterPaint(newQueueLength) {
 preact_1.options.debounceRendering = requestAnimationFrame;
 preact_1.options.requestAnimationFrame = requestAnimationFrame;
 function invokeCleanup(hook) {
-    const comp = currentComponent;
-    let cleanup = hook._cleanup;
+    var comp = currentComponent;
+    var cleanup = hook._cleanup;
     if (typeof cleanup == 'function') {
         hook._cleanup = undefined;
         cleanup();
@@ -339,14 +341,14 @@ function invokeCleanup(hook) {
     currentComponent = comp;
 }
 function invokeEffect(hook) {
-    const comp = currentComponent;
+    var comp = currentComponent;
     hook._cleanup = hook._value();
     currentComponent = comp;
 }
 function argsChanged(oldArgs, newArgs) {
     return (!oldArgs ||
         oldArgs.length !== newArgs.length ||
-        newArgs.some((arg, index) => arg !== oldArgs[index]));
+        newArgs.some(function (arg, index) { return arg !== oldArgs[index]; }));
 }
 function invokeOrReturn(arg, f) {
     return typeof f == 'function' ? f(arg) : f;
