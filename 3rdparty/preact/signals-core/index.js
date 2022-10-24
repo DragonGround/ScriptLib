@@ -8,11 +8,7 @@ var NOTIFIED = 1 << 1;
 var OUTDATED = 1 << 2;
 var DISPOSED = 1 << 3;
 var HAS_ERROR = 1 << 4;
-var IS_EFFECT = 1 << 5;
-var AUTO_DISPOSE = 1 << 6;
-var AUTO_SUBSCRIBE = 1 << 7;
-var NODE_FREE = 1 << 0;
-var NODE_SUBSCRIBED = 1 << 1;
+var TRACKING = 1 << 5;
 function startBatch() {
     batchDepth++;
 }
@@ -31,7 +27,7 @@ function endBatch() {
             var next = effect_1._nextBatchedEffect;
             effect_1._nextBatchedEffect = undefined;
             effect_1._flags &= ~NOTIFIED;
-            if (!(effect_1._flags & DISPOSED) && effect_1._flags & OUTDATED) {
+            if (!(effect_1._flags & DISPOSED) && needsToRecompute(effect_1)) {
                 try {
                     effect_1._callback();
                 }
@@ -76,7 +72,6 @@ function addDependency(signal) {
     var node = signal._node;
     if (node === undefined || node._target !== evalContext) {
         node = {
-            _flags: 0,
             _version: 0,
             _source: signal,
             _prevSource: undefined,
@@ -88,28 +83,21 @@ function addDependency(signal) {
         };
         evalContext._sources = node;
         signal._node = node;
-        if (evalContext._flags & AUTO_SUBSCRIBE) {
+        if (evalContext._flags & TRACKING) {
             signal._subscribe(node);
         }
         return node;
     }
-    else if (node._flags & NODE_FREE) {
-        node._flags &= ~NODE_FREE;
-        var head = evalContext._sources;
-        if (node !== head) {
-            var prev = node._prevSource;
-            var next = node._nextSource;
-            if (prev !== undefined) {
-                prev._nextSource = next;
-            }
-            if (next !== undefined) {
-                next._prevSource = prev;
-            }
-            if (head !== undefined) {
-                head._prevSource = node;
+    else if (node._version === -1) {
+        node._version = 0;
+        if (node._prevSource !== undefined) {
+            node._prevSource._nextSource = node._nextSource;
+            if (node._nextSource !== undefined) {
+                node._nextSource._prevSource = node._prevSource;
             }
             node._prevSource = undefined;
-            node._nextSource = head;
+            node._nextSource = evalContext._sources;
+            evalContext._sources._prevSource = node;
             evalContext._sources = node;
         }
         return node;
@@ -127,8 +115,7 @@ Signal.prototype._refresh = function () {
     return true;
 };
 Signal.prototype._subscribe = function (node) {
-    if (!(node._flags & NODE_SUBSCRIBED)) {
-        node._flags |= NODE_SUBSCRIBED;
+    if (this._targets !== node && node._prevTarget === undefined) {
         node._nextTarget = this._targets;
         if (this._targets !== undefined) {
             this._targets._prevTarget = node;
@@ -137,26 +124,33 @@ Signal.prototype._subscribe = function (node) {
     }
 };
 Signal.prototype._unsubscribe = function (node) {
-    if (node._flags & NODE_SUBSCRIBED) {
-        node._flags &= ~NODE_SUBSCRIBED;
-        var prev = node._prevTarget;
-        var next = node._nextTarget;
-        if (prev !== undefined) {
-            prev._nextTarget = next;
-            node._prevTarget = undefined;
-        }
-        if (next !== undefined) {
-            next._prevTarget = prev;
-            node._nextTarget = undefined;
-        }
-        if (node === this._targets) {
-            this._targets = next;
-        }
+    var prev = node._prevTarget;
+    var next = node._nextTarget;
+    if (prev !== undefined) {
+        prev._nextTarget = next;
+        node._prevTarget = undefined;
+    }
+    if (next !== undefined) {
+        next._prevTarget = prev;
+        node._nextTarget = undefined;
+    }
+    if (node === this._targets) {
+        this._targets = next;
     }
 };
 Signal.prototype.subscribe = function (fn) {
-    var _this = this;
-    return effect(function () { return fn(_this.value); });
+    var signal = this;
+    return effect(function () {
+        var value = signal.value;
+        var flag = this._flags & TRACKING;
+        this._flags &= ~TRACKING;
+        try {
+            fn(value);
+        }
+        finally {
+            this._flags |= flag;
+        }
+    });
 };
 Signal.prototype.valueOf = function () {
     return this.value;
@@ -199,6 +193,16 @@ function signal(value) {
     return new Signal(value);
 }
 exports.signal = signal;
+function needsToRecompute(target) {
+    for (var node = target._sources; node !== undefined; node = node._nextSource) {
+        if (node._source._version !== node._version ||
+            !node._source._refresh() ||
+            node._source._version !== node._version) {
+            return true;
+        }
+    }
+    return false;
+}
 function prepareSources(target) {
     for (var node = target._sources; node !== undefined; node = node._nextSource) {
         var rollbackNode = node._source._node;
@@ -206,7 +210,7 @@ function prepareSources(target) {
             node._rollbackNode = rollbackNode;
         }
         node._source._node = node;
-        node._flags |= NODE_FREE;
+        node._version = -1;
     }
 }
 function cleanupSources(target) {
@@ -214,7 +218,7 @@ function cleanupSources(target) {
     var sources = undefined;
     while (node !== undefined) {
         var next = node._nextSource;
-        if (node._flags & NODE_FREE) {
+        if (node._version === -1) {
             node._source._unsubscribe(node);
             node._nextSource = undefined;
         }
@@ -234,51 +238,10 @@ function cleanupSources(target) {
     }
     target._sources = sources;
 }
-function cleanupContext(context) {
-    var hasError = false;
-    var error;
-    var nested = context._effects;
-    if (nested !== undefined) {
-        context._effects = undefined;
-        while (nested !== undefined) {
-            try {
-                nested._dispose();
-            }
-            catch (err) {
-                hasError = true;
-                error = err;
-            }
-            nested = nested._nextNestedEffect;
-        }
-    }
-    if (context._flags & IS_EFFECT) {
-        var cleanup = context._cleanup;
-        context._cleanup = undefined;
-        if (typeof cleanup === "function") {
-            startBatch();
-            var prevContext = evalContext;
-            evalContext = undefined;
-            try {
-                cleanup();
-            }
-            catch (err) {
-                hasError = true;
-                error = err;
-                context._flags &= ~RUNNING;
-            }
-            evalContext = prevContext;
-            endBatch();
-        }
-    }
-    if (hasError) {
-        throw error;
-    }
-}
 function Computed(compute) {
     Signal.call(this, undefined);
     this._compute = compute;
     this._sources = undefined;
-    this._effects = undefined;
     this._globalVersion = globalVersion - 1;
     this._flags = OUTDATED;
 }
@@ -288,7 +251,7 @@ Computed.prototype._refresh = function () {
     if (this._flags & RUNNING) {
         return false;
     }
-    if (this._targets !== undefined && !(this._flags & OUTDATED)) {
+    if ((this._flags & (OUTDATED | TRACKING)) === TRACKING) {
         return true;
     }
     this._flags &= ~OUTDATED;
@@ -296,24 +259,14 @@ Computed.prototype._refresh = function () {
         return true;
     }
     this._globalVersion = globalVersion;
+    this._flags |= RUNNING;
+    if (this._version > 0 && !needsToRecompute(this)) {
+        this._flags &= ~RUNNING;
+        return true;
+    }
     var prevContext = evalContext;
     try {
-        this._flags |= RUNNING;
-        if (this._version > 0) {
-            var node = this._sources;
-            while (node !== undefined) {
-                if (!node._source._refresh() ||
-                    node._source._version !== node._version) {
-                    break;
-                }
-                node = node._nextSource;
-            }
-            if (node === undefined) {
-                return true;
-            }
-        }
         prepareSources(this);
-        cleanupContext(this);
         evalContext = this;
         var value = this._compute();
         if (this._flags & HAS_ERROR ||
@@ -329,16 +282,14 @@ Computed.prototype._refresh = function () {
         this._flags |= HAS_ERROR;
         this._version++;
     }
-    finally {
-        evalContext = prevContext;
-        cleanupSources(this);
-        this._flags &= ~RUNNING;
-    }
+    evalContext = prevContext;
+    cleanupSources(this);
+    this._flags &= ~RUNNING;
     return true;
 };
 Computed.prototype._subscribe = function (node) {
     if (this._targets === undefined) {
-        this._flags |= OUTDATED | AUTO_SUBSCRIBE;
+        this._flags |= OUTDATED | TRACKING;
         for (var node_1 = this._sources; node_1 !== undefined; node_1 = node_1._nextSource) {
             node_1._source._subscribe(node_1);
         }
@@ -348,7 +299,7 @@ Computed.prototype._subscribe = function (node) {
 Computed.prototype._unsubscribe = function (node) {
     Signal.prototype._unsubscribe.call(this, node);
     if (this._targets === undefined) {
-        this._flags &= ~AUTO_SUBSCRIBE;
+        this._flags &= ~TRACKING;
         for (var node_2 = this._sources; node_2 !== undefined; node_2 = node_2._nextSource) {
             node_2._source._unsubscribe(node_2);
         }
@@ -391,12 +342,35 @@ function computed(compute) {
     return new Computed(compute);
 }
 exports.computed = computed;
+function cleanupEffect(effect) {
+    var cleanup = effect._cleanup;
+    effect._cleanup = undefined;
+    if (typeof cleanup === "function") {
+        startBatch();
+        var prevContext = evalContext;
+        evalContext = undefined;
+        try {
+            cleanup();
+        }
+        catch (err) {
+            effect._flags &= ~RUNNING;
+            effect._flags |= DISPOSED;
+            disposeEffect(effect);
+            throw err;
+        }
+        finally {
+            evalContext = prevContext;
+            endBatch();
+        }
+    }
+}
 function disposeEffect(effect) {
     for (var node = effect._sources; node !== undefined; node = node._nextSource) {
         node._source._unsubscribe(node);
     }
+    effect._compute = undefined;
     effect._sources = undefined;
-    cleanupContext(effect);
+    cleanupEffect(effect);
 }
 function endEffect(prevContext) {
     if (evalContext !== this) {
@@ -410,23 +384,17 @@ function endEffect(prevContext) {
     }
     endBatch();
 }
-function Effect(compute, flags) {
+function Effect(compute) {
     this._compute = compute;
     this._cleanup = undefined;
     this._sources = undefined;
-    this._effects = undefined;
-    this._nextNestedEffect = undefined;
     this._nextBatchedEffect = undefined;
-    this._flags = IS_EFFECT | OUTDATED | flags;
-    if (flags & AUTO_DISPOSE && evalContext !== undefined) {
-        this._nextNestedEffect = evalContext._effects;
-        evalContext._effects = this;
-    }
+    this._flags = TRACKING;
 }
 Effect.prototype._callback = function () {
     var finish = this._start();
     try {
-        if (!(this._flags & DISPOSED)) {
+        if (!(this._flags & DISPOSED) && this._compute !== undefined) {
             this._cleanup = this._compute();
         }
     }
@@ -440,17 +408,16 @@ Effect.prototype._start = function () {
     }
     this._flags |= RUNNING;
     this._flags &= ~DISPOSED;
+    cleanupEffect(this);
     prepareSources(this);
-    cleanupContext(this);
     startBatch();
-    this._flags &= ~OUTDATED;
     var prevContext = evalContext;
     evalContext = this;
     return endEffect.bind(this, prevContext);
 };
 Effect.prototype._notify = function () {
     if (!(this._flags & NOTIFIED)) {
-        this._flags |= NOTIFIED | OUTDATED;
+        this._flags |= NOTIFIED;
         this._nextBatchedEffect = batchedEffect;
         batchedEffect = this;
     }
@@ -462,8 +429,14 @@ Effect.prototype._dispose = function () {
     }
 };
 function effect(compute) {
-    var effect = new Effect(compute, AUTO_DISPOSE | AUTO_SUBSCRIBE);
-    effect._callback();
+    var effect = new Effect(compute);
+    try {
+        effect._callback();
+    }
+    catch (err) {
+        effect._dispose();
+        throw err;
+    }
     return effect._dispose.bind(effect);
 }
 exports.effect = effect;

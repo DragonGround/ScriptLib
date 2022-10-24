@@ -8,22 +8,11 @@ const NOTIFIED = 1 << 1;
 const OUTDATED = 1 << 2;
 const DISPOSED = 1 << 3;
 const HAS_ERROR = 1 << 4;
-const IS_EFFECT = 1 << 5;
-const AUTO_DISPOSE = 1 << 6;
-const AUTO_SUBSCRIBE = 1 << 7;
-
-// Flags for Nodes.
-const NODE_FREE = 1 << 0;
-const NODE_SUBSCRIBED = 1 << 1;
+const TRACKING = 1 << 5;
 
 // A linked list node used to track dependencies (sources) and dependents (targets).
 // Also used to remember the source's last version number that the target saw.
 type Node = {
-	// A node may have the following flags:
-	//  NODE_FREE when it's unclear whether the source is still a dependency of the target
-	//  NODE_SUBSCRIBED when the target has subscribed to listen change notifications from the source
-	_flags: number;
-
 	// A source whose value the target depends on.
 	_source: Signal;
 	_prevSource?: Node;
@@ -37,6 +26,7 @@ type Node = {
 	// The version number of the source that target has last seen. We use version numbers
 	// instead of storing the source value, because source values can take arbitrary amount
 	// of memory, and computeds could hang on to them forever because they're lazily evaluated.
+	// Use the special value -1 to mark potentially unused but recyclable nodes.
 	_version: number;
 
 	// Used to remember & roll back the source's previous `._node` value when entering &
@@ -68,7 +58,7 @@ function endBatch() {
 			effect._nextBatchedEffect = undefined;
 			effect._flags &= ~NOTIFIED;
 
-			if (!(effect._flags & DISPOSED) && effect._flags & OUTDATED) {
+			if (!(effect._flags & DISPOSED) && needsToRecompute(effect)) {
 				try {
 					effect._callback();
 				} catch (err) {
@@ -123,7 +113,6 @@ function addDependency(signal: Signal): Node | undefined {
 		// `signal` is a new dependency. Create a new node dependency node, move it
 		//  to the front of the current context's dependency list.
 		node = {
-			_flags: 0,
 			_version: 0,
 			_source: signal,
 			_prevSource: undefined,
@@ -138,30 +127,26 @@ function addDependency(signal: Signal): Node | undefined {
 
 		// Subscribe to change notifications from this dependency if we're in an effect
 		// OR evaluating a computed signal that in turn has subscribers.
-		if (evalContext._flags & AUTO_SUBSCRIBE) {
+		if (evalContext._flags & TRACKING) {
 			signal._subscribe(node);
 		}
 		return node;
-	} else if (node._flags & NODE_FREE) {
-		// `signal` is an existing dependency from a previous evaluation. Reuse the dependency
-		// node and move it to the front of the evaluation context's dependency list.
-		node._flags &= ~NODE_FREE;
+	} else if (node._version === -1) {
+		// `signal` is an existing dependency from a previous evaluation. Reuse it.
+		node._version = 0;
 
-		const head = evalContext._sources;
-		if (node !== head) {
-			const prev = node._prevSource;
-			const next = node._nextSource;
-			if (prev !== undefined) {
-				prev._nextSource = next;
-			}
-			if (next !== undefined) {
-				next._prevSource = prev;
-			}
-			if (head !== undefined) {
-				head._prevSource = node;
+		// If `node` is not already the current head of the dependency list (i.e.
+		// there is a previous node in the list), then make `node` the new head.
+		if (node._prevSource !== undefined) {
+			node._prevSource._nextSource = node._nextSource;
+			if (node._nextSource !== undefined) {
+				node._nextSource._prevSource = node._prevSource;
 			}
 			node._prevSource = undefined;
-			node._nextSource = head;
+			node._nextSource = evalContext._sources;
+			// evalCotext._sources must be !== undefined (and !== node), because
+			// `node` was originally pointing to some previous node.
+			evalContext._sources!._prevSource = node;
 			evalContext._sources = node;
 		}
 
@@ -176,7 +161,10 @@ declare class Signal<T = any> {
 	/** @internal */
 	_value: unknown;
 
-	/** @internal */
+	/** @internal
+	 * Version numbers should always be >= 0, because the special value -1 is used
+	 * by Nodes to signify potentially unused but recyclable notes.
+	 */
 	_version: number;
 
 	/** @internal */
@@ -221,10 +209,8 @@ Signal.prototype._refresh = function () {
 };
 
 Signal.prototype._subscribe = function (node) {
-	if (!(node._flags & NODE_SUBSCRIBED)) {
-		node._flags |= NODE_SUBSCRIBED;
+	if (this._targets !== node && node._prevTarget === undefined) {
 		node._nextTarget = this._targets;
-
 		if (this._targets !== undefined) {
 			this._targets._prevTarget = node;
 		}
@@ -233,27 +219,33 @@ Signal.prototype._subscribe = function (node) {
 };
 
 Signal.prototype._unsubscribe = function (node) {
-	if (node._flags & NODE_SUBSCRIBED) {
-		node._flags &= ~NODE_SUBSCRIBED;
-
-		const prev = node._prevTarget;
-		const next = node._nextTarget;
-		if (prev !== undefined) {
-			prev._nextTarget = next;
-			node._prevTarget = undefined;
-		}
-		if (next !== undefined) {
-			next._prevTarget = prev;
-			node._nextTarget = undefined;
-		}
-		if (node === this._targets) {
-			this._targets = next;
-		}
+	const prev = node._prevTarget;
+	const next = node._nextTarget;
+	if (prev !== undefined) {
+		prev._nextTarget = next;
+		node._prevTarget = undefined;
+	}
+	if (next !== undefined) {
+		next._prevTarget = prev;
+		node._nextTarget = undefined;
+	}
+	if (node === this._targets) {
+		this._targets = next;
 	}
 };
 
 Signal.prototype.subscribe = function (fn) {
-	return effect(() => fn(this.value));
+	const signal = this;
+	return effect(function (this: Effect) {
+		const value = signal.value;
+		const flag = this._flags & TRACKING;
+		this._flags &= ~TRACKING;
+		try {
+			fn(value);
+		} finally {
+			this._flags |= flag;
+		}
+	});
 };
 
 Signal.prototype.valueOf = function () {
@@ -306,6 +298,31 @@ function signal<T>(value: T): Signal<T> {
 	return new Signal(value);
 }
 
+function needsToRecompute(target: Computed | Effect): boolean {
+	// Check the dependencies for changed values. The dependency list is already
+	// in order of use. Therefore if multiple dependencies have changed values, only
+	// the first used dependency is re-evaluated at this point.
+	for (
+		let node = target._sources;
+		node !== undefined;
+		node = node._nextSource
+	) {
+		// If there's a new version of the dependency before or after refreshing,
+		// or the dependency has something blocking it from refreshing at all (e.g. a
+		// dependency cycle), then we need to recompute.
+		if (
+			node._source._version !== node._version ||
+			!node._source._refresh() ||
+			node._source._version !== node._version
+		) {
+			return true;
+		}
+	}
+	// If none of the dependencies have changed values since last recompute then the
+	// there's no need to recompute.
+	return false;
+}
+
 function prepareSources(target: Computed | Effect) {
 	for (
 		let node = target._sources;
@@ -317,7 +334,7 @@ function prepareSources(target: Computed | Effect) {
 			node._rollbackNode = rollbackNode;
 		}
 		node._source._node = node;
-		node._flags |= NODE_FREE;
+		node._version = -1;
 	}
 }
 
@@ -332,7 +349,7 @@ function cleanupSources(target: Computed | Effect) {
 	let sources = undefined;
 	while (node !== undefined) {
 		const next = node._nextSource;
-		if (node._flags & NODE_FREE) {
+		if (node._version === -1) {
 			node._source._unsubscribe(node);
 			node._nextSource = undefined;
 		} else {
@@ -353,58 +370,9 @@ function cleanupSources(target: Computed | Effect) {
 	target._sources = sources;
 }
 
-function cleanupContext(context: Computed | Effect) {
-	let hasError = false;
-	let error: unknown;
-
-	let nested = context._effects;
-	if (nested !== undefined) {
-		context._effects = undefined;
-
-		while (nested !== undefined) {
-			try {
-				nested._dispose();
-			} catch (err) {
-				hasError = true;
-				error = err;
-			}
-			nested = nested._nextNestedEffect;
-		}
-	}
-
-	if (context._flags & IS_EFFECT) {
-		const cleanup = (context as Effect)._cleanup;
-		(context as Effect)._cleanup = undefined;
-
-		if (typeof cleanup === "function") {
-			/*@__INLINE__**/ startBatch();
-
-			// Run cleanup functions always outside of any context.
-			const prevContext = evalContext;
-			evalContext = undefined;
-
-			try {
-				cleanup();
-			} catch (err) {
-				hasError = true;
-				error = err;
-				context._flags &= ~RUNNING;
-			}
-
-			evalContext = prevContext;
-			endBatch();
-		}
-	}
-
-	if (hasError) {
-		throw error;
-	}
-}
-
 declare class Computed<T = any> extends Signal<T> {
 	_compute: () => T;
 	_sources?: Node;
-	_effects?: Effect;
 	_globalVersion: number;
 	_flags: number;
 
@@ -419,12 +387,12 @@ function Computed(this: Computed, compute: () => unknown) {
 
 	this._compute = compute;
 	this._sources = undefined;
-	this._effects = undefined;
 	this._globalVersion = globalVersion - 1;
 	this._flags = OUTDATED;
 }
 
-(Computed as any).prototype = new Signal() as any;
+// @ts-ignore
+Computed.prototype = new Signal() as Computed;
 
 // @ts-ignore
 Computed.prototype._refresh = function () {
@@ -434,9 +402,10 @@ Computed.prototype._refresh = function () {
 		return false;
 	}
 
-	// Trust the OUTDATED flag only when the computed signal has subscribed
-	// to any notifications from dependencies.
-	if (this._targets !== undefined && !(this._flags & OUTDATED)) {
+	// If this computed signal has subscribed to updates from its dependencies
+	// (TRACKING flag set) and none of them have notified about changes (OUTDATED
+	// flag not set), then the computed value can't have changed.
+	if ((this._flags & (OUTDATED | TRACKING)) === TRACKING) {
 		return true;
 	}
 	this._flags &= ~OUTDATED;
@@ -446,34 +415,17 @@ Computed.prototype._refresh = function () {
 	}
 	this._globalVersion = globalVersion;
 
+	// Mark this computed signal running before checking the dependencies for value
+	// changes, so that the RUNNIN flag can be used to notice cyclical dependencies.
+	this._flags |= RUNNING;
+	if (this._version > 0 && !needsToRecompute(this)) {
+		this._flags &= ~RUNNING;
+		return true;
+	}
+
 	const prevContext = evalContext;
 	try {
-		this._flags |= RUNNING;
-
-		if (this._version > 0) {
-			// Check current dependencies for changes. The dependency list is already in
-			// order of use. Therefore if >1 dependencies have changed only the first used one
-			// is re-evaluated at this point.
-			let node = this._sources;
-			while (node !== undefined) {
-				if (
-					!node._source._refresh() ||
-					node._source._version !== node._version
-				) {
-					// If a dependency has something blocking it refreshing (e.g. a dependency
-					// cycle) or there's a new version of the dependency, then we need to recompute.
-					break;
-				}
-				node = node._nextSource;
-			}
-			if (node === undefined) {
-				return true;
-			}
-		}
-
 		prepareSources(this);
-		cleanupContext(this);
-
 		evalContext = this;
 		const value = this._compute();
 		if (
@@ -489,18 +441,17 @@ Computed.prototype._refresh = function () {
 		this._value = err;
 		this._flags |= HAS_ERROR;
 		this._version++;
-	} finally {
-		evalContext = prevContext;
-		cleanupSources(this);
-		this._flags &= ~RUNNING;
 	}
+	evalContext = prevContext;
+	cleanupSources(this);
+	this._flags &= ~RUNNING;
 	return true;
 };
 
 // @ts-ignore
 Computed.prototype._subscribe = function (node) {
 	if (this._targets === undefined) {
-		this._flags |= OUTDATED | AUTO_SUBSCRIBE;
+		this._flags |= OUTDATED | TRACKING;
 
 		// A computed signal subscribes lazily to its dependencies when the it
 		// gets its first subscriber.
@@ -521,7 +472,7 @@ Computed.prototype._unsubscribe = function (node) {
 
 	// Computed signal unsubscribes from its dependencies from it loses its last subscriber.
 	if (this._targets === undefined) {
-		this._flags &= ~AUTO_SUBSCRIBE;
+		this._flags &= ~TRACKING;
 
 		for (
 			let node = this._sources;
@@ -584,6 +535,30 @@ function computed<T>(compute: () => T): ReadonlySignal<T> {
 	return new Computed(compute);
 }
 
+function cleanupEffect(effect: Effect) {
+	const cleanup = effect._cleanup;
+	effect._cleanup = undefined;
+
+	if (typeof cleanup === "function") {
+		/*@__INLINE__**/ startBatch();
+
+		// Run cleanup functions always outside of any context.
+		const prevContext = evalContext;
+		evalContext = undefined;
+		try {
+			cleanup();
+		} catch (err) {
+			effect._flags &= ~RUNNING;
+			effect._flags |= DISPOSED;
+			disposeEffect(effect);
+			throw err;
+		} finally {
+			evalContext = prevContext;
+			endBatch();
+		}
+	}
+}
+
 function disposeEffect(effect: Effect) {
 	for (
 		let node = effect._sources;
@@ -592,9 +567,10 @@ function disposeEffect(effect: Effect) {
 	) {
 		node._source._unsubscribe(node);
 	}
+	effect._compute = undefined;
 	effect._sources = undefined;
 
-	cleanupContext(effect);
+	cleanupEffect(effect);
 }
 
 function endEffect(this: Effect, prevContext?: Computed | Effect) {
@@ -612,15 +588,13 @@ function endEffect(this: Effect, prevContext?: Computed | Effect) {
 }
 
 declare class Effect {
-	_compute: () => unknown;
+	_compute?: () => unknown;
 	_cleanup?: unknown;
 	_sources?: Node;
-	_effects?: Effect;
-	_nextNestedEffect?: Effect;
 	_nextBatchedEffect?: Effect;
 	_flags: number;
 
-	constructor(compute: () => void, flags: number);
+	constructor(compute: () => void);
 
 	_callback(): void;
 	_start(): () => void;
@@ -628,25 +602,18 @@ declare class Effect {
 	_dispose(): void;
 }
 
-function Effect(this: Effect, compute: () => void, flags: number) {
+function Effect(this: Effect, compute: () => void) {
 	this._compute = compute;
 	this._cleanup = undefined;
 	this._sources = undefined;
-	this._effects = undefined;
-	this._nextNestedEffect = undefined;
 	this._nextBatchedEffect = undefined;
-	this._flags = IS_EFFECT | OUTDATED | flags;
-
-	if (flags & AUTO_DISPOSE && evalContext !== undefined) {
-		this._nextNestedEffect = evalContext._effects;
-		evalContext._effects = this;
-	}
+	this._flags = TRACKING;
 }
 
 Effect.prototype._callback = function () {
 	const finish = this._start();
 	try {
-		if (!(this._flags & DISPOSED)) {
+		if (!(this._flags & DISPOSED) && this._compute !== undefined) {
 			this._cleanup = this._compute();
 		}
 	} finally {
@@ -660,11 +627,10 @@ Effect.prototype._start = function () {
 	}
 	this._flags |= RUNNING;
 	this._flags &= ~DISPOSED;
+	cleanupEffect(this);
 	prepareSources(this);
-	cleanupContext(this);
 
 	/*@__INLINE__**/ startBatch();
-	this._flags &= ~OUTDATED;
 	const prevContext = evalContext;
 	evalContext = this;
 	return endEffect.bind(this, prevContext);
@@ -672,7 +638,7 @@ Effect.prototype._start = function () {
 
 Effect.prototype._notify = function () {
 	if (!(this._flags & NOTIFIED)) {
-		this._flags |= NOTIFIED | OUTDATED;
+		this._flags |= NOTIFIED;
 		this._nextBatchedEffect = batchedEffect;
 		batchedEffect = this;
 	}
@@ -687,8 +653,13 @@ Effect.prototype._dispose = function () {
 };
 
 function effect(compute: () => unknown): () => void {
-	const effect = new Effect(compute, AUTO_DISPOSE | AUTO_SUBSCRIBE);
-	effect._callback();
+	const effect = new Effect(compute);
+	try {
+		effect._callback();
+	} catch (err) {
+		effect._dispose();
+		throw err;
+	}
 	// Return a bound function instead of a wrapper like `() => effect._dispose()`,
 	// because bound functions seem to be just as fast and take up a lot less memory.
 	return effect._dispose.bind(effect);

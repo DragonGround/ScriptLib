@@ -8,17 +8,24 @@ export interface Effect {
 	_dispose(): void;
 }
 
-export interface PropertyEffect extends Effect {
-	_callback(newSignal?: Signal): void;
+export interface PropertyUpdater {
+	_update: (newSignal: Signal, newProps: Record<string, any>) => void;
+	_dispose: () => void;
 }
 
 export interface AugmentedElement extends HTMLElement {
-	_updaters?: Record<string, PropertyEffect | undefined> | null;
+	_updaters?: Record<string, PropertyUpdater | undefined> | null;
+}
+
+export interface AugmentedComponent extends Component<any, any> {
+	_vnode: VNode;
+	_updater?: Effect;
+	_updateFlags: number;
 }
 
 export interface VNode<P = any> extends PVNode<P> {
 	/** The component instance for this VNode */
-	_component: Component;
+	_component: AugmentedComponent;
 	/** The parent VNode */
 	_parent?: VNode;
 	/** The DOM node for this VNode */
@@ -27,17 +34,12 @@ export interface VNode<P = any> extends PVNode<P> {
 	__np?: Record<string, any> | null;
 }
 
-export interface ComponentType extends Component {
-	/** This component's owner VNode */
-	_vnode: VNode;
-}
-
 export const enum OptionsTypes {
 	HOOK = "_hook",
 	DIFF = "_diff",
 	DIFFED = "diffed",
 	RENDER = "_render",
-	CATCH_ERROR = "__e",
+	CATCH_ERROR = "_catchError",
 	UNMOUNT = "unmount",
 }
 

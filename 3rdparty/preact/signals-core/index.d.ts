@@ -1,5 +1,4 @@
 declare type Node = {
-    _flags: number;
     _source: Signal;
     _prevSource?: Node;
     _nextSource?: Node;
@@ -31,7 +30,6 @@ declare function signal<T>(value: T): Signal<T>;
 declare class Computed<T = any> extends Signal<T> {
     _compute: () => T;
     _sources?: Node;
-    _effects?: Effect;
     _globalVersion: number;
     _flags: number;
     constructor(compute: () => T);
@@ -39,24 +37,25 @@ declare class Computed<T = any> extends Signal<T> {
     get value(): T;
 }
 declare function Computed(this: Computed, compute: () => unknown): void;
+declare namespace Computed {
+    var prototype: Computed<any>;
+}
 interface ReadonlySignal<T = any> extends Signal<T> {
     readonly value: T;
 }
 declare function computed<T>(compute: () => T): ReadonlySignal<T>;
 declare class Effect {
-    _compute: () => unknown;
+    _compute?: () => unknown;
     _cleanup?: unknown;
     _sources?: Node;
-    _effects?: Effect;
-    _nextNestedEffect?: Effect;
     _nextBatchedEffect?: Effect;
     _flags: number;
-    constructor(compute: () => void, flags: number);
+    constructor(compute: () => void);
     _callback(): void;
     _start(): () => void;
     _notify(): void;
     _dispose(): void;
 }
-declare function Effect(this: Effect, compute: () => void, flags: number): void;
+declare function Effect(this: Effect, compute: () => void): void;
 declare function effect(compute: () => unknown): () => void;
 export { signal, computed, effect, batch, Signal, ReadonlySignal };

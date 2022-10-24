@@ -1,5 +1,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useComputed = exports.useSignal = exports.Signal = exports.effect = exports.batch = exports.computed = exports.signal = void 0;
+exports.useSignalEffect = exports.useComputed = exports.useSignal = exports.Signal = exports.effect = exports.batch = exports.computed = exports.signal = void 0;
 var preact_1 = require("preact");
 var hooks_1 = require("preact/hooks");
 var signals_core_1 = require("preact/signals-core");
@@ -8,20 +8,17 @@ Object.defineProperty(exports, "computed", { enumerable: true, get: function () 
 Object.defineProperty(exports, "batch", { enumerable: true, get: function () { return signals_core_1.batch; } });
 Object.defineProperty(exports, "effect", { enumerable: true, get: function () { return signals_core_1.effect; } });
 Object.defineProperty(exports, "Signal", { enumerable: true, get: function () { return signals_core_1.Signal; } });
-var hasPendingUpdate = new WeakSet();
-var hasHookState = new WeakSet();
-var hasComputeds = new WeakSet();
+var HAS_PENDING_UPDATE = 1 << 0;
+var HAS_HOOK_STATE = 1 << 1;
+var HAS_COMPUTEDS = 1 << 2;
 function hook(hookName, hookFn) {
     preact_1.options[hookName] = hookFn.bind(null, preact_1.options[hookName] || (function () { }));
 }
 var currentComponent;
-var currentUpdater;
 var finishUpdate;
-var updaterForComponent = new WeakMap();
 function setCurrentUpdater(updater) {
     if (finishUpdate)
         finishUpdate();
-    currentUpdater = updater;
     finishUpdate = updater && updater._start();
 }
 function createUpdater(update) {
@@ -41,11 +38,11 @@ function Text(_a) {
         var v = _this._vnode;
         while ((v = v._parent)) {
             if (v._component) {
-                hasComputeds.add(v._component);
+                v._component._updateFlags |= HAS_COMPUTEDS;
                 break;
             }
         }
-        currentUpdater._callback = function () {
+        _this._updater._callback = function () {
             _this.base.data = s.peek();
         };
         return (0, signals_core_1.computed)(function () {
@@ -87,24 +84,24 @@ hook("_diff", function (old, vnode) {
     old(vnode);
 });
 hook("_render", function (old, vnode) {
+    setCurrentUpdater();
     var updater;
     var component = vnode._component;
     if (component) {
-        hasPendingUpdate.delete(component);
-        updater = updaterForComponent.get(component);
+        component._updateFlags &= ~HAS_PENDING_UPDATE;
+        updater = component._updater;
         if (updater === undefined) {
-            updater = createUpdater(function () {
-                hasPendingUpdate.add(component);
+            component._updater = updater = createUpdater(function () {
+                component._updateFlags |= HAS_PENDING_UPDATE;
                 component.setState({});
             });
-            updaterForComponent.set(component, updater);
         }
     }
     currentComponent = component;
     setCurrentUpdater(updater);
     old(vnode);
 });
-hook("__e", function (old, error, vnode, oldVNode) {
+hook("_catchError", function (old, error, vnode, oldVNode) {
     setCurrentUpdater();
     currentComponent = undefined;
     old(error, vnode, oldVNode);
@@ -115,6 +112,7 @@ hook("diffed", function (old, vnode) {
     var dom;
     if (typeof vnode.type === "string" && (dom = vnode._dom)) {
         var props = vnode.__np;
+        var renderedProps = vnode.props;
         if (props) {
             var updaters = dom._updaters;
             if (updaters) {
@@ -134,51 +132,65 @@ hook("diffed", function (old, vnode) {
                 var updater = updaters[prop];
                 var signal_1 = props[prop];
                 if (updater === undefined) {
-                    updater = createPropUpdater(dom, prop, signal_1);
+                    updater = createPropUpdater(dom, prop, signal_1, renderedProps);
                     updaters[prop] = updater;
                 }
-                setCurrentUpdater(updater);
-                updater._callback(signal_1);
+                else {
+                    updater._update(signal_1, renderedProps);
+                }
             }
         }
     }
     old(vnode);
 });
-function createPropUpdater(dom, prop, signal) {
-    var setAsProperty = prop in dom;
-    return createUpdater(function (newSignal) {
-        if (newSignal)
-            signal = newSignal;
-        var value = signal.value;
-        if (newSignal) {
-        }
-        else if (setAsProperty) {
-            dom[prop] = value;
-        }
-        else if (value) {
-            dom.setAttribute(prop, value);
-        }
-        else {
-            dom.removeAttribute(prop);
-        }
-    });
+function createPropUpdater(dom, prop, propSignal, props) {
+    var setAsProperty = prop in dom &&
+        dom.ownerSVGElement === undefined;
+    var changeSignal = (0, signals_core_1.signal)(propSignal);
+    return {
+        _update: function (newSignal, newProps) {
+            changeSignal.value = newSignal;
+            props = newProps;
+        },
+        _dispose: (0, signals_core_1.effect)(function () {
+            var value = changeSignal.value.value;
+            if (props[prop] === value)
+                return;
+            props[prop] = value;
+            if (setAsProperty) {
+                dom[prop] = value;
+            }
+            else if (value) {
+                dom.setAttribute(prop, value);
+            }
+            else {
+                dom.removeAttribute(prop);
+            }
+        }),
+    };
 }
 hook("unmount", function (old, vnode) {
-    var component = vnode._component;
-    var updater = component && updaterForComponent.get(component);
-    if (updater) {
-        updaterForComponent.delete(component);
-        updater._dispose();
-    }
     if (typeof vnode.type === "string") {
         var dom = vnode._dom;
-        var updaters = dom._updaters;
-        if (updaters) {
-            dom._updaters = null;
-            for (var prop in updaters) {
-                var updater_1 = updaters[prop];
-                if (updater_1)
-                    updater_1._dispose();
+        if (dom) {
+            var updaters = dom._updaters;
+            if (updaters) {
+                dom._updaters = undefined;
+                for (var prop in updaters) {
+                    var updater = updaters[prop];
+                    if (updater)
+                        updater._dispose();
+                }
+            }
+        }
+    }
+    else {
+        var component = vnode._component;
+        if (component) {
+            var updater = component._updater;
+            if (updater) {
+                component._updater = undefined;
+                updater._dispose();
             }
         }
     }
@@ -186,17 +198,15 @@ hook("unmount", function (old, vnode) {
 });
 hook("_hook", function (old, component, index, type) {
     if (type < 3)
-        hasHookState.add(component);
+        component._updateFlags |= HAS_HOOK_STATE;
     old(component, index, type);
 });
 preact_1.Component.prototype.shouldComponentUpdate = function (props, state) {
-    var updater = updaterForComponent.get(this);
+    var updater = this._updater;
     var hasSignals = updater && updater._sources !== undefined;
-    if (!hasSignals && !hasComputeds.has(this))
+    if (!hasSignals && !(this._updateFlags & HAS_COMPUTEDS))
         return true;
-    if (hasPendingUpdate.has(this))
-        return true;
-    if (hasHookState.has(this))
+    if (this._updateFlags & (HAS_PENDING_UPDATE | HAS_HOOK_STATE))
         return true;
     for (var i in state)
         return true;
@@ -216,7 +226,17 @@ exports.useSignal = useSignal;
 function useComputed(compute) {
     var $compute = (0, hooks_1.useRef)(compute);
     $compute.current = compute;
-    hasComputeds.add(currentComponent);
+    currentComponent._updateFlags |= HAS_COMPUTEDS;
     return (0, hooks_1.useMemo)(function () { return (0, signals_core_1.computed)(function () { return $compute.current(); }); }, []);
 }
 exports.useComputed = useComputed;
+function useSignalEffect(cb) {
+    var callback = (0, hooks_1.useRef)(cb);
+    callback.current = cb;
+    (0, hooks_1.useEffect)(function () {
+        return (0, signals_core_1.effect)(function () {
+            callback.current();
+        });
+    }, []);
+}
+exports.useSignalEffect = useSignalEffect;
