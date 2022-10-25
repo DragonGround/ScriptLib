@@ -109,6 +109,7 @@ declare module "preact/jsx" {
 
         interface TextElement extends VisualElementNoChildren {
             text?: string
+            enableRichText? : boolean
         }
 
         interface Label extends TextElement {
