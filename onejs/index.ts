@@ -1,11 +1,24 @@
 import { StateUpdater, useEffect, useState } from "preact/hooks"
 
 
-export function useEventfulState<T, K extends keyof T>(obj: T, key: K): [T[K], StateUpdater<T[K]>] {
-    const [val, setVal] = useState(obj[key] as unknown as T[K])
+/**
+ * A convenience hook that, like useState(), returns a stateful value and a function to update it. This one ties the value to a property on a C# object. It takes care of setting up and cleaning up the C# value changed event automatically. Refer here for more info: https://onejs.com/dataflow#reducing-boilerplates
+ * 
+ * @param obj The C# object containing the property to be observed
+ * @param propertyName The name of the property to be observed
+ * @param eventName The name of the event to be observed. If not specified, it defaults to "On{propertyName}Changed"
+ * @returns 
+ */
+export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, eventName?: string): [T[K], StateUpdater<T[K]>] {
+    const [val, setVal] = useState(obj[propertyName] as unknown as T[K])
 
-    let addEventFunc = obj[`add_On${String(key)}Changed`] as Function
-    let removeEventFunc = obj[`remove_On${String(key)}Changed`] as Function
+    eventName = eventName || "On" + String(propertyName) + "Changed"
+    let addEventFunc = obj[`add_${eventName}`] as Function
+    let removeEventFunc = obj[`remove_${eventName}`] as Function
+
+    if (!addEventFunc || !removeEventFunc)
+        throw new Error(`The object does not have an event named ${eventName}`)
+
     let onValueChangedCallback = function (v) {
         setVal(v)
     }

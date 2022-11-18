@@ -151,11 +151,11 @@ declare module "preact/jsx" {
 
         interface BaseField<T> extends BindableElementNoChildren {
             label?: string
+            onValueChanged?: (e: ChangeEvent<ValueType>) => void
         }
 
         interface BaseFieldTraits<ValueType, UxmlType> extends BaseField<ValueType> {
             value?: ValueType
-            onValueChanged?: (e: ChangeEvent<ValueType>) => void
         }
 
         interface Button extends TextElement {
@@ -342,7 +342,7 @@ declare module "preact/jsx" {
 
         }
 
-        interface DropdownField extends VisualElement {
+        interface DropdownField extends BaseField<string> {
             text?: string
             label?: string
             index?: number
