@@ -32,5 +32,9 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
             removeEventFunc.call(obj, onValueChangedCallback)
         }
     }, [])
-    return [val, setVal]
+    const setValWrapper = (v) => {
+        obj[propertyName] = v
+        // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
+    }
+    return [val, setValWrapper]
 }

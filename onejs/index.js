@@ -20,6 +20,9 @@ function useEventfulState(obj, propertyName, eventName) {
             removeEventFunc.call(obj, onValueChangedCallback);
         };
     }, []);
-    return [val, setVal];
+    var setValWrapper = function (v) {
+        obj[propertyName] = v;
+    };
+    return [val, setValWrapper];
 }
 exports.useEventfulState = useEventfulState;
