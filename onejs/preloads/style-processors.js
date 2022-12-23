@@ -101,7 +101,27 @@ function setStyleColor(propertyName) {
 }
 function setStyleBackground(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleBackground(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(typeof value == "string" ? Utils_1.ImageLoader.Load(value) : value));
+        if (value == null) {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.StyleKeyword.Initial);
+            return;
+        }
+        else if (typeof value == "string") {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(Utils_1.ImageLoader.Load(value)));
+            return;
+        }
+        var type = getType(value);
+        if (type == UIElements_1.VectorImage) {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromVectorImage(value));
+        }
+        else if (type == UnityEngine_1.Sprite) {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromSprite(value));
+        }
+        else if (type == UnityEngine_1.RenderTexture) {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromRenderTexture(value));
+        }
+        else if (type == UnityEngine_1.Texture || type == UnityEngine_1.Texture2D) {
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(value));
+        }
     };
 }
 function setStyleLength(propertyName) {
