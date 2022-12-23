@@ -2,7 +2,7 @@
 
 
 declare module "preact/jsx" {
-    import { Color, Font, Texture, Texture2D, FontStyle, ScaleMode, TextAnchor } from "UnityEngine"
+    import { Color, Font, Texture, Texture2D, FontStyle, ScaleMode, TextAnchor, Sprite } from "UnityEngine"
     import { float2, float3, float4 } from "Unity/Mathematics"
     import { Align, DisplayStyle, EasingFunction, EasingMode, FlexDirection, FontDefinition, Justify, Overflow, OverflowClipBox, Position, TextOverflow, TextOverflowPosition, Visibility, WhiteSpace, Wrap } from "UnityEngine/UIElements"
 
@@ -15,7 +15,7 @@ declare module "preact/jsx" {
         alignItems?: keyof typeof Align
         alignSelf?: keyof typeof Align
         backgroundColor?: ColorInfo    // StyleColor
-        backgroundImage?: Texture | string   // StyleBackground
+        backgroundImage?: Sprite | Texture | string   // StyleBackground
 
         borderColor?: ColorInfo // StyleBorderColor (Custom)
         borderWidth?: number | number[] // StyleBorderWidth (Custom)

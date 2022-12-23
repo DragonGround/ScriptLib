@@ -151,7 +151,7 @@ declare module "preact/jsx" {
 
         interface BaseField<T> extends BindableElementNoChildren {
             label?: string
-            onValueChanged?: (e: ChangeEvent<ValueType>) => void
+            onValueChanged?: (e: ChangeEvent<T>) => void
         }
 
         interface BaseFieldTraits<ValueType, UxmlType> extends BaseField<ValueType> {
