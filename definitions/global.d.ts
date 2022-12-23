@@ -4,6 +4,8 @@ declare function log(obj: any): void
 declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
 
+declare function struct<T>(type: { new(): T }, obj: any): T
+
 declare var __dirname: string
 declare var System: any
 declare type float = number
