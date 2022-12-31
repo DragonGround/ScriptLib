@@ -72,7 +72,7 @@ declare module "preact/jsx" {
         textShadow?: TextShadowInfo // StyleTextShadow
 
         top?: number | string  // StyleLength
-        transformOrigin?: float2 | number[] // StyleTransformOrigin
+        transformOrigin?: float2 | number[] | string[] // StyleTransformOrigin
         transitionDelay?: number[]  // StyleList<TimeValue>
         transitionDuration?: number[]  // StyleList<TimeValue>
         transitionProperty?: (keyof StyleKeys)[]   // StyleList<StylePropertyName>

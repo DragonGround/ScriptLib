@@ -138,23 +138,28 @@ function setStyleBackground(propertyName: keyof Style) {
     }
 }
 
+function _getLength(value) {
+    let v: Length
+    if (typeof value === "string") {
+        if (value.endsWith("%")) {
+            let n = parseFloat(value.replace("%", ""))
+            if (!isNaN(n))
+                v = new Length(n, LengthUnit.Percent)
+        } else {
+            let n = parseFloat(value.endsWith("px") ? value.replace("px", "") : value)
+            if (!isNaN(n))
+                v = new Length(n, LengthUnit.Pixel)
+        }
+
+    } else if (typeof value === "number") {
+        v = new Length(value)
+    }
+    return v
+}
+
 function setStyleLength(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        let v: Length
-        if (typeof value === "string") {
-            if (value.endsWith("%")) {
-                let n = parseFloat(value.replace("%", ""))
-                if (!isNaN(n))
-                    v = new Length(n, LengthUnit.Percent)
-            } else {
-                let n = parseFloat(value.endsWith("px") ? value.replace("px", "") : value)
-                if (!isNaN(n))
-                    v = new Length(n, LengthUnit.Pixel)
-            }
-
-        } else if (typeof value === "number") {
-            v = new Length(value)
-        }
+        let v = _getLength(value)
         style[propertyName] = value == null || typeof v === "undefined" ? new StyleLength(StyleKeyword.Initial) : new StyleLength(v)
     }
 }
@@ -205,8 +210,11 @@ function setStyleTextShadow(propertyName: keyof Style) {
 
 function setStyleTransformOrigin(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        let v = parseFloat3(value)
-        style[propertyName] = value == null ? new StyleTransformOrigin(StyleKeyword.Initial) : new StyleTransformOrigin(new TransformOrigin(new Length(v.x), new Length(v.y), v.z))
+        if (!Array.isArray(value))
+            return
+        // let v = parseFloat3(value)
+        let vals = [_getLength(value[0]), _getLength(value[1])]
+        style[propertyName] = value == null ? new StyleTransformOrigin(StyleKeyword.Initial) : new StyleTransformOrigin(new TransformOrigin(vals[0], vals[1], 0))
     }
 }
 

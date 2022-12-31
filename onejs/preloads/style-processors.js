@@ -124,24 +124,28 @@ function setStyleBackground(propertyName) {
         }
     };
 }
+function _getLength(value) {
+    var v;
+    if (typeof value === "string") {
+        if (value.endsWith("%")) {
+            var n = parseFloat(value.replace("%", ""));
+            if (!isNaN(n))
+                v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Percent);
+        }
+        else {
+            var n = parseFloat(value.endsWith("px") ? value.replace("px", "") : value);
+            if (!isNaN(n))
+                v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Pixel);
+        }
+    }
+    else if (typeof value === "number") {
+        v = new UIElements_1.Length(value);
+    }
+    return v;
+}
 function setStyleLength(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        var v;
-        if (typeof value === "string") {
-            if (value.endsWith("%")) {
-                var n = parseFloat(value.replace("%", ""));
-                if (!isNaN(n))
-                    v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Percent);
-            }
-            else {
-                var n = parseFloat(value.endsWith("px") ? value.replace("px", "") : value);
-                if (!isNaN(n))
-                    v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Pixel);
-            }
-        }
-        else if (typeof value === "number") {
-            v = new UIElements_1.Length(value);
-        }
+        var v = _getLength(value);
         style[propertyName] = value == null || typeof v === "undefined" ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(v);
     };
 }
@@ -185,8 +189,10 @@ function setStyleTextShadow(propertyName) {
 }
 function setStyleTransformOrigin(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        var v = (0, float_parser_1.parseFloat3)(value);
-        style[propertyName] = value == null ? new UIElements_1.StyleTransformOrigin(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTransformOrigin(new UIElements_1.TransformOrigin(new UIElements_1.Length(v.x), new UIElements_1.Length(v.y), v.z));
+        if (!Array.isArray(value))
+            return;
+        var vals = [_getLength(value[0]), _getLength(value[1])];
+        style[propertyName] = value == null ? new UIElements_1.StyleTransformOrigin(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTransformOrigin(new UIElements_1.TransformOrigin(vals[0], vals[1], 0));
     };
 }
 function setStyleListTimeValue(propertyName, valueType) {
