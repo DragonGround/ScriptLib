@@ -1,4 +1,7 @@
+
+
 declare module "UnityEngine" {
+    import { UnityAction } from "UnityEngine/Events"
 
     export enum ApplicationInstallMode {
         Unknown,
@@ -150,6 +153,14 @@ declare module "UnityEngine" {
         Microphone,
     }
 
+    export enum ApplicationMemoryUsage {
+        Unknown,
+        Low,
+        Medium,
+        High,
+        Critical,
+    }
+
     export class YieldInstruction {
         constructor()
     }
@@ -162,12 +173,17 @@ declare module "UnityEngine" {
         constructor()
     }
 
+    export class ApplicationMemoryUsageChange {
+        memoryUsage: ApplicationMemoryUsage
+        constructor(usage: ApplicationMemoryUsage)
+    }
+
     type LogCallback = (logString: string, stackTrace: string, type: LogType) => void
+    type LowMemoryCallback = () => void
+    type MemoryUsageChangedCallback = (usage: ApplicationMemoryUsageChange) => void
+    type AdvertisingIdentifierCallback = (advertisingId: string, trackingEnabled: boolean, errorMsg: string) => void
 
     export class Application {
-        static isLoadingLevel: boolean
-        static streamedBytes: number
-        static webSecurityEnabled: boolean
         static isPlaying: boolean
         static isFocused: boolean
         static buildGUID: string
@@ -188,64 +204,52 @@ declare module "UnityEngine" {
         static companyName: string
         static cloudProjectId: string
         static targetFrameRate: number
-        static stackTraceLogType: StackTraceLogType
         static consoleLogPath: string
         static backgroundLoadingPriority: ThreadPriority
         static genuine: boolean
         static genuineCheckAvailable: boolean
-        static isShowingSplashScreen: boolean
         static platform: RuntimePlatform
         static isMobilePlatform: boolean
         static isConsolePlatform: boolean
         static systemLanguage: SystemLanguage
         static internetReachability: NetworkReachability
-        static isPlayer: boolean
-        static levelCount: number
-        static loadedLevel: number
-        static loadedLevelName: string
+        static exitCancellationToken: any // System.Threading.CancellationToken
         static isEditor: boolean
+        static add_lowMemory(handler: LowMemoryCallback): void
+        static remove_lowMemory(handler: LowMemoryCallback): void
+        static add_memoryUsageChanged(handler: MemoryUsageChangedCallback): void
+        static remove_memoryUsageChanged(handler: MemoryUsageChangedCallback): void
+        static add_logMessageReceived(handler: LogCallback): void
+        static remove_logMessageReceived(handler: LogCallback): void
+        static add_logMessageReceivedThreaded(handler: LogCallback): void
+        static remove_logMessageReceivedThreaded(handler: LogCallback): void
+        static add_onBeforeRender(handler: UnityAction): void
+        static remove_onBeforeRender(handler: UnityAction): void
+        static add_focusChanged(handler: (a: boolean) => void): void
+        static remove_focusChanged(handler: (a: boolean) => void): void
+        static add_deepLinkActivated(handler: (a: string) => void): void
+        static remove_deepLinkActivated(handler: (a: string) => void): void
+        static add_wantsToQuit(handler: () => boolean): void
+        static remove_wantsToQuit(handler: () => boolean): void
+        static add_quitting(handler: () => void): void
+        static remove_quitting(handler: () => void): void
+        static add_unloading(handler: () => void): void
+        static remove_unloading(handler: () => void): void
         static Quit(exitCode: number): void
         static Quit(): void
-        static CancelQuit(): void
         static Unload(): void
-        static GetStreamProgressForLevel(levelIndex: number): number
-        static GetStreamProgressForLevel(levelName: string): number
         static CanStreamedLevelBeLoaded(levelIndex: number): boolean
         static CanStreamedLevelBeLoaded(levelName: string): boolean
         static IsPlaying(obj: any): boolean
         static GetBuildTags(): String[]
         static SetBuildTags(buildTags: String[]): void
         static HasProLicense(): boolean
-        static ExternalEval(script: string): void
-        static RequestAdvertisingIdentifierAsync(delegateMethod: any /* AdvertisingIdentifierCallback */): boolean
+        static RequestAdvertisingIdentifierAsync(delegateMethod: AdvertisingIdentifierCallback): boolean
         static OpenURL(url: string): void
-        static ForceCrash(mode: number): void
         static GetStackTraceLogType(logType: LogType): StackTraceLogType
         static SetStackTraceLogType(logType: LogType, stackTraceType: StackTraceLogType): void
         static RequestUserAuthorization(mode: UserAuthorization): AsyncOperation
         static HasUserAuthorization(mode: UserAuthorization): boolean
-        static ExternalCall(functionName: string, args: Object[]): void
-        static DontDestroyOnLoad(o: any): void
-        static CaptureScreenshot(filename: string, superSize: number): void
-        static CaptureScreenshot(filename: string): void
-        static RegisterLogCallback(handler: (a: string, b: string, c: LogType) => void): void
-        static RegisterLogCallbackThreaded(handler: (a: string, b: string, c: LogType) => void): void
-        static LoadLevel(index: number): void
-        static LoadLevel(name: string): void
-        static LoadLevelAdditive(index: number): void
-        static LoadLevelAdditive(name: string): void
-        static LoadLevelAsync(index: number): AsyncOperation
-        static LoadLevelAsync(levelName: string): AsyncOperation
-        static LoadLevelAdditiveAsync(index: number): AsyncOperation
-        static LoadLevelAdditiveAsync(levelName: string): AsyncOperation
-        static UnloadLevel(index: number): boolean
-        static UnloadLevel(scenePath: string): boolean
-
-        static add_logMessageReceived(callback: LogCallback): void
-        static remove_logMessageReceived(callback: LogCallback): void
-        static add_logMessageReceivedThreaded(callback: LogCallback): void
-        static remove_logMessageReceivedThreaded(callback: LogCallback): void
-        
         constructor()
     }
 }

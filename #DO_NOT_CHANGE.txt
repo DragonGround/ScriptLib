@@ -1,0 +1,1 @@
+The ScriptLib folder is managed by OneJS. It will get overriden during OneJS version updates. If you make any changes in here and would like to keep them, please back them up!
