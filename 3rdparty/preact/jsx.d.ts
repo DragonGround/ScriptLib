@@ -1,5 +1,5 @@
 // Users who only use Preact for SSR might not specify "dom" in their lib in tsconfig.json
-/// <reference lib="dom" />
+///// <reference lib="dom" />
 
 declare module "preact/jsx" {
 	import {

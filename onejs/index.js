@@ -8,7 +8,7 @@ function useEventfulState(obj, propertyName, eventName) {
     var addEventFunc = obj["add_".concat(eventName)];
     var removeEventFunc = obj["remove_".concat(eventName)];
     if (!addEventFunc || !removeEventFunc)
-        throw new Error("The object does not have an event named ".concat(eventName));
+        throw new Error("[useEventfulState] The object does not have an event named ".concat(eventName));
     var onValueChangedCallback = function (v) {
         setVal(v);
     };

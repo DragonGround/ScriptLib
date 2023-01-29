@@ -20,6 +20,7 @@ declare module "preact/jsx" {
         export interface VisualElement {
             id?: string
             ref?: Ref<any>
+            key?: string
 
             children?: (string | number | Element) | (string | number | Element)[]
 
@@ -373,7 +374,7 @@ declare module "preact/jsx" {
         export interface IntrinsicElements {
             div: VisualElement
             box: Box
-            text: TextElement
+            textelement: TextElement
             label: Label
             image: Image
             foldout: Foldout

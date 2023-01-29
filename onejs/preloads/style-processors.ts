@@ -1,4 +1,4 @@
-import { ImageLoader, UIStyleUtil, FontLoader } from "OneJS/Utils"
+import { UIStyleUtil } from "OneJS/Utils"
 import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
@@ -122,7 +122,7 @@ function setStyleBackground(propertyName: keyof Style) {
             style[propertyName] = new StyleBackground(StyleKeyword.Initial)
             return
         } else if (typeof value == "string") {
-            style[propertyName] = new StyleBackground(Background.FromTexture2D(ImageLoader.Load(value)))
+            style[propertyName] = new StyleBackground(Background.FromTexture2D(resource.loadImage(value)))
             return
         }
         let type = getType(value)
@@ -269,13 +269,13 @@ function setStyleTranslate(propertyName: keyof Style) {
 
 function setStyleFont(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleFont(StyleKeyword.Initial) : new StyleFont(typeof value == "string" ? FontLoader.Load(value) : value)
+        style[propertyName] = value == null ? new StyleFont(StyleKeyword.Initial) : new StyleFont(typeof value == "string" ? resource.loadFont(value) : value)
     }
 }
 
 function setStyleFontDefinition(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleFontDefinition(StyleKeyword.Initial) : new StyleFontDefinition(typeof value == "string" ? FontLoader.Load(value) : value)
+        style[propertyName] = value == null ? new StyleFontDefinition(StyleKeyword.Initial) : new StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value)
     }
 }
 

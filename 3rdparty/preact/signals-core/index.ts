@@ -391,11 +391,9 @@ function Computed(this: Computed, compute: () => unknown) {
 	this._flags = OUTDATED;
 }
 
-// @ts-ignore
-Computed.prototype = new Signal() as Computed;
+Computed.prototype = new Signal() as unknown as Computed;
 
-// @ts-ignore
-Computed.prototype._refresh = function () {
+(Computed.prototype as any)._refresh = function () {
 	this._flags &= ~NOTIFIED;
 
 	if (this._flags & RUNNING) {
@@ -448,8 +446,7 @@ Computed.prototype._refresh = function () {
 	return true;
 };
 
-// @ts-ignore
-Computed.prototype._subscribe = function (node) {
+(Computed.prototype as any)._subscribe = function (node) {
 	if (this._targets === undefined) {
 		this._flags |= OUTDATED | TRACKING;
 
@@ -466,8 +463,7 @@ Computed.prototype._subscribe = function (node) {
 	Signal.prototype._subscribe.call(this, node);
 };
 
-// @ts-ignore
-Computed.prototype._unsubscribe = function (node) {
+(Computed.prototype as any)._unsubscribe = function (node) {
 	Signal.prototype._unsubscribe.call(this, node);
 
 	// Computed signal unsubscribes from its dependencies from it loses its last subscriber.
@@ -484,7 +480,7 @@ Computed.prototype._unsubscribe = function (node) {
 	}
 };
 
-Computed.prototype._notify = function () {
+(Computed.prototype as any)._notify = function () {
 	if (!(this._flags & NOTIFIED)) {
 		this._flags |= OUTDATED | NOTIFIED;
 
@@ -498,8 +494,7 @@ Computed.prototype._notify = function () {
 	}
 };
 
-// @ts-ignore
-Computed.prototype.peek = function () {
+(Computed.prototype as any).peek = function () {
 	if (!this._refresh()) {
 		cycleDetected();
 	}

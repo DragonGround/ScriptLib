@@ -106,7 +106,7 @@ function setStyleBackground(propertyName) {
             return;
         }
         else if (typeof value == "string") {
-            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(Utils_1.ImageLoader.Load(value)));
+            style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(resource.loadImage(value)));
             return;
         }
         var type = getType(value);
@@ -239,12 +239,12 @@ function setStyleTranslate(propertyName) {
 }
 function setStyleFont(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleFont(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFont(typeof value == "string" ? Utils_1.FontLoader.Load(value) : value);
+        style[propertyName] = value == null ? new UIElements_1.StyleFont(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFont(typeof value == "string" ? resource.loadFont(value) : value);
     };
 }
 function setStyleFontDefinition(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleFontDefinition(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFontDefinition(typeof value == "string" ? Utils_1.FontLoader.Load(value) : value);
+        style[propertyName] = value == null ? new UIElements_1.StyleFontDefinition(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value);
     };
 }
 function setStyleBorderColor(propertyName) {

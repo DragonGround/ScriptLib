@@ -186,8 +186,8 @@ function namedColors() {
     }
     var res = [];
     for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
-        var name_1 = names_1[_a];
-        res.push(namedColor(name_1));
+        var name = names_1[_a];
+        res.push(namedColor(name));
     }
     return res;
 }

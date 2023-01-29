@@ -1,8 +1,12 @@
 declare function require(path: string): any
 declare function importNamespace(path: string): any
-declare function log(obj: any): void
 declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
+declare function log(obj: any): void
+declare function error(obj: any): void
+declare function warn(obj: any): void
+declare function logTime(obj: any): void
+declare function logTimeEnd(obj: any): void
 
 declare function struct<T>(type: { new(): T }, obj: any): T
 
@@ -25,17 +29,18 @@ declare type LowercaseMapping<A, B> = {
     [Property in keyof A as `${Lowercase<string & Property>}`]: B
 };
 
-declare interface Document {
-    Root: any
-    addRuntimeUSS(uss: string): any // returns the created Unity StyleSheet ScriptableObject
-    removeRuntimeStyleSheet(sheet: any): void
-    clearRuntimeStyleSheets(): void
-}
-
-declare interface HTMLElement {
-    clearChildren()
+interface ElementCreationOptions {
+    is: string
 }
 
 declare interface CSSStyleDeclaration {
     setProperty(property: string, value: any): void
 }
+
+interface Resource {
+    loadFont(path: string): Font
+    loadFontDefinition(path: string): FontDefinition
+    loadImage(path: string): Texture2D
+}
+
+declare var resource: Resource

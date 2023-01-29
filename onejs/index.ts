@@ -17,7 +17,7 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
     let removeEventFunc = obj[`remove_${eventName}`] as Function
 
     if (!addEventFunc || !removeEventFunc)
-        throw new Error(`The object does not have an event named ${eventName}`)
+        throw new Error(`[useEventfulState] The object does not have an event named ${eventName}`)
 
     let onValueChangedCallback = function (v) {
         setVal(v)
