@@ -1,8 +1,7 @@
 
 
 declare module "UnityEngine/UIElements" {
-    import { List } from "System/Collections/Generic"
-    import { Color } from "UnityEngine"
+    import { IEnumerable, IEnumerator, List } from "System/Collections/Generic"
 
     export class StyleList<T> implements IStyleValue<List<T>> {
         value: List<T>
@@ -29,5 +28,12 @@ declare module "UnityEngine/UIElements" {
         static IsNullOrEmpty(propertyName: StylePropertyName): boolean
 
         constructor(name: string)
+    }
+
+    
+
+    export class StylePropertyNameCollection implements IEnumerable<StylePropertyName> {
+        GetEnumerator(): IEnumerator<StylePropertyName>
+        Contains(stylePropertyName: StylePropertyName): boolean
     }
 }

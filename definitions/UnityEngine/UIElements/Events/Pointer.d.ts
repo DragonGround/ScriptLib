@@ -2,9 +2,7 @@
 
 declare module "UnityEngine/UIElements" {
     import { IDisposable } from "System"
-    import { EventModifiers } from "IMGUI"
-    import { PenStatus, PenData } from "InputLegacy"
-    import { Vector3, Vector2 } from "UnityEngine"
+    import { Vector3, Vector2, Touch, PenStatus, PenData, Event, EventModifiers } from "UnityEngine"
 
     export interface IPointerEventInternal {
         triggeredByOS: boolean

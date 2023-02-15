@@ -25,6 +25,20 @@ declare module "UnityEngine" {
         deltaPos: Vector2
     }
 
+    export enum TouchPhase {
+        Began,
+        Moved,
+        Stationary,
+        Ended,
+        Canceled,
+    }
+    
+    export enum TouchType {
+        Direct,
+        Indirect,
+        Stylus,
+    }
+
     export class Touch {
         fingerId: number
         position: Vector2
@@ -61,6 +75,53 @@ declare module "UnityEngine" {
         LandscapeRight,
         FaceUp,
         FaceDown,
+    }
+
+    export enum LocationServiceStatus {
+        Stopped,
+        Initializing,
+        Running,
+        Failed,
+    }
+
+    export class LocationInfo {
+        latitude: number
+        longitude: number
+        altitude: number
+        horizontalAccuracy: number
+        verticalAccuracy: number
+        timestamp: number
+    }
+
+    export class LocationService {
+        isEnabledByUser: boolean
+        status: LocationServiceStatus
+        lastData: LocationInfo
+        constructor()
+        Start(desiredAccuracyInMeters: number, updateDistanceInMeters: number): void
+        Start(desiredAccuracyInMeters: number): void
+        Start(): void
+        Stop(): void
+    }
+
+    export class Compass {
+        magneticHeading: number
+        trueHeading: number
+        headingAccuracy: number
+        rawVector: Vector3
+        timestamp: number
+        enabled: boolean
+        constructor()
+    }
+
+    export class Gyroscope {
+        rotationRate: Vector3
+        rotationRateUnbiased: Vector3
+        gravity: Vector3
+        userAcceleration: Vector3
+        attitude: Quaternion
+        enabled: boolean
+        updateInterval: number
     }
 
     export class Input {
