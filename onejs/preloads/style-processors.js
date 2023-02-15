@@ -174,7 +174,11 @@ function setStyleRotate(propertyName) {
 }
 function setStyleScale(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        var v = (0, float_parser_1.parseFloat2)(value);
+        var v = value;
+        if (typeof value == "number")
+            v = new UnityEngine_1.Vector2(value, value);
+        if (Array.isArray(value))
+            v = new UnityEngine_1.Vector2(value[0], value[1]);
         style[propertyName] = value == null ? new UIElements_1.StyleScale(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleScale(new UIElements_1.Scale(v));
     };
 }

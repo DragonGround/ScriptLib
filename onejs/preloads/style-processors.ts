@@ -2,8 +2,7 @@ import { UIStyleUtil } from "OneJS/Utils"
 import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
-import { List } from "System/Collections/Generic"
-import { FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D } from "UnityEngine"
+import { FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D, Vector2 } from "UnityEngine"
 import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage } from "UnityEngine/UIElements"
 
 /**
@@ -193,7 +192,11 @@ function setStyleRotate(propertyName: keyof Style) {
 
 function setStyleScale(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        var v = parseFloat2(value)
+        var v = value
+        if (typeof value == "number")
+            v = new Vector2(value, value)
+        if (Array.isArray(value))
+            v = new Vector2(value[0], value[1])
         style[propertyName] = value == null ? new StyleScale(StyleKeyword.Initial) : new StyleScale(new Scale(v))
     }
 }
