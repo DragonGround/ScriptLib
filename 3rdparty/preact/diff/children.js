@@ -55,7 +55,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
         oldVNode = oldVNode || constants_1.EMPTY_OBJ;
         (0, index_1.diff)(parentDom, childVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
         newDom = childVNode._dom;
-        if ((j = childVNode.ref) && oldVNode.ref != j) {
+        if ((j = childVNode.ref) && oldVNode.ref !== j) {
             if (refs === null || typeof refs === "undefined")
                 refs = [];
             if (oldVNode.ref)

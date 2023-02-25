@@ -30,8 +30,6 @@ declare module "UnityEngine/UIElements" {
         constructor(name: string)
     }
 
-    
-
     export class StylePropertyNameCollection implements IEnumerable<StylePropertyName> {
         GetEnumerator(): IEnumerator<StylePropertyName>
         Contains(stylePropertyName: StylePropertyName): boolean
