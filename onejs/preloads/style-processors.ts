@@ -90,6 +90,7 @@ setStyleInt("unitySliceBottom")
 setStyleInt("unitySliceLeft")
 setStyleInt("unitySliceRight")
 setStyleInt("unitySliceTop")
+setStyleFloat("unitySliceScale")
 
 setStyleEnum("unityTextAlign", TextAnchor)
 setStyleColor("unityTextOutlineColor")

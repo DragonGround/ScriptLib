@@ -90,6 +90,7 @@ declare module "preact/jsx" {
         unitySliceLeft?: number   // StyleInt
         unitySliceRight?: number   // StyleInt
         unitySliceTop?: number   // StyleInt
+        unitySliceScale?: number   // StyleFloat
 
         unityTextAlign?: keyof typeof TextAnchor
         unityTextOutlineColor?: ColorInfo   // StyleColor
@@ -180,6 +181,7 @@ declare module "preact/jsx" {
         "-unity-slice-left": any,
         "-unity-slice-right": any,
         "-unity-slice-top": any,
+        "-unity-slice-scale": any,
         "-unity-text-align": any,
         "-unity-text-outline": any,
         "-unity-text-outline-color": any,

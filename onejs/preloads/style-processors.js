@@ -79,6 +79,7 @@ setStyleInt("unitySliceBottom");
 setStyleInt("unitySliceLeft");
 setStyleInt("unitySliceRight");
 setStyleInt("unitySliceTop");
+setStyleFloat("unitySliceScale");
 setStyleEnum("unityTextAlign", UnityEngine_1.TextAnchor);
 setStyleColor("unityTextOutlineColor");
 setStyleFloat("unityTextOutlineWidth");
