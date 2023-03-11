@@ -2,7 +2,7 @@ import { UIStyleUtil } from "OneJS/Utils"
 import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
-import { FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D, Vector2 } from "UnityEngine"
+import { Color, FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D, Vector2 } from "UnityEngine"
 import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage } from "UnityEngine/UIElements"
 
 /**
@@ -110,7 +110,7 @@ function setStyleEnum(propertyName: keyof Style, enumType) {
 
 function setStyleColor(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style[propertyName] = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(getType(value) == Color ? value : parseColor(value))
     }
 }
 

@@ -96,7 +96,7 @@ function setStyleEnum(propertyName, enumType) {
 }
 function setStyleColor(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style[propertyName] = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor(getType(value) == UnityEngine_1.Color ? value : (0, color_parser_1.parseColor)(value));
     };
 }
 function setStyleBackground(propertyName) {
