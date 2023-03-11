@@ -4,8 +4,8 @@
 declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
-    import { Bounds, BoundsInt, Color, Rect, RectInt, Texture, Texture2D, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
-    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent, ScrollerVisibility, PopupField, DropdownField, NavigationMoveEvent, NavigationTabEvent, NavigationCancelEvent, NavigationSubmitEvent, TransitionCancelEvent, TransitionEndEvent, TransitionRunEvent, TransitionStartEvent } from "UnityEngine/UIElements"
+    import { Bounds, BoundsInt, Color, Rect, RectInt, ScaleMode, Sprite, Texture, Texture2D, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
+    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent, ScrollerVisibility, PopupField, DropdownField, NavigationMoveEvent, NavigationTabEvent, NavigationCancelEvent, NavigationSubmitEvent, TransitionCancelEvent, TransitionEndEvent, TransitionRunEvent, TransitionStartEvent, VectorImage } from "UnityEngine/UIElements"
 
     namespace JSXInternal {
 
@@ -119,6 +119,12 @@ declare module "preact/jsx" {
 
         interface Image extends VisualElementNoChildren {
             image?: Texture
+            sprite?: Sprite
+            vectorImage?: VectorImage
+            sourceRect?: Rect
+            uv?: Rect
+            scaleMode?: ScaleMode
+            tintColor?: Color
         }
 
         interface IMGUIContainer extends VisualElementNoChildren {
