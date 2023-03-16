@@ -92,17 +92,17 @@ function setStyleEnum(propertyName, enumType) {
     styleProcessors[propertyName] = function (style, value) {
         var styleEnumNull = document.createStyleEnumWithKeyword(UIElements_1.StyleKeyword.Initial, getType(enumType));
         var styleEnum = document.createStyleEnum(enumType[value], getType(enumType));
-        style[propertyName] = value == null ? styleEnumNull : styleEnum;
+        style[propertyName] = !value ? styleEnumNull : styleEnum;
     };
 }
 function setStyleColor(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor(getType(value) == UnityEngine_1.Color ? value : (0, color_parser_1.parseColor)(value));
+        style[propertyName] = !value ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor(getType(value) == UnityEngine_1.Color ? value : (0, color_parser_1.parseColor)(value));
     };
 }
 function setStyleBackground(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        if (value == null) {
+        if (!value) {
             style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.StyleKeyword.Initial);
             return;
         }
@@ -147,17 +147,17 @@ function _getLength(value) {
 function setStyleLength(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
         var v = _getLength(value);
-        style[propertyName] = value == null || typeof v === "undefined" ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(v);
+        style[propertyName] = !value || typeof v === "undefined" ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(v);
     };
 }
 function setStyleFloat(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(value);
+        style[propertyName] = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(value);
     };
 }
 function setStyleInt(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleInt(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleInt(value);
+        style[propertyName] = !value ? new UIElements_1.StyleInt(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleInt(value);
     };
 }
 function setStyleCursor(propertyName) {
@@ -165,12 +165,12 @@ function setStyleCursor(propertyName) {
         var cursor = new UIElements_1.Cursor();
         cursor.texture = value.texture;
         cursor.hotspot = value.hotspot;
-        style[propertyName] = value == null ? new UIElements_1.StyleCursor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleCursor(new UIElements_1.Cursor());
+        style[propertyName] = !value ? new UIElements_1.StyleCursor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleCursor(new UIElements_1.Cursor());
     };
 }
 function setStyleRotate(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleRotate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(value)));
+        style[propertyName] = !value ? new UIElements_1.StyleRotate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(value)));
     };
 }
 function setStyleScale(propertyName) {
@@ -180,7 +180,7 @@ function setStyleScale(propertyName) {
             v = new UnityEngine_1.Vector2(value, value);
         if (Array.isArray(value))
             v = new UnityEngine_1.Vector2(value[0], value[1]);
-        style[propertyName] = value == null ? new UIElements_1.StyleScale(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleScale(new UIElements_1.Scale(v));
+        style[propertyName] = !value ? new UIElements_1.StyleScale(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleScale(new UIElements_1.Scale(v));
     };
 }
 function setStyleTextShadow(propertyName) {
@@ -189,7 +189,7 @@ function setStyleTextShadow(propertyName) {
         ts.offset = (0, float_parser_1.parseFloat2)(value.offset);
         ts.blurRadius = value.blurRadius;
         ts.color = (0, color_parser_1.parseColor)(value.color);
-        style[propertyName] = value == null ? new UIElements_1.StyleTextShadow(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTextShadow(ts);
+        style[propertyName] = !value ? new UIElements_1.StyleTextShadow(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTextShadow(ts);
     };
 }
 function setStyleTransformOrigin(propertyName) {
@@ -197,7 +197,7 @@ function setStyleTransformOrigin(propertyName) {
         if (!Array.isArray(value))
             return;
         var vals = [_getLength(value[0]), _getLength(value[1])];
-        style[propertyName] = value == null ? new UIElements_1.StyleTransformOrigin(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTransformOrigin(new UIElements_1.TransformOrigin(vals[0], vals[1], 0));
+        style[propertyName] = !value ? new UIElements_1.StyleTransformOrigin(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTransformOrigin(new UIElements_1.TransformOrigin(vals[0], vals[1], 0));
     };
 }
 function setStyleListTimeValue(propertyName, valueType) {
@@ -209,7 +209,7 @@ function setStyleListTimeValue(propertyName, valueType) {
             list.Add(new UIElements_1.TimeValue(value[i]));
         var styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         var styleList = document.createStyleList(list, getType(valueType));
-        style[propertyName] = value == null ? styleListNull : styleList;
+        style[propertyName] = !value ? styleListNull : styleList;
     };
 }
 function setStyleListPropertyName(propertyName, valueType) {
@@ -221,7 +221,7 @@ function setStyleListPropertyName(propertyName, valueType) {
             list.Add(new UIElements_1.StylePropertyName(value[i]));
         var styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         var styleList = document.createStyleList(list, getType(valueType));
-        style[propertyName] = value == null ? styleListNull : styleList;
+        style[propertyName] = !value ? styleListNull : styleList;
     };
 }
 function setStyleListEasingFunction(propertyName, valueType) {
@@ -233,31 +233,31 @@ function setStyleListEasingFunction(propertyName, valueType) {
             list.Add(new UIElements_1.EasingFunction(UIElements_1.EasingMode[value[i]]));
         var styleListNull = document.createStyleListWithKeyword(UIElements_1.StyleKeyword.Initial, getType(valueType));
         var styleList = document.createStyleList(list, getType(valueType));
-        style[propertyName] = value == null ? styleListNull : styleList;
+        style[propertyName] = !value ? styleListNull : styleList;
     };
 }
 function setStyleTranslate(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
         var v = (0, float_parser_1.parseFloat3)(value);
-        style[propertyName] = value == null ? new UIElements_1.StyleTranslate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTranslate(new UIElements_1.Translate(new UIElements_1.Length(v.x), new UIElements_1.Length(v.y), v.z));
+        style[propertyName] = !value ? new UIElements_1.StyleTranslate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTranslate(new UIElements_1.Translate(new UIElements_1.Length(v.x), new UIElements_1.Length(v.y), v.z));
     };
 }
 function setStyleFont(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleFont(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFont(typeof value == "string" ? resource.loadFont(value) : value);
+        style[propertyName] = !value ? new UIElements_1.StyleFont(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFont(typeof value == "string" ? resource.loadFont(value) : value);
     };
 }
 function setStyleFontDefinition(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = value == null ? new UIElements_1.StyleFontDefinition(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value);
+        style[propertyName] = !value ? new UIElements_1.StyleFontDefinition(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value);
     };
 }
 function setStyleBorderColor(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style.borderTopColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
-        style.borderRightColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
-        style.borderBottomColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
-        style.borderLeftColor = value == null ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderTopColor = !value ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderRightColor = !value ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderBottomColor = !value ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
+        style.borderLeftColor = !value ? new UIElements_1.StyleColor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleColor((0, color_parser_1.parseColor)(value));
     };
 }
 function setStyleBorderWidth(propertyName) {
@@ -270,10 +270,10 @@ function setStyleBorderWidth(propertyName) {
         else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value;
         }
-        style.borderTopWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[0]);
-        style.borderRightWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[1]);
-        style.borderBottomWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[2]);
-        style.borderLeftWidth = value == null ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[3]);
+        style.borderTopWidth = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[0]);
+        style.borderRightWidth = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[1]);
+        style.borderBottomWidth = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[2]);
+        style.borderLeftWidth = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(vals[3]);
     };
 }
 function setStyleBorderRadius(propertyName) {
@@ -286,10 +286,10 @@ function setStyleBorderRadius(propertyName) {
         else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value;
         }
-        style.borderTopLeftRadius = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
-        style.borderTopRightRadius = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
-        style.borderBottomRightRadius = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
-        style.borderBottomLeftRadius = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
+        style.borderTopLeftRadius = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
+        style.borderTopRightRadius = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
+        style.borderBottomRightRadius = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
+        style.borderBottomLeftRadius = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
     };
 }
 function setStyleMargin(propertyName) {
@@ -302,10 +302,10 @@ function setStyleMargin(propertyName) {
         else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value;
         }
-        style.marginTop = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
-        style.marginRight = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
-        style.marginBottom = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
-        style.marginLeft = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
+        style.marginTop = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
+        style.marginRight = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
+        style.marginBottom = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
+        style.marginLeft = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
     };
 }
 function setStylePadding(propertyName) {
@@ -318,10 +318,10 @@ function setStylePadding(propertyName) {
         else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value;
         }
-        style.paddingTop = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
-        style.paddingRight = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
-        style.paddingBottom = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
-        style.paddingLeft = value == null ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
+        style.paddingTop = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[0]));
+        style.paddingRight = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[1]));
+        style.paddingBottom = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[2]));
+        style.paddingLeft = !value ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(new UIElements_1.Length(vals[3]));
     };
 }
 globalThis.__setStyleProperty = function (style, key, value) {

@@ -105,20 +105,20 @@ function setStyleEnum(propertyName: keyof Style, enumType) {
     styleProcessors[propertyName] = (style, value) => {
         let styleEnumNull = (document as any).createStyleEnumWithKeyword(StyleKeyword.Initial, getType(enumType))
         let styleEnum = (document as any).createStyleEnum(enumType[value], getType(enumType))
-        style[propertyName] = value == null ? styleEnumNull : styleEnum
+        style[propertyName] = !value ? styleEnumNull : styleEnum
     }
 }
 
 function setStyleColor(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(getType(value) == Color ? value : parseColor(value))
+        style[propertyName] = !value ? new StyleColor(StyleKeyword.Initial) : new StyleColor(getType(value) == Color ? value : parseColor(value))
     }
 }
 
 function setStyleBackground(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
         // style[propertyName] = value == null ? new StyleBackground(StyleKeyword.Initial) : new StyleBackground(Background.FromTexture2D(typeof value == "string" ? ImageLoader.Load(value) : value))
-        if (value == null) {
+        if (!value) {
             style[propertyName] = new StyleBackground(StyleKeyword.Initial)
             return
         } else if (typeof value == "string") {
@@ -160,19 +160,19 @@ function _getLength(value) {
 function setStyleLength(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
         let v = _getLength(value)
-        style[propertyName] = value == null || typeof v === "undefined" ? new StyleLength(StyleKeyword.Initial) : new StyleLength(v)
+        style[propertyName] = !value || typeof v === "undefined" ? new StyleLength(StyleKeyword.Initial) : new StyleLength(v)
     }
 }
 
 function setStyleFloat(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(value)
+        style[propertyName] = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(value)
     }
 }
 
 function setStyleInt(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleInt(StyleKeyword.Initial) : UIStyleUtil.GetStyleInt(value)
+        style[propertyName] = !value ? new StyleInt(StyleKeyword.Initial) : UIStyleUtil.GetStyleInt(value)
     }
 }
 
@@ -181,13 +181,13 @@ function setStyleCursor(propertyName: keyof Style) {
         let cursor = new Cursor()
         cursor.texture = value.texture
         cursor.hotspot = value.hotspot
-        style[propertyName] = value == null ? new StyleCursor(StyleKeyword.Initial) : new StyleCursor(new Cursor())
+        style[propertyName] = !value ? new StyleCursor(StyleKeyword.Initial) : new StyleCursor(new Cursor())
     }
 }
 
 function setStyleRotate(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleRotate(StyleKeyword.Initial) : new StyleRotate(new Rotate(new Angle(value)))
+        style[propertyName] = !value ? new StyleRotate(StyleKeyword.Initial) : new StyleRotate(new Rotate(new Angle(value)))
     }
 }
 
@@ -198,7 +198,7 @@ function setStyleScale(propertyName: keyof Style) {
             v = new Vector2(value, value)
         if (Array.isArray(value))
             v = new Vector2(value[0], value[1])
-        style[propertyName] = value == null ? new StyleScale(StyleKeyword.Initial) : new StyleScale(new Scale(v))
+        style[propertyName] = !value ? new StyleScale(StyleKeyword.Initial) : new StyleScale(new Scale(v))
     }
 }
 
@@ -208,7 +208,7 @@ function setStyleTextShadow(propertyName: keyof Style) {
         ts.offset = parseFloat2(value.offset)
         ts.blurRadius = value.blurRadius
         ts.color = parseColor(value.color)
-        style[propertyName] = value == null ? new StyleTextShadow(StyleKeyword.Initial) : new StyleTextShadow(ts)
+        style[propertyName] = !value ? new StyleTextShadow(StyleKeyword.Initial) : new StyleTextShadow(ts)
     }
 }
 
@@ -218,7 +218,7 @@ function setStyleTransformOrigin(propertyName: keyof Style) {
             return
         // let v = parseFloat3(value)
         let vals = [_getLength(value[0]), _getLength(value[1])]
-        style[propertyName] = value == null ? new StyleTransformOrigin(StyleKeyword.Initial) : new StyleTransformOrigin(new TransformOrigin(vals[0], vals[1], 0))
+        style[propertyName] = !value ? new StyleTransformOrigin(StyleKeyword.Initial) : new StyleTransformOrigin(new TransformOrigin(vals[0], vals[1], 0))
     }
 }
 
@@ -232,7 +232,7 @@ function setStyleListTimeValue(propertyName: keyof Style, valueType) {
 
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
-        style[propertyName] = value == null ? styleListNull : styleList
+        style[propertyName] = !value ? styleListNull : styleList
     }
 }
 
@@ -246,7 +246,7 @@ function setStyleListPropertyName(propertyName: keyof Style, valueType) {
 
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
-        style[propertyName] = value == null ? styleListNull : styleList
+        style[propertyName] = !value ? styleListNull : styleList
     }
 }
 
@@ -260,35 +260,35 @@ function setStyleListEasingFunction(propertyName: keyof Style, valueType) {
 
         let styleListNull = (document as any).createStyleListWithKeyword(StyleKeyword.Initial, getType(valueType))
         let styleList = (document as any).createStyleList(list, getType(valueType))
-        style[propertyName] = value == null ? styleListNull : styleList
+        style[propertyName] = !value ? styleListNull : styleList
     }
 }
 
 function setStyleTranslate(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
         var v = parseFloat3(value)
-        style[propertyName] = value == null ? new StyleTranslate(StyleKeyword.Initial) : new StyleTranslate(new Translate(new Length(v.x), new Length(v.y), v.z))
+        style[propertyName] = !value ? new StyleTranslate(StyleKeyword.Initial) : new StyleTranslate(new Translate(new Length(v.x), new Length(v.y), v.z))
     }
 }
 
 function setStyleFont(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleFont(StyleKeyword.Initial) : new StyleFont(typeof value == "string" ? resource.loadFont(value) : value)
+        style[propertyName] = !value ? new StyleFont(StyleKeyword.Initial) : new StyleFont(typeof value == "string" ? resource.loadFont(value) : value)
     }
 }
 
 function setStyleFontDefinition(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = value == null ? new StyleFontDefinition(StyleKeyword.Initial) : new StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value)
+        style[propertyName] = !value ? new StyleFontDefinition(StyleKeyword.Initial) : new StyleFontDefinition(typeof value == "string" ? resource.loadFont(value) : value)
     }
 }
 
 function setStyleBorderColor(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style: IStyle, value) => {
-        style.borderTopColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
-        style.borderRightColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
-        style.borderBottomColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
-        style.borderLeftColor = value == null ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderTopColor = !value ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderRightColor = !value ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderBottomColor = !value ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
+        style.borderLeftColor = !value ? new StyleColor(StyleKeyword.Initial) : new StyleColor(parseColor(value))
     }
 }
 
@@ -300,10 +300,10 @@ function setStyleBorderWidth(propertyName: keyof Style) {
         } else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value
         }
-        style.borderTopWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[0])
-        style.borderRightWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[1])
-        style.borderBottomWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[2])
-        style.borderLeftWidth = value == null ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[3])
+        style.borderTopWidth = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[0])
+        style.borderRightWidth = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[1])
+        style.borderBottomWidth = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[2])
+        style.borderLeftWidth = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(vals[3])
     }
 }
 
@@ -315,10 +315,10 @@ function setStyleBorderRadius(propertyName: keyof Style) {
         } else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value
         }
-        style.borderTopLeftRadius = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
-        style.borderTopRightRadius = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
-        style.borderBottomRightRadius = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
-        style.borderBottomLeftRadius = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
+        style.borderTopLeftRadius = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
+        style.borderTopRightRadius = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
+        style.borderBottomRightRadius = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
+        style.borderBottomLeftRadius = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
     }
 }
 
@@ -330,10 +330,10 @@ function setStyleMargin(propertyName: keyof Style) {
         } else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value
         }
-        style.marginTop = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
-        style.marginRight = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
-        style.marginBottom = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
-        style.marginLeft = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
+        style.marginTop = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
+        style.marginRight = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
+        style.marginBottom = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
+        style.marginLeft = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
     }
 }
 
@@ -345,10 +345,10 @@ function setStylePadding(propertyName: keyof Style) {
         } else if (typeof value === "number") {
             vals[0] = vals[1] = vals[2] = vals[3] = value
         }
-        style.paddingTop = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
-        style.paddingRight = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
-        style.paddingBottom = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
-        style.paddingLeft = value == null ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
+        style.paddingTop = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[0]))
+        style.paddingRight = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[1]))
+        style.paddingBottom = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[2]))
+        style.paddingLeft = !value ? new StyleLength(StyleKeyword.Initial) : new StyleLength(new Length(vals[3]))
     }
 }
 
