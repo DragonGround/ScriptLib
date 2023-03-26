@@ -7,4 +7,8 @@ declare module "UnityEngine/UIElements" {
         Unregister(eventType: { new(): EventBase }, handler: (e: EventBase) => void): void
         Unregister(eventType: { new(): EventBase }, handler: (e: EventBase) => void, useTrickleDown: TrickleDown): void
     }
+
+    interface VisualElement {
+        ForceUpdate(): void
+    }
 }

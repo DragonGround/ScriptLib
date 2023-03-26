@@ -33,6 +33,7 @@ declare module "UnityEngine/UIElements" {
         lineJoin: LineJoin
         lineCap: LineCap
         miterLimit: number
+        constructor()
         BeginPath(): void
         ClosePath(): void
         MoveTo(pos: Vector2): void
@@ -44,6 +45,7 @@ declare module "UnityEngine/UIElements" {
         Stroke(): void
         Fill(): void
         Fill(fillRule: FillRule): void
+        SaveToVectorImage(vectorImage: VectorImage): boolean
     }
 
     export class Vertex {
