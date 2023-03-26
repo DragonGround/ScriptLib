@@ -213,7 +213,7 @@ export function useReducer(reducer, initialState, init?) {
 				const stateHooks = hookState._component.__hooks._list.filter(
 					x => x._component
 				);
-				const allHooksEmpty = stateHooks.every(x => !x._nextValue);
+				const allHooksEmpty = stateHooks.every(x => typeof x._nextValue === "undefined" || x._nextValue === null); // MODDED
 				// When we have no updated hooks in the component we invoke the previous SCU or
 				// traverse the VDOM tree further.
 				if (allHooksEmpty) {

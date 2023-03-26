@@ -162,7 +162,7 @@ function useReducer(reducer, initialState, init) {
                 if (typeof hookState._component.__hooks == "undefined" || hookState._component.__hooks === null)
                     return true;
                 var stateHooks = hookState._component.__hooks._list.filter(function (x) { return x._component; });
-                var allHooksEmpty = stateHooks.every(function (x) { return !x._nextValue; });
+                var allHooksEmpty = stateHooks.every(function (x) { return typeof x._nextValue === "undefined" || x._nextValue === null; });
                 if (allHooksEmpty) {
                     return prevScu_1 ? prevScu_1.call(this, p, s, c) : true;
                 }
