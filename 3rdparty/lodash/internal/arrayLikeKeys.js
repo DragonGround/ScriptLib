@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var isArguments_js_1 = require("../isArguments.js");
 var isBuffer_js_1 = require("../isBuffer.js");

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var generateAlphabeticName_1 = require("./generateAlphabeticName");
 var hash_1 = require("./hash");

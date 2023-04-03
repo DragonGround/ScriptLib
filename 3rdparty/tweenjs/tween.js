@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tween = void 0;
 var easing_1 = require("./easing");

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var now;
 if (typeof self === 'undefined' && typeof process !== 'undefined' && process.hrtime) {

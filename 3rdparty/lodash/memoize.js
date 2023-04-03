@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function memoize(func, resolver) {
     if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {

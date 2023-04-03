@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var root_js_1 = require("./root.js");
 var freeExports = typeof exports === 'object' && exports !== null && !exports.nodeType && exports;

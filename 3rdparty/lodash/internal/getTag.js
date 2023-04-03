@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var toString = Object.prototype.toString;
 function getTag(value) {

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._catchError = void 0;
 function _catchError(error, vnode, oldVNode, errorInfo) {

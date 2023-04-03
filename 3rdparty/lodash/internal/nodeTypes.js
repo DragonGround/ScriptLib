@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var freeGlobal_js_1 = require("./freeGlobal.js");
 var freeExports = typeof exports === 'object' && exports !== null && !exports.nodeType && exports;

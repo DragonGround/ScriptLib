@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var HASH_UNDEFINED = '__lodash_hash_undefined__';
 var Hash = (function () {

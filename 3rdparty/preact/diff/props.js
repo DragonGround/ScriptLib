@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setProperty = exports.diffProps = void 0;
 var options_1 = require("../options");

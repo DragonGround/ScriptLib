@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var baseClone_js_1 = require("./internal/baseClone.js");
 var CLONE_DEEP_FLAG = 1;

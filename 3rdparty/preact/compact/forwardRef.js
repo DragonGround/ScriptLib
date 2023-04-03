@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forwardRef = exports.REACT_FORWARD_SYMBOL = void 0;
 var preact_1 = require("preact");

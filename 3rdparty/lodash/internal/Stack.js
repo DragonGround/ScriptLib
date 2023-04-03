@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ListCache_js_1 = require("./ListCache.js");
 var MapCache_js_1 = require("./MapCache.js");

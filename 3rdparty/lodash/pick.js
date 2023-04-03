@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var basePick_1 = require("./internal/basePick");
 function pick(object) {

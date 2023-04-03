@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toChildArray = exports.diffChildren = void 0;
 var index_1 = require("./index");

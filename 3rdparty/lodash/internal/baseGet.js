@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var castPath_js_1 = require("./castPath.js");
 var toKey_js_1 = require("./toKey.js");

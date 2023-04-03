@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var isPrototype_js_1 = require("./isPrototype.js");
 function initCloneObject(object) {

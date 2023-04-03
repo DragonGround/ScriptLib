@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TOKEN_TYPE = void 0;
 var TOKEN_TYPE = {

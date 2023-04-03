@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var isKey_js_1 = require("./isKey.js");
 var stringToPath_js_1 = require("./stringToPath.js");

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseFloat4 = exports.parseFloat3 = exports.parseFloat2 = void 0;
 var math_1 = require("math");

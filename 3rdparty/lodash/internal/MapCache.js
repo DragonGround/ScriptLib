@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Hash_js_1 = require("./Hash.js");
 function getMapData(_a, key) {

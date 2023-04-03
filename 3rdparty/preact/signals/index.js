@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSignalEffect = exports.useComputed = exports.useSignal = exports.Signal = exports.effect = exports.batch = exports.computed = exports.signal = void 0;
 var preact_1 = require("preact");

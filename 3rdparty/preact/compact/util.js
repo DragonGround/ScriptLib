@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeNode = exports.shallowDiffers = exports.assign = void 0;
 function assign(obj, props) {

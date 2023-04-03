@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var memoize_js_1 = require("../memoize.js");
 var MAX_MEMOIZE_SIZE = 500;

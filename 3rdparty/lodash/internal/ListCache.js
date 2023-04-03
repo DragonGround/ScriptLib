@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var assocIndexOf_js_1 = require("./assocIndexOf.js");
 var ListCache = (function () {

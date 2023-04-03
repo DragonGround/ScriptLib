@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidElement = exports.Fragment = exports.createRef = exports.createVNode = exports.createElement = void 0;
 var util_1 = require("./util");

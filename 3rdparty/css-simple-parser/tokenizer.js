@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var string_indexes_1 = require("string-indexes");
 var constants_1 = require("./constants");

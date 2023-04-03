@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.slice = exports.removeNode = exports.assign = void 0;
 var constants_1 = require("./constants");

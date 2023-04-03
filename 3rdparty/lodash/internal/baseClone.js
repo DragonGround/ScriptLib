@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Stack_js_1 = require("./Stack.js");
 var arrayEach_js_1 = require("./arrayEach.js");

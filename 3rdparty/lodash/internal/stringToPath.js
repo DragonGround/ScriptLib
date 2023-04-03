@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var memoizeCapped_js_1 = require("./memoizeCapped.js");
 var charCodeOfDot = '.'.charCodeAt(0);

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
 var nativeGetSymbols = Object.getOwnPropertySymbols;

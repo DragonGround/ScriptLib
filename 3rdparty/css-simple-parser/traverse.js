@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var traverse = function (ast, fn) {
     var children = ast.children;

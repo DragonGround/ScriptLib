@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var arrayLikeKeys_js_1 = require("./internal/arrayLikeKeys.js");
 var isArrayLike_js_1 = require("./isArrayLike.js");

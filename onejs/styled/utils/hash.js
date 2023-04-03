@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hash = exports.phash = exports.SEED = void 0;
 exports.SEED = 5381;

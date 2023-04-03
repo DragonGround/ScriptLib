@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var AD_REPLACER_R = /(a)(d)/gi;
 var charsLength = 52;

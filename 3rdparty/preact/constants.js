@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IS_NON_DIMENSIONAL = exports.EMPTY_ARR = exports.EMPTY_OBJ = void 0;
 exports.EMPTY_OBJ = {};

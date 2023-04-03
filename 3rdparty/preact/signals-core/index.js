@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Signal = exports.batch = exports.effect = exports.computed = exports.signal = void 0;
 function cycleDetected() {

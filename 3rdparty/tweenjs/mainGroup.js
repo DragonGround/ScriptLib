@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mainGroup = void 0;
 var group_1 = require("./group");

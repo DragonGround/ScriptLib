@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var assignValue_js_1 = require("./assignValue.js");
 var baseAssignValue_js_1 = require("./baseAssignValue.js");

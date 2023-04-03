@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function baseAssignValue(object, key, value) {
     if (key == '__proto__') {

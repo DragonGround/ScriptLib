@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var copyObject_js_1 = require("./copyObject.js");
 var getSymbolsIn_js_1 = require("./getSymbolsIn.js");

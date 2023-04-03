@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmount = exports.applyRef = exports.commitRoot = exports.diff = void 0;
 var constants_1 = require("../constants");

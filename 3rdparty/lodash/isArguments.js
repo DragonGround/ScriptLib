@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var getTag_js_1 = require("./internal/getTag.js");
 var isObjectLike_js_1 = require("./isObjectLike.js");

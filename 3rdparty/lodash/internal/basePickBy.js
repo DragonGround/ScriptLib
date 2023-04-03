@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var baseGet_js_1 = require("./baseGet.js");
 var baseSet_js_1 = require("./baseSet.js");

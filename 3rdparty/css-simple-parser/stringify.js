@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var stringifyNode = function (node) {
     return "".concat(node.selector, "{").concat(node.body).concat(stringifyChildren(node.children), "}");

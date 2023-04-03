@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("OneJS/Utils");
 var color_parser_1 = require("onejs/utils/color-parser");

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var parse_1 = require("./parse");
 var stringify_1 = require("./stringify");

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.update = exports.remove = exports.add = exports.removeAll = exports.getAll = exports.VERSION = exports.Tween = exports.nextId = exports.Sequence = exports.now = exports.Interpolation = exports.Group = exports.Easing = void 0;
 var easing_1 = require("./easing");

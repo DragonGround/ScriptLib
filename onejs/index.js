@@ -1,9 +1,12 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.eventfulSignal = exports.useEventfulState = void 0;
 var hooks_1 = require("preact/hooks");
 var signals_1 = require("preact/signals");
 function useEventfulState(obj, propertyName, eventName) {
     var _a = (0, hooks_1.useState)(obj[propertyName]), val = _a[0], setVal = _a[1];
+    var _b = (0, hooks_1.useState)({}), updateState = _b[1];
+    var forceUpdate = (0, hooks_1.useCallback)(function () { return updateState({}); }, []);
     eventName = eventName || "On" + String(propertyName) + "Changed";
     var addEventFunc = obj["add_".concat(eventName)];
     var removeEventFunc = obj["remove_".concat(eventName)];
@@ -11,6 +14,7 @@ function useEventfulState(obj, propertyName, eventName) {
         throw new Error("[useEventfulState] The object does not have an event named ".concat(eventName));
     var onValueChangedCallback = function (v) {
         setVal(v);
+        forceUpdate();
     };
     (0, hooks_1.useEffect)(function () {
         addEventFunc.call(obj, onValueChangedCallback);

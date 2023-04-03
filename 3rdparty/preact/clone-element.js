@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cloneElement = void 0;
 var util_1 = require("./util");

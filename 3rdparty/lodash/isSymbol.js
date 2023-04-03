@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var getTag_1 = require("./internal/getTag");
 function isSymbol(value) {

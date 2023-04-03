@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var eq_js_1 = require("../eq.js");
 function assocIndexOf(array, key) {

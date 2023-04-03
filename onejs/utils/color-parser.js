@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.namedColors = exports.namedColor = exports.parseCSSColor = exports.parseColor = exports.colorStrToF4 = void 0;
 var math_1 = require("math");

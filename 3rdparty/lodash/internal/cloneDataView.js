@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cloneArrayBuffer_js_1 = require("./cloneArrayBuffer.js");
 function cloneDataView(dataView, isDeep) {

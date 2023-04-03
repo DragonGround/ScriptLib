@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var getSymbols_js_1 = require("./getSymbols.js");
 function getSymbolsIn(object) {

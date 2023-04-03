@@ -1,4 +1,4 @@
-import { StateUpdater, useEffect, useState } from "preact/hooks"
+import { StateUpdater, useCallback, useEffect, useState } from "preact/hooks"
 import { computed, effect, Signal, signal } from "preact/signals"
 
 /**
@@ -11,6 +11,8 @@ import { computed, effect, Signal, signal } from "preact/signals"
  */
 export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, eventName?: string): [T[K], StateUpdater<T[K]>] {
     const [val, setVal] = useState(obj[propertyName] as unknown as T[K])
+    const [, updateState] = useState({})
+    const forceUpdate = useCallback(() => updateState({}), [])
 
     eventName = eventName || "On" + String(propertyName) + "Changed"
     let addEventFunc = obj[`add_${eventName}`] as Function
@@ -21,6 +23,7 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
 
     let onValueChangedCallback = function (v) {
         setVal(v)
+        forceUpdate()
     }
 
     useEffect(() => {

@@ -1,3 +1,4 @@
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pick = exports.has = exports.defaults = exports.eq = void 0;
 var defaults_1 = require("./defaults");
