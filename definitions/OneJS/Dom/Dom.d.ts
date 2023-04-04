@@ -20,8 +20,8 @@ declare module "OneJS/Dom" {
         constructor(tagName: string)
         constructor(ve: VisualElement, document: Document)
         clearChildren(): void
-        addEventListener(name: string, handler: Function, useCapture: boolean): void
-        removeEventListener(name: string, handler: Function, useCapture: boolean): void
+        addEventListener(name: string, handler: Function, useCapture?: boolean): void
+        removeEventListener(name: string, handler: Function, useCapture?: boolean): void
         appendChild(node: Dom): void
         removeChild(child: Dom): void
         insertBefore(a: Dom, b: Dom): void
