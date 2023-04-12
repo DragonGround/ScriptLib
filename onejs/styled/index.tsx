@@ -1,6 +1,7 @@
 import flatten from "css-flatten"
 import { h } from "preact"
 import generateComponentId from "./utils/generateComponentId"
+import { forwardRef } from "preact/compact"
 
 function _hashAndAddRuntimeUSS(style: string) {
     let compId = generateComponentId(style)
@@ -26,12 +27,12 @@ function _processTemplate(props, strings: TemplateStringsArray, values: any[]) {
 const styled = (Tag: string | ((props?) => h.JSX.Element)) => {
 
     const tag = function (strings: TemplateStringsArray, ...values) {
-        return (props) => {
+        return forwardRef((props, ref) => {
             let style = _processTemplate(props, strings, values)
             let compId = _hashAndAddRuntimeUSS(style)
 
-            return <Tag class={compId} {...props}></Tag>
-        }
+            return <Tag ref={ref} class={compId} {...props}></Tag>
+        })
     }
 
     tag.attrs = (func: (props: any) => ({})) => {
