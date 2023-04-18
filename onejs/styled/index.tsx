@@ -1,7 +1,7 @@
 import flatten from "css-flatten"
 import { h } from "preact"
 import generateComponentId from "./utils/generateComponentId"
-import { forwardRef } from "preact/compact"
+import { forwardRef } from "preact/compat"
 
 function _hashAndAddRuntimeUSS(style: string) {
     let compId = generateComponentId(style)

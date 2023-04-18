@@ -15,7 +15,7 @@ exports.emo = exports.uss = exports.default = void 0;
 var css_flatten_1 = require("css-flatten");
 var preact_1 = require("preact");
 var generateComponentId_1 = require("./utils/generateComponentId");
-var compact_1 = require("preact/compact");
+var compat_1 = require("preact/compat");
 function _hashAndAddRuntimeUSS(style) {
     var compId = (0, generateComponentId_1.default)(style);
     style = ".".concat(compId, " {").concat(style, "}");
@@ -38,7 +38,7 @@ var styled = function (Tag) {
         for (var _i = 1; _i < arguments.length; _i++) {
             values[_i - 1] = arguments[_i];
         }
-        return (0, compact_1.forwardRef)(function (props, ref) {
+        return (0, compat_1.forwardRef)(function (props, ref) {
             var style = _processTemplate(props, strings, values);
             var compId = _hashAndAddRuntimeUSS(style);
             return (0, preact_1.h)(Tag, __assign({ ref: ref, class: compId }, props));

@@ -1,3 +1,4 @@
+/// <reference types="scriptlib/3rdparty/preact/preact" />
 import { h } from "preact";
 declare const styled: {
     (Tag: string | ((props?: any) => h.JSX.Element)): {
