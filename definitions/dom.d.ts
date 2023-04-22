@@ -8,6 +8,8 @@ type TimerHandler = string | Function
 
 declare function setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number
 declare function clearTimeout(id: number | undefined): void
+declare function setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number
+declare function clearInterval(id: number | undefined): void
 
 declare function requestAnimationFrame(callback: FrameRequestCallback): number
 declare function cancelAnimationFrame(handle: number): void;

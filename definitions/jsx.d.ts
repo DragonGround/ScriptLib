@@ -1,6 +1,5 @@
 
 
-
 declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
@@ -110,7 +109,7 @@ declare module "preact/jsx" {
 
         interface TextElement extends VisualElementNoChildren {
             text?: string
-            enableRichText? : boolean
+            enableRichText?: boolean
         }
 
         interface Label extends TextElement {
