@@ -4,7 +4,7 @@ declare module "preact/jsx" {
     import { Enum } from "System"
     import { Ref } from "preact"
     import { Bounds, BoundsInt, Color, Rect, RectInt, ScaleMode, Sprite, Texture, Texture2D, Vector2, Vector2Int, Vector3, Vector3Int, Vector4 } from "UnityEngine"
-    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent, ScrollerVisibility, PopupField, DropdownField, NavigationMoveEvent, NavigationTabEvent, NavigationCancelEvent, NavigationSubmitEvent, TransitionCancelEvent, TransitionEndEvent, TransitionRunEvent, TransitionStartEvent, VectorImage } from "UnityEngine/UIElements"
+    import { AttachToPanelEvent, BlurEvent, ClickEvent, InputEvent, FocusEvent, WheelEvent, DetachFromPanelEvent, DragEnterEvent, DragExitedEvent, DragLeaveEvent, DragPerformEvent, DragUpdatedEvent, ExecuteCommandEvent, FocusInEvent, FocusOutEvent, GeometryChangedEvent, KeyDownEvent, KeyUpEvent, MouseCaptureEvent, MouseCaptureOutEvent, MouseDownEvent, MouseEnterEvent, MouseEnterWindowEvent, MouseLeaveEvent, MouseLeaveWindowEvent, MouseMoveEvent, MouseOutEvent, MouseOverEvent, MouseUpEvent, PickingMode, PointerCancelEvent, PointerCaptureEvent, PointerCaptureOutEvent, PointerDownEvent, PointerEnterEvent, PointerLeaveEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerStationaryEvent, PointerUpEvent, ScrollViewMode, TooltipEvent, UxmlBoolAttributeDescription, UxmlDoubleAttributeDescription, UxmlFloatAttributeDescription, UxmlIntAttributeDescription, UxmlLongAttributeDescription, UxmlStringAttributeDescription, ValidateCommandEvent, ChangeEvent, ScrollerVisibility, PopupField, DropdownField, NavigationMoveEvent, NavigationTabEvent, NavigationCancelEvent, NavigationSubmitEvent, TransitionCancelEvent, TransitionEndEvent, TransitionRunEvent, TransitionStartEvent, VectorImage, TouchScrollBehavior } from "UnityEngine/UIElements"
 
     namespace JSXInternal {
 
@@ -338,6 +338,9 @@ declare module "preact/jsx" {
             "vertical-scroller-visibility"?: ScrollerVisibility
             "horizontal-page-size"?: number
             "vertical-page-size"?: number
+            "touch-scroll-behavior"?: TouchScrollBehavior
+            "scroll-deceleration-rate"?: number
+            "elasticity"?: number
         }
 
         interface TreeView extends VisualElement {
