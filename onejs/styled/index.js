@@ -32,7 +32,8 @@ function _processTemplate(props, strings, values) {
     }, strings[0]);
     return style;
 }
-var styled = function (Tag) {
+function styled(Tag) {
+    var AnyTag = Tag;
     var tag = function (strings) {
         var values = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -41,7 +42,7 @@ var styled = function (Tag) {
         return (0, compat_1.forwardRef)(function (props, ref) {
             var style = _processTemplate(props, strings, values);
             var compId = _hashAndAddRuntimeUSS(style);
-            return (0, preact_1.h)(Tag, __assign({ ref: ref, class: compId }, props));
+            return (0, preact_1.h)(AnyTag, __assign({ ref: ref, class: compId }, props));
         });
     };
     tag.attrs = function (func) {
@@ -55,12 +56,12 @@ var styled = function (Tag) {
                 var condensedProps = Object.assign({}, defaultProps, props);
                 var style = _processTemplate(condensedProps, strings, values);
                 var compId = _hashAndAddRuntimeUSS(style);
-                return (0, preact_1.h)(Tag, __assign({ class: compId }, condensedProps));
+                return (0, preact_1.h)(AnyTag, __assign({ class: compId }, condensedProps));
             };
         };
     };
     return tag;
-};
+}
 exports.default = styled;
 styled.div = styled("div");
 styled.button = styled("button");
