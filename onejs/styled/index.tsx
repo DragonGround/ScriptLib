@@ -24,7 +24,7 @@ function _processTemplate(props, strings: TemplateStringsArray, values: any[]) {
     return style as string
 }
 
-const styled = (Tag: string | ((props?) => h.JSX.Element)) => {
+const styled = (Tag: keyof h.JSX.IntrinsicElements | ((props?) => h.JSX.Element)) => {
 
     const tag = function (strings: TemplateStringsArray, ...values) {
         return forwardRef((props, ref) => {
@@ -32,7 +32,7 @@ const styled = (Tag: string | ((props?) => h.JSX.Element)) => {
             let compId = _hashAndAddRuntimeUSS(style)
 
             return <Tag ref={ref} class={compId} {...props}></Tag>
-        })
+        }) as (props: any, ref: any) => h.JSX.Element
     }
 
     tag.attrs = (func: (props: any) => ({})) => {
