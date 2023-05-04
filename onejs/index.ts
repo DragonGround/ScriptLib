@@ -62,3 +62,33 @@ export function eventfulSignal<T, K extends keyof T>(obj: T, propertyName: K, ev
     })
     return sig
 }
+
+/**
+ * Run a callback when a C# event fires. The callback will be cleaned up on
+ * unmount and when the OneJS engine reloads.
+ * @param obj The object that the C# event is attached to.
+ * @param eventName The variable name of the C# event.
+ * @param callback The callback to run when the event fires.
+ * @param dependencies: The dependencies to pass to useEffect. Previous versions
+ * of the callback will be cleaned up any dependency changes.
+ */
+export function useEvent<TEventName extends string, TCallback>(
+  obj: Record<
+    `add_${TEventName}` | `remove_${TEventName}`,
+    (callback: TCallback) => void
+  >,
+  eventName: TEventName,
+  callback: TCallback,
+  dependencies: any[] = []
+) {
+  const remove = obj[`remove_${eventName}`].bind(obj);
+  function removeHandler() {
+    remove(callback);
+  }
+
+  useEffect(() => {
+    obj[`add_${eventName}`](callback);
+    onEngineReload(removeHandler);
+    return removeHandler;
+  }, dependencies);
+}
