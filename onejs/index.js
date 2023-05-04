@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.eventfulSignal = exports.useEventfulState = void 0;
+exports.useEvent = exports.useEventfulState = void 0;
 var hooks_1 = require("preact/hooks");
-var signals_1 = require("preact/signals");
 function useEventfulState(obj, propertyName, eventName) {
     var _a = (0, hooks_1.useState)(obj[propertyName]), val = _a[0], setVal = _a[1];
     var _b = (0, hooks_1.useState)({}), updateState = _b[1];
@@ -16,13 +15,15 @@ function useEventfulState(obj, propertyName, eventName) {
         setVal(v);
         forceUpdate();
     };
+    function removeHandler() {
+        removeEventFunc.call(obj, onValueChangedCallback);
+    }
     (0, hooks_1.useEffect)(function () {
         addEventFunc.call(obj, onValueChangedCallback);
-        onEngineReload(function () {
-            removeEventFunc.call(obj, onValueChangedCallback);
-        });
+        onEngineReload(removeHandler);
         return function () {
-            removeEventFunc.call(obj, onValueChangedCallback);
+            removeHandler();
+            unregisterOnEngineReload(removeHandler);
         };
     }, []);
     var setValWrapper = function (v) {
@@ -31,20 +32,19 @@ function useEventfulState(obj, propertyName, eventName) {
     return [val, setValWrapper];
 }
 exports.useEventfulState = useEventfulState;
-function eventfulSignal(obj, propertyName, eventName) {
-    var sig = (0, signals_1.signal)(obj[propertyName]);
-    eventName = eventName || "On" + String(propertyName) + "Changed";
-    var addEventFunc = obj["add_".concat(eventName)];
-    var removeEventFunc = obj["remove_".concat(eventName)];
-    if (!addEventFunc || !removeEventFunc)
-        throw new Error("[eventfulSignal] The object does not have an event named ".concat(eventName));
-    var onValueChangedCallback = function (v) {
-        sig.value = v;
-    };
-    addEventFunc.call(obj, onValueChangedCallback);
-    onEngineReload(function () {
-        removeEventFunc.call(obj, onValueChangedCallback);
-    });
-    return sig;
+function useEvent(obj, eventName, callback, dependencies) {
+    if (dependencies === void 0) { dependencies = []; }
+    var remove = obj["remove_".concat(eventName)].bind(obj);
+    function removeHandler() {
+        remove(callback);
+    }
+    (0, hooks_1.useEffect)(function () {
+        obj["add_".concat(eventName)](callback);
+        onEngineReload(removeHandler);
+        return function () {
+            removeHandler();
+            unregisterOnEngineReload(removeHandler);
+        };
+    }, dependencies);
 }
-exports.eventfulSignal = eventfulSignal;
+exports.useEvent = useEvent;

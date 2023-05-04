@@ -26,13 +26,16 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
         forceUpdate()
     }
 
+    function removeHandler() {
+        removeEventFunc.call(obj, onValueChangedCallback)
+    }
+
     useEffect(() => {
         addEventFunc.call(obj, onValueChangedCallback)
-        onEngineReload(() => {
-            removeEventFunc.call(obj, onValueChangedCallback)
-        })
+        onEngineReload(removeHandler)
         return () => {
-            removeEventFunc.call(obj, onValueChangedCallback)
+            removeHandler()
+            unregisterOnEngineReload(removeHandler)
         }
     }, [])
     const setValWrapper = (v) => {
@@ -40,27 +43,6 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
         // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
     }
     return [val, setValWrapper]
-}
-
-export function eventfulSignal<T, K extends keyof T>(obj: T, propertyName: K, eventName?: string): Signal<T[K]> {
-    const sig = signal(obj[propertyName] as unknown as T[K])
-
-    eventName = eventName || "On" + String(propertyName) + "Changed"
-    let addEventFunc = obj[`add_${eventName}`] as Function
-    let removeEventFunc = obj[`remove_${eventName}`] as Function
-
-    if (!addEventFunc || !removeEventFunc)
-        throw new Error(`[eventfulSignal] The object does not have an event named ${eventName}`)
-
-    let onValueChangedCallback = function (v) {
-        sig.value = v
-    }
-
-    addEventFunc.call(obj, onValueChangedCallback)
-    onEngineReload(() => {
-        removeEventFunc.call(obj, onValueChangedCallback)
-    })
-    return sig
 }
 
 /**
@@ -73,22 +55,25 @@ export function eventfulSignal<T, K extends keyof T>(obj: T, propertyName: K, ev
  * of the callback will be cleaned up any dependency changes.
  */
 export function useEvent<TEventName extends string, TCallback>(
-  obj: Record<
-    `add_${TEventName}` | `remove_${TEventName}`,
-    (callback: TCallback) => void
-  >,
-  eventName: TEventName,
-  callback: TCallback,
-  dependencies: any[] = []
+    obj: Record<
+        `add_${TEventName}` | `remove_${TEventName}`,
+        (callback: TCallback) => void
+    >,
+    eventName: TEventName,
+    callback: TCallback,
+    dependencies: any[] = []
 ) {
-  const remove = obj[`remove_${eventName}`].bind(obj);
-  function removeHandler() {
-    remove(callback);
-  }
+    const remove = obj[`remove_${eventName}`].bind(obj)
+    function removeHandler() {
+        remove(callback)
+    }
 
-  useEffect(() => {
-    obj[`add_${eventName}`](callback);
-    onEngineReload(removeHandler);
-    return removeHandler;
-  }, dependencies);
+    useEffect(() => {
+        obj[`add_${eventName}`](callback)
+        onEngineReload(removeHandler)
+        return () => {
+            removeHandler()
+            unregisterOnEngineReload(removeHandler)
+        }
+    }, dependencies)
 }

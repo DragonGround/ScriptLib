@@ -2,6 +2,7 @@ declare function require(path: string): any
 declare function importNamespace(path: string): any
 declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
+declare function unregisterOnEngineReload(callback: Function): void
 declare function log(obj: any): void
 declare function error(obj: any): void
 declare function warn(obj: any): void
