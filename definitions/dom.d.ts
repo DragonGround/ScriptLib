@@ -70,6 +70,7 @@ declare interface Dom {
 interface Document {
     Root: any
     body: Dom
+    getElementById(tagName: string): Dom
     createElement(tagName: string, opts?: ElementCreationOptions): Dom
     createElementNS(namespaceURI: string, qualifiedName: string, opts?: ElementCreationOptions): Dom
     addEventListener(name: string, handler: Function, useCapture?: boolean): void
