@@ -137,6 +137,8 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 
 		if (typeof value === 'function') {
 			// never serialize functions as attribute values
+		} else if (name == "disabled") { // MODDED
+			dom.setAttribute(name, value);
 		} else if (
 			value != null &&
 			(value !== false || (name[0] === 'a' && name[1] === 'r'))

@@ -20,6 +20,7 @@ declare module "preact/jsx" {
             id?: string
             ref?: Ref<any>
             key?: string
+            disabled?: boolean
 
             children?: (string | number | Element) | (string | number | Element)[]
 
