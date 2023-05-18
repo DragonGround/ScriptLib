@@ -27,20 +27,20 @@ const RAF_TIMEOUT = 100;
 let prevRaf;
 
 options._diff = vnode => {
-	if (
-		typeof vnode.type === 'function' &&
-		!vnode._mask &&
-		vnode.type !== Fragment
-	) {
-		vnode._mask =
-			(vnode._parent && vnode._parent._mask ? vnode._parent._mask : '') +
-			(vnode._parent && vnode._parent._children
-				? vnode._parent._children.indexOf(vnode)
-				: 0);
-	} else if (!vnode._mask) {
-		vnode._mask =
-			vnode._parent && vnode._parent._mask ? vnode._parent._mask : '';
-	}
+	// if (
+	// 	typeof vnode.type === 'function' &&
+	// 	!vnode._mask &&
+	// 	vnode.type !== Fragment
+	// ) {
+	// 	vnode._mask =
+	// 		(vnode._parent && vnode._parent._mask ? vnode._parent._mask : '') +
+	// 		(vnode._parent && vnode._parent._children
+	// 			? vnode._parent._children.indexOf(vnode)
+	// 			: 0);
+	// } else if (!vnode._mask) {
+	// 	vnode._mask =
+	// 		vnode._parent && vnode._parent._mask ? vnode._parent._mask : '';
+	// }
 
 	currentComponent = null;
 	if (oldBeforeDiff) oldBeforeDiff(vnode);
@@ -178,7 +178,7 @@ export function useReducer(reducer, initialState, init?) {
 	/** @type {import('./internal').ReducerHookState} */
 	const hookState = getHookState(currentIndex++, 2);
 	hookState._reducer = reducer;
-	if (typeof hookState._component === "undefined" || hookState._component === null) {
+	if (typeof hookState._component === "undefined" || hookState._component === null) { // MODDED
 		hookState._value = [
 			!init ? invokeOrReturn(undefined, initialState) : init(initialState),
 
@@ -199,7 +199,23 @@ export function useReducer(reducer, initialState, init?) {
 
 		if (!currentComponent._hasScuFromHooks) {
 			currentComponent._hasScuFromHooks = true;
-			const prevScu = currentComponent.shouldComponentUpdate;
+			let prevScu = currentComponent.shouldComponentUpdate;
+			const prevCWU = currentComponent.componentWillUpdate;
+
+			// If we're dealing with a forced update `shouldComponentUpdate` will
+			// not be called. But we use that to update the hook values, so we
+			// need to call it.
+			currentComponent.componentWillUpdate = function (p, s, c) {
+				if (this._force) {
+					let tmp = prevScu;
+					// Clear to avoid other sCU hooks from being called
+					prevScu = undefined;
+					updateHookState(p, s, c);
+					prevScu = tmp;
+				}
+
+				if (prevCWU) prevCWU.call(this, p, s, c);
+			};
 
 			// This SCU has the purpose of bailing out after repeated updates
 			// to stateful hooks.
@@ -207,13 +223,19 @@ export function useReducer(reducer, initialState, init?) {
 			// state setters, if we have next states and
 			// all next states within a component end up being equal to their original state
 			// we are safe to bail out for this specific component.
-			currentComponent.shouldComponentUpdate = function (p, s, c) {
+			/**
+			 *
+			 * @type {import('./internal').Component["shouldComponentUpdate"]}
+			 */
+			// @ts-ignore - We don't use TS to downtranspile
+			// eslint-disable-next-line no-inner-declarations
+			function updateHookState(p, s, c) {
 				if (typeof hookState._component.__hooks == "undefined" || hookState._component.__hooks === null) return true;
 
 				const stateHooks = hookState._component.__hooks._list.filter(
 					x => x._component
 				);
-				const allHooksEmpty = stateHooks.every(x => typeof x._nextValue === "undefined" || x._nextValue === null); // MODDED
+				const allHooksEmpty = stateHooks.every(x => !x._nextValue);
 				// When we have no updated hooks in the component we invoke the previous SCU or
 				// traverse the VDOM tree further.
 				if (allHooksEmpty) {
@@ -233,12 +255,14 @@ export function useReducer(reducer, initialState, init?) {
 					}
 				});
 
-				return shouldUpdate
+				return shouldUpdate || hookState._component.props !== p
 					? prevScu
 						? prevScu.call(this, p, s, c)
 						: true
 					: false;
-			};
+			}
+
+			currentComponent.shouldComponentUpdate = updateHookState;
 		}
 	}
 
@@ -382,19 +406,18 @@ export function useErrorBoundary(cb) {
 	];
 }
 
-function hash(s) {
-	let h = 0,
-		i = s.length;
-	while (i > 0) {
-		h = ((h << 5) - h + s.charCodeAt(--i)) | 0;
-	}
-	return h;
-}
-
 export function useId() {
 	const state = getHookState(currentIndex++, 11);
 	if (!state._value) {
-		state._value = 'P' + hash(currentComponent._vnode._mask) + currentIndex;
+		// Grab either the root node or the nearest async boundary node.
+		/** @type {import('./internal.d').VNode} */
+		let root = currentComponent._vnode;
+		while (root !== null && !root._mask && root._parent !== null) {
+			root = root._parent;
+		}
+
+		let mask = root._mask || (root._mask = [0, 0]);
+		state._value = 'P' + mask[0] + '-' + mask[1]++;
 	}
 
 	return state._value;
@@ -405,7 +428,7 @@ export function useId() {
 function flushAfterPaintEffects() {
 	let component;
 	while ((component = afterPaintEffects.shift())) {
-		if (!component._parentDom || typeof component.__hooks == "undefined" || component.__hooks === null) continue;
+		if (!component._parentDom || typeof component.__hooks == "undefined" || component.__hooks === null) continue; // MODDED
 		try {
 			component.__hooks._pendingEffects.forEach(invokeCleanup);
 			component.__hooks._pendingEffects.forEach(invokeEffect);

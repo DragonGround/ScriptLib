@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeNode = exports.shallowDiffers = exports.assign = void 0;
+exports.is = exports.removeNode = exports.shallowDiffers = exports.assign = void 0;
 function assign(obj, props) {
     for (var i in props)
         obj[i] = props[i];
@@ -23,3 +23,7 @@ function removeNode(node) {
         parentNode.removeChild(node);
 }
 exports.removeNode = removeNode;
+function is(x, y) {
+    return (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y);
+}
+exports.is = is;

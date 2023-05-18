@@ -19,7 +19,10 @@ function createContext(defaultValue, contextId) {
                 this.getChildContext = function () { return ctx_1; };
                 this.shouldComponentUpdate = function (_props) {
                     if (this.props.value !== _props.value) {
-                        subs_1.some(component_1.enqueueRender);
+                        subs_1.some(function (c) {
+                            c._force = true;
+                            (0, component_1.enqueueRender)(c);
+                        });
                     }
                 };
                 this.sub = function (c) {

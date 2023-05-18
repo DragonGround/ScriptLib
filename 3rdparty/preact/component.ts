@@ -97,7 +97,7 @@ export function getDomSibling(vnode, childIndex?) {
 	for (; childIndex < vnode._children.length; childIndex++) {
 		sibling = vnode._children[childIndex];
 
-		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) {
+		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) { // MODDED
 			// Since updateParentDomPointers keeps _dom pointer correct,
 			// we can rely on _dom to tell us if this subtree contains a
 			// rendered DOM node, and what the first rendered DOM node is
@@ -140,7 +140,7 @@ function renderComponent(component) {
 		);
 		commitRoot(commitQueue, vnode);
 
-		if (vnode._dom !== oldDom) {
+		if (vnode._dom !== oldDom) { // MODDED
 			// parentDom.removeChild(oldDom)	// MODDED
 			updateParentDomPointers(vnode);
 		}
@@ -182,6 +182,12 @@ let rerenderQueue = [];
 
 let prevDebounce;
 
+// MODDED
+// const defer =
+// 	typeof Promise == 'function'
+// 		? Promise.prototype.then.bind(Promise.resolve())
+// 		: setTimeout;
+
 /**
  * Enqueue a rerender of a component
  * @param {import('./internal').Component} c The component to rerender
@@ -199,18 +205,31 @@ export function enqueueRender(c) {
 	}
 }
 
+/**
+ * @param {import('./internal').Component} a
+ * @param {import('./internal').Component} b
+ */
+const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
+
 /** Flush the render queue by rerendering all queued components */
 function process() {
-	let queue;
-	while ((process._rerenderCount = rerenderQueue.length)) {
-		queue = rerenderQueue.sort((a, b) => a._vnode._depth - b._vnode._depth);
-		rerenderQueue = [];
-		// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
-		// process() calls from getting scheduled while `queue` is still being consumed.
-		queue.some(c => {
-			if (c._dirty) renderComponent(c);
-		});
+	let c;
+	rerenderQueue.sort(depthSort);
+	// Don't update `renderCount` yet. Keep its value non-zero to prevent unnecessary
+	// process() calls from getting scheduled while `queue` is still being consumed.
+	while ((c = rerenderQueue.shift())) {
+		if (c._dirty) {
+			let renderQueueLength = rerenderQueue.length;
+			renderComponent(c);
+			if (rerenderQueue.length > renderQueueLength) {
+				// When i.e. rerendering a provider additional new items can be injected, we want to
+				// keep the order from top to bottom with those new items so we can handle them in a
+				// single pass
+				rerenderQueue.sort(depthSort);
+			}
+		}
 	}
+	process._rerenderCount = 0;
 }
 
 process._rerenderCount = 0;

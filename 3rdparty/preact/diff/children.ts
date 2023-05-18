@@ -2,6 +2,7 @@ import { diff, unmount, applyRef } from './index';
 import { createVNode, Fragment } from '../create-element';
 import { EMPTY_OBJ, EMPTY_ARR } from '../constants';
 import { getDomSibling } from '../component';
+import { isArray } from '../util';
 import { VNode } from '../internal';
 
 /**
@@ -48,7 +49,7 @@ export function diffChildren(
 	for (i = 0; i < renderResult.length; i++) {
 		childVNode = renderResult[i];
 
-		if (childVNode === null || typeof childVNode === 'boolean') {
+		if (childVNode === null || typeof childVNode === 'boolean' || typeof childVNode === 'function') { // MODDED
 			childVNode = newParentVNode._children[i] = null;
 		}
 		// If this newVNode is being reused (e.g. <div>{reuse}{reuse}</div>) in the same diff,
@@ -94,7 +95,7 @@ export function diffChildren(
 
 		// Terser removes the `continue` here and wraps the loop body
 		// in a `if (childVNode) { ... } condition
-		if (childVNode === null || typeof childVNode === "undefined") {
+		if (childVNode === null || typeof childVNode === "undefined") { // MODDED
 			continue;
 		}
 
@@ -151,7 +152,7 @@ export function diffChildren(
 		newDom = childVNode._dom;
 
 		if ((j = childVNode.ref) && oldVNode.ref !== j) {
-			if (refs === null || typeof refs === "undefined") refs = [];
+			if (refs === null || typeof refs === "undefined") refs = []; // MODDED
 			if (oldVNode.ref) refs.push(oldVNode.ref, null, childVNode);
 			refs.push(j, childVNode._component || newDom, childVNode);
 		}
@@ -206,7 +207,7 @@ export function diffChildren(
 
 	// Remove remaining oldChildren if there are any.
 	for (i = oldChildrenLength; i--;) {
-		if (typeof oldChildren[i] !== "undefined" && oldChildren[i] !== null) {
+		if (typeof oldChildren[i] !== "undefined" && oldChildren[i] !== null) { // MODDED
 			if (
 				typeof newParentVNode.type == 'function' &&
 				oldChildren[i]._dom != null &&
@@ -215,7 +216,8 @@ export function diffChildren(
 				// If the newParentVNode.__nextDom points to a dom node that is about to
 				// be unmounted, then get the next sibling of that vnode and set
 				// _nextDom to it
-				newParentVNode._nextDom = getDomSibling(oldParentVNode, i + 1);
+				// newParentVNode._nextDom = getDomSibling(oldParentVNode, i + 1);
+				newParentVNode._nextDom = getLastDom(oldParentVNode).nextSibling;
 			}
 
 			unmount(oldChildren[i], oldChildren[i]);
@@ -327,4 +329,27 @@ function placeChild(
 	}
 
 	return oldDom;
+}
+
+/**
+ * @param {import('../internal').VNode} vnode
+ */
+function getLastDom(vnode) {
+	if (vnode.type == null || typeof vnode.type === 'string') {
+		return vnode._dom;
+	}
+
+	if (vnode._children) {
+		for (let i = vnode._children.length - 1; i >= 0; i--) {
+			let child = vnode._children[i];
+			if (child) {
+				let lastDom = getLastDom(child);
+				if (lastDom) {
+					return lastDom;
+				}
+			}
+		}
+	}
+
+	return null;
 }

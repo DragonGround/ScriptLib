@@ -16,19 +16,6 @@ var oldBeforeUnmount = preact_1.options.unmount;
 var RAF_TIMEOUT = 100;
 var prevRaf;
 preact_1.options._diff = function (vnode) {
-    if (typeof vnode.type === 'function' &&
-        !vnode._mask &&
-        vnode.type !== preact_1.Fragment) {
-        vnode._mask =
-            (vnode._parent && vnode._parent._mask ? vnode._parent._mask : '') +
-                (vnode._parent && vnode._parent._children
-                    ? vnode._parent._children.indexOf(vnode)
-                    : 0);
-    }
-    else if (!vnode._mask) {
-        vnode._mask =
-            vnode._parent && vnode._parent._mask ? vnode._parent._mask : '';
-    }
     currentComponent = null;
     if (oldBeforeDiff)
         oldBeforeDiff(vnode);
@@ -159,11 +146,22 @@ function useReducer(reducer, initialState, init) {
         if (!currentComponent._hasScuFromHooks) {
             currentComponent._hasScuFromHooks = true;
             var prevScu_1 = currentComponent.shouldComponentUpdate;
-            currentComponent.shouldComponentUpdate = function (p, s, c) {
+            var prevCWU_1 = currentComponent.componentWillUpdate;
+            currentComponent.componentWillUpdate = function (p, s, c) {
+                if (this._force) {
+                    var tmp = prevScu_1;
+                    prevScu_1 = undefined;
+                    updateHookState(p, s, c);
+                    prevScu_1 = tmp;
+                }
+                if (prevCWU_1)
+                    prevCWU_1.call(this, p, s, c);
+            };
+            function updateHookState(p, s, c) {
                 if (typeof hookState._component.__hooks == "undefined" || hookState._component.__hooks === null)
                     return true;
                 var stateHooks = hookState._component.__hooks._list.filter(function (x) { return x._component; });
-                var allHooksEmpty = stateHooks.every(function (x) { return typeof x._nextValue === "undefined" || x._nextValue === null; });
+                var allHooksEmpty = stateHooks.every(function (x) { return !x._nextValue; });
                 if (allHooksEmpty) {
                     return prevScu_1 ? prevScu_1.call(this, p, s, c) : true;
                 }
@@ -177,12 +175,13 @@ function useReducer(reducer, initialState, init) {
                             shouldUpdate = true;
                     }
                 });
-                return shouldUpdate
+                return shouldUpdate || hookState._component.props !== p
                     ? prevScu_1
                         ? prevScu_1.call(this, p, s, c)
                         : true
                     : false;
-            };
+            }
+            currentComponent.shouldComponentUpdate = updateHookState;
         }
     }
     return hookState._nextValue || hookState._value;
@@ -279,17 +278,15 @@ function useErrorBoundary(cb) {
     ];
 }
 exports.useErrorBoundary = useErrorBoundary;
-function hash(s) {
-    var h = 0, i = s.length;
-    while (i > 0) {
-        h = ((h << 5) - h + s.charCodeAt(--i)) | 0;
-    }
-    return h;
-}
 function useId() {
     var state = getHookState(currentIndex++, 11);
     if (!state._value) {
-        state._value = 'P' + hash(currentComponent._vnode._mask) + currentIndex;
+        var root = currentComponent._vnode;
+        while (root !== null && !root._mask && root._parent !== null) {
+            root = root._parent;
+        }
+        var mask = root._mask || (root._mask = [0, 0]);
+        state._value = 'P' + mask[0] + '-' + mask[1]++;
     }
     return state._value;
 }

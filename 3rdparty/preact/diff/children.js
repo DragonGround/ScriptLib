@@ -12,7 +12,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
     newParentVNode._children = [];
     for (i = 0; i < renderResult.length; i++) {
         childVNode = renderResult[i];
-        if (childVNode === null || typeof childVNode === 'boolean') {
+        if (childVNode === null || typeof childVNode === 'boolean' || typeof childVNode === 'function') {
             childVNode = newParentVNode._children[i] = null;
         }
         else if (typeof childVNode === 'string' ||
@@ -90,7 +90,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
             if (typeof newParentVNode.type == 'function' &&
                 oldChildren[i]._dom != null &&
                 oldChildren[i]._dom == newParentVNode._nextDom) {
-                newParentVNode._nextDom = (0, component_1.getDomSibling)(oldParentVNode, i + 1);
+                newParentVNode._nextDom = getLastDom(oldParentVNode).nextSibling;
             }
             (0, index_1.unmount)(oldChildren[i], oldChildren[i]);
         }
@@ -164,4 +164,21 @@ function placeChild(parentDom, childVNode, oldVNode, oldChildren, newDom, oldDom
         oldDom = newDom.nextSibling;
     }
     return oldDom;
+}
+function getLastDom(vnode) {
+    if (vnode.type == null || typeof vnode.type === 'string') {
+        return vnode._dom;
+    }
+    if (vnode._children) {
+        for (var i = vnode._children.length - 1; i >= 0; i--) {
+            var child = vnode._children[i];
+            if (child) {
+                var lastDom = getLastDom(child);
+                if (lastDom) {
+                    return lastDom;
+                }
+            }
+        }
+    }
+    return null;
 }

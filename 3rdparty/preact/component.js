@@ -96,15 +96,19 @@ function enqueueRender(c) {
     }
 }
 exports.enqueueRender = enqueueRender;
+var depthSort = function (a, b) { return a._vnode._depth - b._vnode._depth; };
 function process() {
-    var queue;
-    while ((process._rerenderCount = rerenderQueue.length)) {
-        queue = rerenderQueue.sort(function (a, b) { return a._vnode._depth - b._vnode._depth; });
-        rerenderQueue = [];
-        queue.some(function (c) {
-            if (c._dirty)
-                renderComponent(c);
-        });
+    var c;
+    rerenderQueue.sort(depthSort);
+    while ((c = rerenderQueue.shift())) {
+        if (c._dirty) {
+            var renderQueueLength = rerenderQueue.length;
+            renderComponent(c);
+            if (rerenderQueue.length > renderQueueLength) {
+                rerenderQueue.sort(depthSort);
+            }
+        }
     }
+    process._rerenderCount = 0;
 }
 process._rerenderCount = 0;

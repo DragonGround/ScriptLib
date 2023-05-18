@@ -74,11 +74,15 @@ function setProperty(dom, name, value, oldValue, isSvg) {
         if (isSvg) {
             name = name.replace(/xlink(H|:h)/, 'h').replace(/sName$/, 's');
         }
-        else if (name !== 'href' &&
+        else if (name !== 'width' &&
+            name !== 'height' &&
+            name !== 'href' &&
             name !== 'list' &&
             name !== 'form' &&
             name !== 'tabIndex' &&
             name !== 'download' &&
+            name !== 'rowSpan' &&
+            name !== 'colSpan' &&
             name in dom) {
             try {
                 dom.setAttribute(name, value == null ? null : value);
@@ -91,8 +95,7 @@ function setProperty(dom, name, value, oldValue, isSvg) {
         else if (name == "disabled") {
             dom.setAttribute(name, value);
         }
-        else if (value != null &&
-            (value !== false || (name[0] === 'a' && name[1] === 'r'))) {
+        else if (value != null && (value !== false || name[4] === '-')) {
             dom.setAttribute(name, value);
         }
         else {

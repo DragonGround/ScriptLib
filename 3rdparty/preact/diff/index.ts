@@ -3,8 +3,8 @@ import { Component, getDomSibling } from '../component';
 import { Fragment } from '../create-element';
 import { diffChildren } from './children';
 import { diffProps, setProperty } from './props';
-import { assign, removeNode, slice } from '../util';
-import { options } from 'preact/'
+import { assign, isArray, removeNode, slice } from '../util';
+import options from '../options';
 
 /**
  * Diff two virtual nodes and apply proper changes to the DOM
@@ -89,12 +89,14 @@ export function diff(
 				c._globalContext = globalContext;
 				isNew = c._dirty = true;
 				c._renderCallbacks = [];
+				c._stateCallbacks = [];
 			}
 
 			// Invoke getDerivedStateFromProps
 			if (c._nextState == null) {
 				c._nextState = c.state;
 			}
+
 			if (newType.getDerivedStateFromProps != null) {
 				if (c._nextState == c.state) {
 					c._nextState = assign({}, c._nextState);
@@ -108,6 +110,7 @@ export function diff(
 
 			oldProps = c.props;
 			oldState = c.state;
+			c._vnode = newVNode;
 
 			// Invoke pre-render lifecycle methods
 			if (isNew) {
@@ -140,16 +143,30 @@ export function diff(
 						) === false) ||
 					newVNode._original === oldVNode._original
 				) {
-					c.props = newProps;
-					c.state = c._nextState;
 					// More info about this here: https://gist.github.com/JoviDeCroock/bec5f2ce93544d2e6070ef8e0036e4e8
-					if (newVNode._original !== oldVNode._original) c._dirty = false;
-					c._vnode = newVNode;
+					if (newVNode._original !== oldVNode._original) {
+						// When we are dealing with a bail because of sCU we have to update
+						// the props, state and dirty-state.
+						// when we are dealing with strict-equality we don't as the child could still
+						// be dirtied see #3883
+						c.props = newProps;
+						c.state = c._nextState;
+						c._dirty = false;
+					}
+
+					// In cases of bailing due to strict-equality we have to reset force as well
+					c._force = false;
 					newVNode._dom = oldVNode._dom;
 					newVNode._children = oldVNode._children;
 					newVNode._children.forEach(vnode => {
 						if (vnode) vnode._parent = newVNode;
 					});
+
+					for (let i = 0; i < c._stateCallbacks.length; i++) {
+						c._renderCallbacks.push(c._stateCallbacks[i]);
+					}
+					c._stateCallbacks = [];
+
 					if (c._renderCallbacks.length) {
 						commitQueue.push(c);
 					}
@@ -170,7 +187,6 @@ export function diff(
 
 			c.context = componentContext;
 			c.props = newProps;
-			c._vnode = newVNode;
 			c._parentDom = parentDom;
 
 			let renderHook = options._render,
@@ -182,6 +198,11 @@ export function diff(
 				if (renderHook) renderHook(newVNode);
 
 				tmp = c.render(c.props, c.state, c.context);
+
+				for (let i = 0; i < c._stateCallbacks.length; i++) {
+					c._renderCallbacks.push(c._stateCallbacks[i]);
+				}
+				c._stateCallbacks = [];
 			} else {
 				do {
 					c._dirty = false;
@@ -206,12 +227,12 @@ export function diff(
 			}
 
 			let isTopLevelFragment =
-				tmp !== null && tmp.type === Fragment && tmp.key == null;
+				tmp !== null && tmp.type === Fragment && tmp.key == null; // MODDED
 			let renderResult = isTopLevelFragment ? tmp.props.children : tmp;
 
 			diffChildren(
 				parentDom,
-				Array.isArray(renderResult) ? renderResult : [renderResult],
+				isArray(renderResult) ? renderResult : [renderResult],
 				newVNode,
 				oldVNode,
 				globalContext,
@@ -419,7 +440,7 @@ function diffElementNodes(
 			i = newVNode.props.children;
 			diffChildren(
 				dom,
-				Array.isArray(i) ? i : [i],
+				isArray(i) ? i : [i],
 				newVNode,
 				oldVNode,
 				globalContext,
@@ -494,7 +515,7 @@ export function applyRef(ref, value, vnode) {
  * @param {boolean} [skipRemove] Flag that indicates that a parent node of the
  * current element is already detached from the DOM.
  */
-export function unmount(vnode, parentVNode, skipRemove = false) {
+export function unmount(vnode, parentVNode, skipRemove) {
 	let r;
 	if (options.unmount) options.unmount(vnode);
 
@@ -504,7 +525,7 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 		}
 	}
 
-	if ((r = vnode._component) !== null) {
+	if ((r = vnode._component) !== null) { // MODDED
 		if (r.componentWillUnmount) {
 			try {
 				r.componentWillUnmount();
@@ -520,7 +541,11 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 	if ((r = vnode._children)) {
 		for (let i = 0; i < r.length; i++) {
 			if (r[i]) {
-				unmount(r[i], parentVNode, typeof vnode.type != 'function');
+				unmount(
+					r[i],
+					parentVNode,
+					skipRemove || typeof vnode.type !== 'function'
+				);
 			}
 		}
 	}

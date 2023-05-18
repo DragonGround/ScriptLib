@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.slice = exports.removeNode = exports.assign = void 0;
+exports.slice = exports.removeNode = exports.assign = exports.isArray = void 0;
 var constants_1 = require("./constants");
+exports.isArray = Array.isArray;
 function assign(obj, props) {
     for (var i in props)
         obj[i] = props[i];

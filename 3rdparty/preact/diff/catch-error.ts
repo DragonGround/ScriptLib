@@ -7,7 +7,7 @@
  * @param {import('../internal').VNode} [oldVNode]
  * @param {import('../internal').ErrorInfo} [errorInfo]
  */
- export function _catchError(error, vnode, oldVNode, errorInfo) {
+export function _catchError(error, vnode, oldVNode, errorInfo) {
 	/** @type {import('../internal').Component} */
 	let component, ctor, handled;
 

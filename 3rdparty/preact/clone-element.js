@@ -5,13 +5,21 @@ var util_1 = require("./util");
 var create_element_1 = require("./create-element");
 function cloneElement(vnode, props, children) {
     var normalizedProps = (0, util_1.assign)({}, vnode.props), key, ref, i;
+    var defaultProps;
+    if (vnode.type && vnode.type.defaultProps) {
+        defaultProps = vnode.type.defaultProps;
+    }
     for (i in props) {
         if (i == 'key')
             key = props[i];
         else if (i == 'ref')
             ref = props[i];
-        else
+        else if (props[i] === undefined && defaultProps !== undefined) {
+            normalizedProps[i] = defaultProps[i];
+        }
+        else {
             normalizedProps[i] = props[i];
+        }
     }
     if (arguments.length > 2) {
         normalizedProps.children =

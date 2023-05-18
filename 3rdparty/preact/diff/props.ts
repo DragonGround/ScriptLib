@@ -111,6 +111,8 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 			// - className --> class
 			name = name.replace(/xlink(H|:h)/, 'h').replace(/sName$/, 's');
 		} else if (
+			name !== 'width' &&
+			name !== 'height' &&
 			name !== 'href' &&
 			name !== 'list' &&
 			name !== 'form' &&
@@ -118,11 +120,13 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 			// cast to `0` instead
 			name !== 'tabIndex' &&
 			name !== 'download' &&
+			name !== 'rowSpan' &&
+			name !== 'colSpan' &&
 			name in dom
 		) {
 			try {
 				// dom[name] = value == null ? '' : value;
-				dom.setAttribute(name, value == null ? null : value);
+				dom.setAttribute(name, value == null ? null : value); // MODDED
 				// labelled break is 1b smaller here than a return statement (sorry)
 				break o;
 			} catch (e) { }
@@ -139,10 +143,7 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 			// never serialize functions as attribute values
 		} else if (name == "disabled") { // MODDED
 			dom.setAttribute(name, value);
-		} else if (
-			value != null &&
-			(value !== false || (name[0] === 'a' && name[1] === 'r'))
-		) {
+		} else if (value != null && (value !== false || name[4] === '-')) {
 			dom.setAttribute(name, value);
 		} else {
 			dom.removeAttribute(name);

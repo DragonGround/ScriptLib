@@ -7,7 +7,7 @@ var create_element_1 = require("../create-element");
 var children_1 = require("./children");
 var props_1 = require("./props");
 var util_1 = require("../util");
-var preact_1 = require("preact/");
+var options_1 = require("../options");
 function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
     var tmp, newType = newVNode.type;
     if (newVNode.constructor !== undefined)
@@ -18,7 +18,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
         newVNode._hydrating = null;
         excessDomChildren = [oldDom];
     }
-    if ((tmp = preact_1.options._diff))
+    if ((tmp = options_1.default._diff))
         tmp(newVNode);
     try {
         outer: if (typeof newType == 'function') {
@@ -53,6 +53,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
                 c_1._globalContext = globalContext;
                 isNew = c_1._dirty = true;
                 c_1._renderCallbacks = [];
+                c_1._stateCallbacks = [];
             }
             if (c_1._nextState == null) {
                 c_1._nextState = c_1.state;
@@ -65,6 +66,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             oldProps_1 = c_1.props;
             oldState_1 = c_1.state;
+            c_1._vnode = newVNode;
             if (isNew) {
                 if (newType.getDerivedStateFromProps == null &&
                     c_1.componentWillMount != null) {
@@ -84,17 +86,22 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
                     c_1.shouldComponentUpdate != null &&
                     c_1.shouldComponentUpdate(newProps, c_1._nextState, componentContext) === false) ||
                     newVNode._original === oldVNode._original) {
-                    c_1.props = newProps;
-                    c_1.state = c_1._nextState;
-                    if (newVNode._original !== oldVNode._original)
+                    if (newVNode._original !== oldVNode._original) {
+                        c_1.props = newProps;
+                        c_1.state = c_1._nextState;
                         c_1._dirty = false;
-                    c_1._vnode = newVNode;
+                    }
+                    c_1._force = false;
                     newVNode._dom = oldVNode._dom;
                     newVNode._children = oldVNode._children;
                     newVNode._children.forEach(function (vnode) {
                         if (vnode)
                             vnode._parent = newVNode;
                     });
+                    for (var i = 0; i < c_1._stateCallbacks.length; i++) {
+                        c_1._renderCallbacks.push(c_1._stateCallbacks[i]);
+                    }
+                    c_1._stateCallbacks = [];
                     if (c_1._renderCallbacks.length) {
                         commitQueue.push(c_1);
                     }
@@ -111,15 +118,18 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             c_1.context = componentContext;
             c_1.props = newProps;
-            c_1._vnode = newVNode;
             c_1._parentDom = parentDom;
-            var renderHook = preact_1.options._render, count = 0;
+            var renderHook = options_1.default._render, count = 0;
             if ('prototype' in newType && newType.prototype.render) {
                 c_1.state = c_1._nextState;
                 c_1._dirty = false;
                 if (renderHook)
                     renderHook(newVNode);
                 tmp = c_1.render(c_1.props, c_1.state, c_1.context);
+                for (var i = 0; i < c_1._stateCallbacks.length; i++) {
+                    c_1._renderCallbacks.push(c_1._stateCallbacks[i]);
+                }
+                c_1._stateCallbacks = [];
             }
             else {
                 do {
@@ -139,7 +149,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             var isTopLevelFragment = tmp !== null && tmp.type === create_element_1.Fragment && tmp.key == null;
             var renderResult = isTopLevelFragment ? tmp.props.children : tmp;
-            (0, children_1.diffChildren)(parentDom, Array.isArray(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
+            (0, children_1.diffChildren)(parentDom, (0, util_1.isArray)(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
             c_1.base = newVNode._dom;
             newVNode._hydrating = null;
             if (c_1._renderCallbacks.length) {
@@ -158,7 +168,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
         else {
             newVNode._dom = diffElementNodes(oldVNode._dom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, isHydrating);
         }
-        if ((tmp = preact_1.options.diffed))
+        if ((tmp = options_1.default.diffed))
             tmp(newVNode);
     }
     catch (e) {
@@ -170,13 +180,13 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             newVNode._hydrating = !!isHydrating;
             excessDomChildren[excessDomChildren.indexOf(oldDom)] = null;
         }
-        preact_1.options._catchError(e, newVNode, oldVNode);
+        options_1.default._catchError(e, newVNode, oldVNode);
     }
 }
 exports.diff = diff;
 function commitRoot(commitQueue, root) {
-    if (preact_1.options._commit)
-        preact_1.options._commit(root, commitQueue);
+    if (options_1.default._commit)
+        options_1.default._commit(root, commitQueue);
     commitQueue.some(function (c) {
         try {
             commitQueue = c._renderCallbacks;
@@ -186,7 +196,7 @@ function commitRoot(commitQueue, root) {
             });
         }
         catch (e) {
-            preact_1.options._catchError(e, c._vnode);
+            options_1.default._catchError(e, c._vnode);
         }
     });
 }
@@ -254,7 +264,7 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
         }
         else {
             i = newVNode.props.children;
-            (0, children_1.diffChildren)(dom, Array.isArray(i) ? i : [i], newVNode, oldVNode, globalContext, isSvg && nodeType !== 'foreignObject', excessDomChildren, commitQueue, excessDomChildren
+            (0, children_1.diffChildren)(dom, (0, util_1.isArray)(i) ? i : [i], newVNode, oldVNode, globalContext, isSvg && nodeType !== 'foreignObject', excessDomChildren, commitQueue, excessDomChildren
                 ? excessDomChildren[0]
                 : oldVNode._children && (0, component_1.getDomSibling)(oldVNode, 0), isHydrating);
             if (excessDomChildren != null) {
@@ -289,15 +299,14 @@ function applyRef(ref, value, vnode) {
             ref.current = value;
     }
     catch (e) {
-        preact_1.options._catchError(e, vnode);
+        options_1.default._catchError(e, vnode);
     }
 }
 exports.applyRef = applyRef;
 function unmount(vnode, parentVNode, skipRemove) {
-    if (skipRemove === void 0) { skipRemove = false; }
     var r;
-    if (preact_1.options.unmount)
-        preact_1.options.unmount(vnode);
+    if (options_1.default.unmount)
+        options_1.default.unmount(vnode);
     if ((r = vnode.ref)) {
         if (!r.current || r.current === vnode._dom) {
             applyRef(r, null, parentVNode);
@@ -309,7 +318,7 @@ function unmount(vnode, parentVNode, skipRemove) {
                 r.componentWillUnmount();
             }
             catch (e) {
-                preact_1.options._catchError(e, parentVNode);
+                options_1.default._catchError(e, parentVNode);
             }
         }
         r.base = r._parentDom = null;
@@ -318,7 +327,7 @@ function unmount(vnode, parentVNode, skipRemove) {
     if ((r = vnode._children)) {
         for (var i = 0; i < r.length; i++) {
             if (r[i]) {
-                unmount(r[i], parentVNode, typeof vnode.type != 'function');
+                unmount(r[i], parentVNode, skipRemove || typeof vnode.type !== 'function');
             }
         }
     }
