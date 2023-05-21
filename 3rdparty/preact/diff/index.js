@@ -304,6 +304,7 @@ function applyRef(ref, value, vnode) {
 }
 exports.applyRef = applyRef;
 function unmount(vnode, parentVNode, skipRemove) {
+    if (skipRemove === void 0) { skipRemove = false; }
     var r;
     if (options_1.default.unmount)
         options_1.default.unmount(vnode);

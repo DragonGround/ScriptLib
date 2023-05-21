@@ -20,3 +20,4 @@ declare namespace styled {
 export { styled as default };
 export declare const uss: (strings: TemplateStringsArray, ...values: any[]) => (props: any) => string;
 export declare const emo: (strings: TemplateStringsArray, ...values: any[]) => string;
+export declare type CompType<T> = (props: h.JSX.Button | T, ref: any) => h.JSX.Element;

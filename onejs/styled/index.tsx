@@ -71,3 +71,5 @@ export const emo = function (strings: TemplateStringsArray, ...values) {
 
     return _hashAndAddRuntimeUSS(style)
 }
+
+export type CompType<T> = (props: h.JSX.Button | T, ref: any) => h.JSX.Element

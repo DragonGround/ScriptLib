@@ -515,7 +515,7 @@ export function applyRef(ref, value, vnode) {
  * @param {boolean} [skipRemove] Flag that indicates that a parent node of the
  * current element is already detached from the DOM.
  */
-export function unmount(vnode, parentVNode, skipRemove) {
+export function unmount(vnode, parentVNode, skipRemove = false) {
 	let r;
 	if (options.unmount) options.unmount(vnode);
 
