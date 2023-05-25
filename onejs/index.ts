@@ -1,5 +1,4 @@
 import { StateUpdater, useCallback, useEffect, useState } from "preact/hooks"
-import { computed, effect, Signal, signal } from "preact/signals"
 
 /**
  * A convenience hook that, like useState(), returns a stateful value and a function to update it. This one ties the value to a property on a C# object. It takes care of setting up and cleaning up the C# value changed event automatically. Refer here for more info: https://onejs.com/dataflow#reducing-boilerplates
@@ -55,10 +54,7 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
  * of the callback will be cleaned up any dependency changes.
  */
 export function useEvent<TEventName extends string, TCallback>(
-    obj: Record<
-        `add_${TEventName}` | `remove_${TEventName}`,
-        (callback: TCallback) => void
-    >,
+    obj: CsharpEventSource<TEventName, TCallback>,
     eventName: TEventName,
     callback: TCallback,
     dependencies: any[] = []
@@ -77,3 +73,18 @@ export function useEvent<TEventName extends string, TCallback>(
         }
     }, dependencies)
 }
+
+/**
+ * Describes a C# class or struct that contains a property that is a C# event.
+ * For example, given a C# class that declares an event called `OnValueChanged`
+ * whose delegates accept a single parameter of type `int`, you can declare the
+ * type as follows:
+ *
+ *   type MyType = CsharpEventSource<"OnValueChanged", (value: number) => void> & {
+ *     // other properties...
+ *   }
+ */
+export type CsharpEventSource<TEventName extends string, TCallback> = Record<
+  `add_${TEventName}` | `remove_${TEventName}`,
+  (handler: TCallback) => void
+>;
