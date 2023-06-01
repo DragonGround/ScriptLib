@@ -13,7 +13,7 @@ let previousComponent;
 let currentHook = 0;
 
 /** @type {Array<import('./internal').Component>} */
-let afterPaintEffects = [];
+let afterPaintEffects: any[] = [];
 
 let EMPTY = [];
 

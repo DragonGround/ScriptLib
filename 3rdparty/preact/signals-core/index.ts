@@ -346,7 +346,7 @@ function cleanupSources(target: Computed | Effect) {
 	// Drop former dependencies from the list and unsubscribe from their change notifications.
 
 	let node = target._sources;
-	let sources = undefined;
+	let sources: any = undefined;
 	while (node !== undefined) {
 		const next = node._nextSource;
 		if (node._version === -1) {

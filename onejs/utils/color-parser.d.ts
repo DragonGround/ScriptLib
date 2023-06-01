@@ -151,7 +151,7 @@ declare var kCSSColorTable: {
     yellow: number[];
     yellowgreen: number[];
 };
-declare function parseCSSColor(css_str: string): number[];
+declare function parseCSSColor(css_str: string): number[] | null;
 declare function namedColor(name: keyof typeof kCSSColorTable): Color;
 declare function namedColors(...names: (keyof typeof kCSSColorTable)[]): Color[];
 export declare function colorStrToF4(str: string): float4;

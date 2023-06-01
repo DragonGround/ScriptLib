@@ -138,8 +138,8 @@ function setStyleBackground(propertyName: keyof Style) {
     }
 }
 
-function _getLength(value) {
-    let v: Length
+function _getLength(value): Length {
+    let v: any = undefined
     if (typeof value === "string") {
         if (value.endsWith("%")) {
             let n = parseFloat(value.replace("%", ""))

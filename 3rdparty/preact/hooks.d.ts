@@ -69,7 +69,7 @@ declare module "preact/hooks" {
 	 */
 	export function useRef<T>(initialValue: T): MutableRef<T>;
 	export function useRef<T>(initialValue: T | null): Ref<T>;
-	export function useRef<T = undefined>(): MutableRef<T | undefined>;
+	export function useRef<T>(): MutableRef<T>;
 
 	type EffectCallback = () => void | (() => void);
 	/**

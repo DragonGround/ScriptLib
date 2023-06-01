@@ -18,7 +18,7 @@ export function createContext(defaultValue, contextId) {
 		/** @type {import('./internal').FunctionComponent} */
 		Provider(props) {
 			if (!this.getChildContext) {
-				let subs = [];
+				let subs: any[] = [];
 				let ctx = {};
 				ctx[contextId] = this;
 
@@ -40,14 +40,14 @@ export function createContext(defaultValue, contextId) {
 						// 	c.context[contextId] = _props.value;
 						// 	enqueueRender(c);
 						// });
-						subs.some(c => {
+						subs.some((c: any) => {
 							c._force = true;
 							enqueueRender(c);
 						});
 					}
 				};
 
-				this.sub = c => {
+				this.sub = (c: any) => {
 					subs.push(c);
 					let old = c.componentWillUnmount;
 					c.componentWillUnmount = () => {

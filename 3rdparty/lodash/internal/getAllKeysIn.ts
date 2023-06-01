@@ -8,7 +8,7 @@ import getSymbolsIn from './getSymbolsIn.js'
  * @returns {Array} Returns the array of property names and symbols.
  */
 function getAllKeysIn(object) {
-  const result = []
+  const result: (string | symbol)[] = []
   for (const key in object) {
     result.push(key)
   }

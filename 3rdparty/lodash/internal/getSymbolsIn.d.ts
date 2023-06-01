@@ -1,2 +1,2 @@
-declare function getSymbolsIn(object: any): any[];
+declare function getSymbolsIn(object: any): symbol[];
 export default getSymbolsIn;

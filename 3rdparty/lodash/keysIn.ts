@@ -21,7 +21,7 @@
  * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
  */
 function keysIn(object) {
-  const result = []
+  const result: string[] = []
   for (const key in object) {
     result.push(key)
   }

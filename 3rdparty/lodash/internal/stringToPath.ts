@@ -24,7 +24,7 @@ const rePropName = RegExp(
  * @returns {Array} Returns the property path array.
  */
 const stringToPath = memoizeCapped((string) => {
-  const result = []
+  const result: string[] = []
   if (string.charCodeAt(0) === charCodeOfDot) {
     result.push('')
   }

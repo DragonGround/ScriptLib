@@ -206,7 +206,8 @@ function parseColor(input) {
     }
     else if (typeof input === "string") {
         var c = parseCSSColor(input);
-        return new UnityEngine_1.Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3]);
+        if (c !== null)
+            return new UnityEngine_1.Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3]);
     }
     return new UnityEngine_1.Color(input[0], input[1], input[2], input[3]);
 }

@@ -137,7 +137,7 @@ function css_hue_to_rgb(m1, m2, h) {
     return m1;
 }
 
-function parseCSSColor(css_str: string): number[] {
+function parseCSSColor(css_str: string): number[] | null {
     // Remove all whitespace, not compliant, but should just be more accepting.
     var str = css_str.replace(/ /g, '').toLowerCase();
 
@@ -235,7 +235,8 @@ export function parseColor(input: string | number[] | float4): Color {
         return new Color(input[0], input[1], input[2], input[3])
     } else if (typeof input === "string") {
         var c = parseCSSColor(input)
-        return new Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
+        if (c !== null)
+            return new Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
     }
     return new Color(input[0], input[1], input[2], input[3])
 }

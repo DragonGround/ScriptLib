@@ -1,2 +1,2 @@
-declare function keysIn(object: any): any[];
+declare function keysIn(object: any): string[];
 export default keysIn;

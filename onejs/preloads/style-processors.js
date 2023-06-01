@@ -127,7 +127,7 @@ function setStyleBackground(propertyName) {
     };
 }
 function _getLength(value) {
-    var v;
+    var v = undefined;
     if (typeof value === "string") {
         if (value.endsWith("%")) {
             var n_1 = parseFloat(value.replace("%", ""));

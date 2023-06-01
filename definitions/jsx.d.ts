@@ -22,7 +22,7 @@ declare module "preact/jsx" {
             key?: string
             disabled?: boolean
 
-            children?: (string | number | Element) | (string | number | Element)[]
+            children?: (string | number | boolean | Element | null | undefined) | (string | number | boolean | Element | null | undefined)[]
 
             dangerouslySetInnerHTML?: {
                 __html: string;

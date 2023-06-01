@@ -1,2 +1,2 @@
-declare function getAllKeysIn(object: any): any[];
+declare function getAllKeysIn(object: any): (string | symbol)[];
 export default getAllKeysIn;
