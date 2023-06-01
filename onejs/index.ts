@@ -1,5 +1,4 @@
 import { StateUpdater, useCallback, useEffect, useState } from "preact/hooks"
-import { computed, effect, Signal, signal } from "preact/signals"
 
 /**
  * A convenience hook that, like useState(), returns a stateful value and a function to update it. This one ties the value to a property on a C# object. It takes care of setting up and cleaning up the C# value changed event automatically. Refer here for more info: https://onejs.com/dataflow#reducing-boilerplates
@@ -55,10 +54,7 @@ export function useEventfulState<T, K extends keyof T>(obj: T, propertyName: K, 
  * of the callback will be cleaned up any dependency changes.
  */
 export function useEvent<TEventName extends string, TCallback>(
-    obj: Record<
-        `add_${TEventName}` | `remove_${TEventName}`,
-        (callback: TCallback) => void
-    >,
+    obj: HasCSharpEventBase<TEventName, TCallback>,
     eventName: TEventName,
     callback: TCallback,
     dependencies: any[] = []
@@ -77,3 +73,56 @@ export function useEvent<TEventName extends string, TCallback>(
         }
     }, dependencies)
 }
+
+/**
+ * Describes a C# class or struct that contains a property that is a C# event.
+ * For example, given a C# class that declares an event called `OnValueChanged`
+ * whose delegates accept a single parameter of type `int`, you can declare the
+ * type as follows:
+ *
+ *   type MyType = HasCsharpEvent<"OnValueChanged", number> & {
+ *     // other properties...
+ *   }
+ * 
+ * For event delegates that take more than one value, see related types
+ * `HasCsharpEvent2` and `HasCsharpEvent3`.
+ */
+export type HasCsharpEvent<EventName extends string, TVal> = HasCSharpEventBase<
+  EventName,
+  (val: TVal) => void
+>;
+
+export type HasCsharpEvent2<
+  EventName extends string,
+  TVal1,
+  TVal2
+> = HasCSharpEventBase<EventName, (val1: TVal1, val2: TVal2) => void>;
+
+export type HasCsharpEvent3<
+  EventName extends string,
+  TVal1,
+  TVal2,
+  TVal3
+> = HasCSharpEventBase<
+  EventName,
+  (val1: TVal1, val2: TVal2, val3: TVal3) => void
+>;
+
+/**
+ * A type that describes a C# class or struct that contains the following
+ * properties/fields that conform to the useEventfulState() protocol:
+ * 
+ * - a property with an arbitrary name and type
+ * - a C# event named `On{PropertyName}Changed`, whose delegate accepts a single
+ *   parameter of the same type as the property
+ */
+export type HasEventfulProperty<PropName extends string, TVal> = Record<
+  PropName,
+  TVal
+> &
+  HasCsharpEvent<`On${Capitalize<PropName>}Changed`, TVal>;
+
+type HasCSharpEventBase<EventName extends string, TCallback> = Record<
+  `add_${EventName}` | `remove_${EventName}`,
+  (handler: TCallback) => void
+>;
