@@ -148,7 +148,7 @@ function _getLength(value) {
 function setStyleLength(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
         var v = _getLength(value);
-        style[propertyName] = !value || typeof v === "undefined" ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(v);
+        style[propertyName] = (!value && value !== 0) || typeof v === "undefined" ? new UIElements_1.StyleLength(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleLength(v);
     };
 }
 function setStyleFloat(propertyName) {

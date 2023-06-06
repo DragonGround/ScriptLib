@@ -160,7 +160,7 @@ function _getLength(value): Length {
 function setStyleLength(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
         let v = _getLength(value)
-        style[propertyName] = !value || typeof v === "undefined" ? new StyleLength(StyleKeyword.Initial) : new StyleLength(v)
+        style[propertyName] = (!value && value !== 0) || typeof v === "undefined" ? new StyleLength(StyleKeyword.Initial) : new StyleLength(v)
     }
 }
 
