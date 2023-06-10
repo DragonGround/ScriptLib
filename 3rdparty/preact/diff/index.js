@@ -172,8 +172,6 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             tmp(newVNode);
     }
     catch (e) {
-        log(e.message);
-        log(e.stack);
         newVNode._original = null;
         if (isHydrating || excessDomChildren != null) {
             newVNode._dom = oldDom;
