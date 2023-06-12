@@ -346,7 +346,7 @@ function invokeEffect(hook) {
 function argsChanged(oldArgs, newArgs) {
     return (!oldArgs ||
         oldArgs.length !== newArgs.length ||
-        newArgs.some(function (arg, index) { return arg !== oldArgs[index]; }));
+        Array.isArray(newArgs) && newArgs.some(function (arg, index) { return arg !== oldArgs[index]; }));
 }
 function invokeOrReturn(arg, f) {
     return typeof f == 'function' ? f(arg) : f;

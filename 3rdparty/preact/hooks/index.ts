@@ -519,7 +519,7 @@ function argsChanged(oldArgs, newArgs) {
 	return (
 		!oldArgs ||
 		oldArgs.length !== newArgs.length ||
-		newArgs.some((arg, index) => arg !== oldArgs[index])
+		Array.isArray(newArgs) && newArgs.some((arg, index) => arg !== oldArgs[index])	// MODDED
 	);
 }
 

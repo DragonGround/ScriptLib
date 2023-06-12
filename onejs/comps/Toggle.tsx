@@ -4,9 +4,9 @@ import { Style } from "preact/jsx"
 export interface SwitchProps {
     class?: string
     children?: any
+    style?: Style
     checked?: boolean
     onChange?: (checked: boolean) => void
-    style?: Style
 }
 
 export const Switch = ({ class: classProp, children, checked, onChange, style }: SwitchProps) => {
