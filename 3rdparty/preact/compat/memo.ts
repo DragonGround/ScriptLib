@@ -8,7 +8,7 @@ import { shallowDiffers } from './util';
  * @param {(prev: object, next: object) => boolean} [comparer] Custom equality function
  * @returns {import('./internal').FunctionComponent}
  */
-export function memo(c, comparer) {
+export function memo(c, comparer?: any) {
     function shouldUpdate(nextProps) {
         let ref = this.props.ref;
         let updateRef = ref == nextProps.ref;
