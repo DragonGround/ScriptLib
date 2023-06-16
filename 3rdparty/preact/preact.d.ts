@@ -81,7 +81,7 @@ declare module "preact" {
 
 	export type ComponentProps<
 		C extends ComponentType<any> | keyof JSXInternal.IntrinsicElements
-		> = C extends ComponentType<infer P>
+	> = C extends ComponentType<infer P>
 		? P
 		: C extends keyof JSXInternal.IntrinsicElements
 		? JSXInternal.IntrinsicElements[C]

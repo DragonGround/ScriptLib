@@ -1,5 +1,5 @@
 import { Dom } from "OneJS/Dom"
-import { Fragment, createContext, h } from "preact"
+import { h, Fragment, createContext } from "preact"
 import { useContext, useEffect, useRef, useState } from "preact/hooks"
 import { Style } from "preact/jsx"
 import { FAIcon } from "onejs/fonts/fontawesome"
