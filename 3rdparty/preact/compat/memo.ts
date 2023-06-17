@@ -1,14 +1,14 @@
-import { createElement } from 'preact';
+import { FunctionComponent, createElement } from 'preact';
 import { shallowDiffers } from './util';
 
 /**
  * Memoize a component, so that it only updates when the props actually have
  * changed. This was previously known as `React.pure`.
- * @param {import('./internal').FunctionComponent} c functional component
- * @param {(prev: object, next: object) => boolean} [comparer] Custom equality function
- * @returns {import('./internal').FunctionComponent}
  */
-export function memo(c, comparer?: any) {
+export function memo<P = {}>(
+  c: FunctionComponent<P>,
+  comparer?: (prev: P, next: P) => boolean
+): FunctionComponent<P> {
     function shouldUpdate(nextProps) {
         let ref = this.props.ref;
         let updateRef = ref == nextProps.ref;
