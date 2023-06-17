@@ -10,8 +10,6 @@ import {
 } from "preact/signals-core";
 import {
 	VNode,
-	OptionsTypes,
-	HookFn,
 	Effect,
 	PropertyUpdater,
 	AugmentedComponent,
@@ -420,3 +418,26 @@ export function update<T extends SignalOrReactive>(
 	}
 }
 */
+
+const enum OptionsTypes {
+	HOOK = "_hook",
+	DIFF = "_diff",
+	DIFFED = "diffed",
+	RENDER = "_render",
+	CATCH_ERROR = "_catchError",
+	UNMOUNT = "unmount",
+}
+
+interface OptionsType {
+	[OptionsTypes.HOOK](component: Component, index: number, type: number): void;
+	[OptionsTypes.DIFF](vnode: VNode): void;
+	[OptionsTypes.DIFFED](vnode: VNode): void;
+	[OptionsTypes.RENDER](vnode: VNode): void;
+	[OptionsTypes.CATCH_ERROR](error: any, vnode: VNode, oldVNode: VNode): void;
+	[OptionsTypes.UNMOUNT](vnode: VNode): void;
+}
+
+type HookFn<T extends keyof OptionsType> = (
+	old: OptionsType[T],
+	...a: Parameters<OptionsType[T]>
+) => ReturnType<OptionsType[T]>;
