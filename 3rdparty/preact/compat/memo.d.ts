@@ -1,5 +1,2 @@
-export declare function memo(c: any, comparer?: any): {
-    (props: any): import("preact").VNode<any>;
-    displayName: string;
-    _forwarded: boolean;
-};
+import { FunctionComponent } from 'preact';
+export declare function memo<P = {}>(c: FunctionComponent<P>, comparer?: (prev: P, next: P) => boolean): FunctionComponent<P>;
