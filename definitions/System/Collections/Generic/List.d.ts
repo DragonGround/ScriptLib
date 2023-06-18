@@ -2,12 +2,9 @@
 
 declare module "System/Collections/Generic" {
 
-    export interface ListEnumerator<T> {
+    export interface ListEnumerator<T> extends IEnumerator<T> {
         Current: T
-
-        MoveNext(): boolean
         Dispose(): void
-
     }
 
     export class List<T> {
