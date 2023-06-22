@@ -22,6 +22,29 @@ const HAS_PENDING_UPDATE = 1 << 0;
 const HAS_HOOK_STATE = 1 << 1;
 const HAS_COMPUTEDS = 1 << 2;
 
+const enum OptionsTypes {
+	HOOK = "_hook",
+	DIFF = "_diff",
+	DIFFED = "diffed",
+	RENDER = "_render",
+	CATCH_ERROR = "_catchError",
+	UNMOUNT = "unmount",
+}
+
+interface OptionsType {
+	[OptionsTypes.HOOK](component: Component, index: number, type: number): void;
+	[OptionsTypes.DIFF](vnode: VNode): void;
+	[OptionsTypes.DIFFED](vnode: VNode): void;
+	[OptionsTypes.RENDER](vnode: VNode): void;
+	[OptionsTypes.CATCH_ERROR](error: any, vnode: VNode, oldVNode: VNode): void;
+	[OptionsTypes.UNMOUNT](vnode: VNode): void;
+}
+
+type HookFn<T extends keyof OptionsType> = (
+	old: OptionsType[T],
+	...a: Parameters<OptionsType[T]>
+) => ReturnType<OptionsType[T]>;
+
 // Install a Preact options hook
 function hook<T extends OptionsTypes>(hookName: T, hookFn: HookFn<T>) {
 	// @ts-ignore-next-line private options hooks usage
@@ -418,26 +441,3 @@ export function update<T extends SignalOrReactive>(
 	}
 }
 */
-
-const enum OptionsTypes {
-	HOOK = "_hook",
-	DIFF = "_diff",
-	DIFFED = "diffed",
-	RENDER = "_render",
-	CATCH_ERROR = "_catchError",
-	UNMOUNT = "unmount",
-}
-
-interface OptionsType {
-	[OptionsTypes.HOOK](component: Component, index: number, type: number): void;
-	[OptionsTypes.DIFF](vnode: VNode): void;
-	[OptionsTypes.DIFFED](vnode: VNode): void;
-	[OptionsTypes.RENDER](vnode: VNode): void;
-	[OptionsTypes.CATCH_ERROR](error: any, vnode: VNode, oldVNode: VNode): void;
-	[OptionsTypes.UNMOUNT](vnode: VNode): void;
-}
-
-type HookFn<T extends keyof OptionsType> = (
-	old: OptionsType[T],
-	...a: Parameters<OptionsType[T]>
-) => ReturnType<OptionsType[T]>;
