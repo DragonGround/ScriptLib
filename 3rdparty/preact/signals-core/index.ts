@@ -660,4 +660,4 @@ function effect(compute: () => unknown): () => void {
 	return effect._dispose.bind(effect);
 }
 
-export { signal, computed, effect, batch, Signal, ReadonlySignal };
+export { signal, computed, effect, batch, Signal, type ReadonlySignal };
