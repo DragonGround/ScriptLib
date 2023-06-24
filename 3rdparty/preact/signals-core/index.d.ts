@@ -58,4 +58,4 @@ declare class Effect {
 }
 declare function Effect(this: Effect, compute: () => void): void;
 declare function effect(compute: () => unknown): () => void;
-export { signal, computed, effect, batch, Signal, ReadonlySignal };
+export { signal, computed, effect, batch, Signal, type ReadonlySignal };
