@@ -92,8 +92,7 @@ setStyleLength("wordSpacing");
 function setStyleEnum(propertyName, enumType) {
     styleProcessors[propertyName] = function (style, value) {
         var styleEnumNull = document.createStyleEnumWithKeyword(UIElements_1.StyleKeyword.Initial, getType(enumType));
-        var styleEnum = document.createStyleEnum(enumType[value], getType(enumType));
-        style[propertyName] = !value ? styleEnumNull : styleEnum;
+        style[propertyName] = !value ? styleEnumNull : document.createStyleEnum(enumType[value], getType(enumType));
     };
 }
 function setStyleColor(propertyName) {

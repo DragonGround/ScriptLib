@@ -104,8 +104,7 @@ setStyleLength("wordSpacing")
 function setStyleEnum(propertyName: keyof Style, enumType) {
     styleProcessors[propertyName] = (style, value) => {
         let styleEnumNull = (document as any).createStyleEnumWithKeyword(StyleKeyword.Initial, getType(enumType))
-        let styleEnum = (document as any).createStyleEnum(enumType[value], getType(enumType))
-        style[propertyName] = !value ? styleEnumNull : styleEnum
+        style[propertyName] = !value ? styleEnumNull : (document as any).createStyleEnum(enumType[value], getType(enumType))
     }
 }
 
