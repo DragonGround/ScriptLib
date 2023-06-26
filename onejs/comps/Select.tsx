@@ -117,18 +117,18 @@ export const Select = ({ class: classProp, items, index, onChange, style }: Sele
     }, [selectedItem])
 
     return <Listbox class={`relative ${classProp}`} items={items} index={index} onChange={setSelectedItem}>
-        <Listbox.Button class={`bg-white rounded-md px-[12px] py-[10px] flex-row justify-between`}>
+        <Listbox.Button class={`default-bg-color active-text-color bold rounded-sm px-[12px] py-[10px] flex-row justify-between`}>
             <div class="">{selectedItem.name}</div>
-            <FAIcon name="down-dir" class="text-gray-400 translate-y-1" />
+            <FAIcon name="down-dir" class="active-text-color translate-y-1" />
         </Listbox.Button>
-        <Listbox.Options class="absolute bg-white rounded-md py-2 mt-2">
+        <Listbox.Options class="absolute default-bg-color default-text-color rounded-sm py-2 mt-2">
             {items.map((item, i) => (
-                <Listbox.Option index={i} class={`hover:bg-yellow-100 px-[12px] py-[10px] flex-row justify-between`} item={item}>
+                <Listbox.Option index={i} class={`hover:hover-bg-color hover:active-text-color px-[12px] py-[10px] flex-row justify-between`} item={item}>
                     {({ selected }) => <Fragment>
-                        <div class={`${selected ? 'bold' : 'font-normal'}`}>
+                        <div class={`bold ${selected ? 'active-text-color' : ''}`}>
                             {item.name}
                         </div>
-                        {selected ? <FAIcon name="ok" class="text-gray-400 translate-y-1" /> : null}
+                        {selected ? <FAIcon name="ok" class="active-text-color translate-y-1" /> : null}
                     </Fragment>}
                 </Listbox.Option>
             ))}

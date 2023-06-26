@@ -60,9 +60,9 @@ export const RadioToggle = ({ class: classProp, items, index, onChange, style }:
         onChange && onChange(items[index].value)
     }
 
-    return <RadioGroup class={`flex flex-row rounded-md overflow-hidden bg-white/50 ${classProp}`} index={index} onChange={onChangeIndex}>
+    return <RadioGroup class={`flex flex-row rounded-sm overflow-hidden default-bg-color text-yellow-600/90 bold ${classProp}`} index={index} onChange={onChangeIndex}>
         {items.map((item, i) => (
-            <RadioGroup.Option class={({ checked }) => `${checked ? "bg-white/70" : "bg-white/0"} p-2 transition-[background-color] duration-200`} index={i}>
+            <RadioGroup.Option class={({ checked }) => `${checked ? "bg-yellow-300 text-yellow-800" : "bg-white"} p-3 transition-[background-color] duration-200`} index={i}>
                 {({ checked }) => <Fragment>{item.label}</Fragment>}
             </RadioGroup.Option>
         ))}
