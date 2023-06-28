@@ -66,7 +66,7 @@ declare module "preact/jsx" {
         paddingTop?: number | string  // StyleLength
         position?: keyof typeof Position
         right?: number | string  // StyleLength
-        rotate?: number // StyleRotate
+        rotate?: number | string // StyleRotate
         scale?: float2 | number[]  // StyleScale
         textOverflow?: keyof typeof TextOverflow
         textShadow?: TextShadowInfo // StyleTextShadow

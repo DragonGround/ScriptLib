@@ -168,9 +168,25 @@ function setStyleCursor(propertyName) {
         style[propertyName] = !value ? new UIElements_1.StyleCursor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleCursor(new UIElements_1.Cursor());
     };
 }
+var rotateRegex = /(-?\d*\.?\d+)(deg|grad|rad|turn)/g;
+var stringToEnum = {
+    'deg': UIElements_1.AngleUnit.Degree,
+    'grad': UIElements_1.AngleUnit.Gradian,
+    'rad': UIElements_1.AngleUnit.Radian,
+    'turn': UIElements_1.AngleUnit.Turn,
+};
 function setStyleRotate(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = !value ? new UIElements_1.StyleRotate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(value)));
+        var match;
+        if (typeof value == "string" && (match = rotateRegex.exec(value)) !== null) {
+            style[propertyName] = new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(Number(match[1]), stringToEnum[match[2]])));
+        }
+        else if (typeof value == "number") {
+            style[propertyName] = new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(value)));
+        }
+        else {
+            style[propertyName] = new UIElements_1.StyleRotate(UIElements_1.StyleKeyword.Initial);
+        }
     };
 }
 function setStyleScale(propertyName) {

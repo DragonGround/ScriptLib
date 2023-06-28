@@ -3,7 +3,7 @@ import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
 import { Color, FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D, Vector2 } from "UnityEngine"
-import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage } from "UnityEngine/UIElements"
+import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage, AngleUnit } from "UnityEngine/UIElements"
 
 /**
  * Unity Specific Style processors
@@ -184,9 +184,24 @@ function setStyleCursor(propertyName: keyof Style) {
     }
 }
 
+const rotateRegex = /(-?\d*\.?\d+)(deg|grad|rad|turn)/g
+const stringToEnum: { [key: string]: AngleUnit } = {
+    'deg': AngleUnit.Degree,
+    'grad': AngleUnit.Gradian,
+    'rad': AngleUnit.Radian,
+    'turn': AngleUnit.Turn,
+}
+
 function setStyleRotate(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = !value ? new StyleRotate(StyleKeyword.Initial) : new StyleRotate(new Rotate(new Angle(value)))
+        let match;
+        if (typeof value == "string" && (match = rotateRegex.exec(value)) !== null) {
+            style[propertyName] = new StyleRotate(new Rotate(new Angle(Number(match[1]), stringToEnum[match[2]])))
+        } else if (typeof value == "number") {
+            style[propertyName] = new StyleRotate(new Rotate(new Angle(value)))
+        } else {
+            style[propertyName] = new StyleRotate(StyleKeyword.Initial)
+        }
     }
 }
 
