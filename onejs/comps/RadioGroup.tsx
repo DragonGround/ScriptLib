@@ -1,8 +1,6 @@
-import { Dom } from "OneJS/Dom"
 import { h, Fragment, createContext } from "preact"
 import { useContext, useEffect, useRef, useState } from "preact/hooks"
 import { Style } from "preact/jsx"
-import { FAIcon } from "onejs/fonts/fontawesome"
 
 export interface RadioGroupProps {
     class?: string
@@ -60,9 +58,9 @@ export const RadioToggle = ({ class: classProp, items, index, onChange, style }:
         onChange && onChange(items[index].value)
     }
 
-    return <RadioGroup class={`flex flex-row rounded-sm overflow-hidden default-bg-color text-yellow-600/90 bold ${classProp}`} index={index} onChange={onChangeIndex}>
+    return <RadioGroup class={`flex flex-row rounded-sm overflow-hidden default-bg-color active-text-color bold ${classProp}`} index={index} onChange={onChangeIndex}>
         {items.map((item, i) => (
-            <RadioGroup.Option class={({ checked }) => `${checked ? "bg-yellow-300 text-yellow-800" : "bg-white"} p-3 transition-[background-color] duration-200`} index={i}>
+            <RadioGroup.Option class={({ checked }) => `${checked ? "accented-bg-color highlighted-text-color" : "bg-white"} p-3 transition-[background-color] duration-200`} index={i}>
                 {({ checked }) => <Fragment>{item.label}</Fragment>}
             </RadioGroup.Option>
         ))}

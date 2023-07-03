@@ -28,9 +28,9 @@ var RadioToggle = function (_a) {
     function onChangeIndex(index) {
         onChange && onChange(items[index].value);
     }
-    return (0, preact_1.h)(exports.RadioGroup, { class: "flex flex-row rounded-sm overflow-hidden default-bg-color text-yellow-600/90 bold ".concat(classProp), index: index, onChange: onChangeIndex }, items.map(function (item, i) { return ((0, preact_1.h)(exports.RadioGroup.Option, { class: function (_a) {
+    return (0, preact_1.h)(exports.RadioGroup, { class: "flex flex-row rounded-sm overflow-hidden default-bg-color active-text-color bold ".concat(classProp), index: index, onChange: onChangeIndex }, items.map(function (item, i) { return ((0, preact_1.h)(exports.RadioGroup.Option, { class: function (_a) {
             var checked = _a.checked;
-            return "".concat(checked ? "bg-yellow-300 text-yellow-800" : "bg-white", " p-3 transition-[background-color] duration-200");
+            return "".concat(checked ? "accented-bg-color highlighted-text-color" : "bg-white", " p-3 transition-[background-color] duration-200");
         }, index: i }, function (_a) {
         var checked = _a.checked;
         return (0, preact_1.h)(preact_1.Fragment, null, item.label);

@@ -235,8 +235,9 @@ export function parseColor(input: string | number[] | float4): Color {
         return new Color(input[0], input[1], input[2], input[3])
     } else if (typeof input === "string") {
         var c = parseCSSColor(input)
-        if (c !== null)
+        if (c !== null) {
             return new Color(c[0] / 255, c[1] / 255, c[2] / 255, c[3])
+        }
     }
     return new Color(input[0], input[1], input[2], input[3])
 }
