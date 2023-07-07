@@ -19,7 +19,7 @@ declare module "preact/jsx" {
         export interface VisualElement {
             id?: string
             ref?: Ref<any>
-            key?: string
+            key?: string | number
             disabled?: boolean
 
             children?: (string | number | boolean | Element | null | undefined) | (string | number | boolean | Element | null | undefined)[]
