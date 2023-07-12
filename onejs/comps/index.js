@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExampleTabs = exports.Tab = exports.RadioToggle = exports.RadioGroup = exports.Select = exports.Listbox = exports.DiamondToggle = exports.Toggle = exports.Switch = void 0;
+exports.Slider = exports.Transition = exports.ExampleTabs = exports.Tab = exports.RadioToggle = exports.RadioGroup = exports.Select = exports.Listbox = exports.DiamondToggle = exports.Toggle = exports.Switch = void 0;
 var Toggle_1 = require("./Toggle");
 Object.defineProperty(exports, "Switch", { enumerable: true, get: function () { return Toggle_1.Switch; } });
 Object.defineProperty(exports, "Toggle", { enumerable: true, get: function () { return Toggle_1.Toggle; } });
@@ -14,3 +14,7 @@ Object.defineProperty(exports, "RadioToggle", { enumerable: true, get: function 
 var Tab_1 = require("./Tab");
 Object.defineProperty(exports, "Tab", { enumerable: true, get: function () { return Tab_1.Tab; } });
 Object.defineProperty(exports, "ExampleTabs", { enumerable: true, get: function () { return Tab_1.ExampleTabs; } });
+var Transition_1 = require("./Transition");
+Object.defineProperty(exports, "Transition", { enumerable: true, get: function () { return Transition_1.Transition; } });
+var Slider_1 = require("./Slider");
+Object.defineProperty(exports, "Slider", { enumerable: true, get: function () { return Slider_1.Slider; } });

@@ -1,3 +1,4 @@
+import { NativeArray } from "Unity/Collections"
 
 
 declare module "UnityEngine" {

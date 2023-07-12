@@ -10,7 +10,7 @@ theme.extend = {
 }
 exports.theme = theme
 
-exports.paths = ["./ScriptLib/onejs/comps/**/*.js"]
+exports.paths = ["./ScriptLib/onejs/comps/**/*.js", "./Samples/**/*.js"]
 
 exports.plugins = [
     plugin(function ({ addUtilities, matchUtilities, addBase, theme }) {

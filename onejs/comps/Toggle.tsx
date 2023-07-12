@@ -39,7 +39,7 @@ export const Toggle = ({ class: classProp, children, checked, onChange, style }:
 
 export const DiamondToggle = ({ class: classProp, children, checked, onChange, style }: ToggleProps) => {
 
-    return <Switch class={`w-8 h-8 p-[6px] rounded-md border-[1px] ${checked ? 'border-[rgba(255_255_255_0.8)] bg-[rgba(0_0_0_0.5)] rotate-[45deg]' : 'border-[rgba(255_255_255_0.5)] bg-[rgba(0_0_0_0.8)] rotate-0'} transition-[background-color,translate] duration-200 ${classProp}`} checked={checked} onChange={onChange} style={style}>
+    return <Switch class={`w-8 h-8 p-[6px] rounded-md border-[1px] ${checked ? 'border-[rgba(255_255_255_0.8)] bg-[rgba(0_0_0_0.5)] rotate-[45deg]' : 'border-[rgba(255_255_255_0.5)] bg-[rgba(0_0_0_0.8)] rotate-0'} transition-[background-color,rotate] duration-200 ${classProp}`} checked={checked} onChange={onChange} style={style}>
         {({ checked }) => (
             <div class={`w-[18px] h-[18px] bg-white rounded-sm ${checked ? 'flex' : 'hidden'}`} onClick={() => onChange && onChange(!checked)} />
         )}

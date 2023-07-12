@@ -2,7 +2,7 @@
 
 declare module "Unity/Jobs" {
     import { NativeArray, NativeSlice } from "Unity/Collections"
-    
+
     export class JobHandle {
         static CompleteAll(job0: JobHandle, job1: JobHandle): void
         static CompleteAll(job0: JobHandle, job1: JobHandle, job2: JobHandle): void
@@ -15,5 +15,9 @@ declare module "Unity/Jobs" {
         static CheckFenceIsDependencyOrDidSyncFence(jobHandle: JobHandle, dependsOn: JobHandle): boolean
         IsCompleted: boolean
         Complete(): void
+    }
+
+    export class IJobParallelFor {
+        Execute(index: number): void
     }
 }
