@@ -22,7 +22,6 @@ export const Listbox = ({ class: classProp, children, items, onChange, index, st
     const offset = useRef({ x: 0, y: 0, width: 0 })
 
     useEffect(() => {
-        // let listboxPos = ref.current.ve.LocalToWorld(ref.current.ve.layout)
         offset.current.x = ref.current.ve.layout.x
         offset.current.y = ref.current.ve.layout.y + ref.current.ve.layout.height
         offset.current.width = ref.current.ve.layout.width

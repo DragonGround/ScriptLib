@@ -1,14 +1,8 @@
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Slider = void 0;
-var styled_1 = require("onejs/styled");
 var preact_1 = require("preact");
 var hooks_1 = require("preact/hooks");
-var sliderClass = (0, styled_1.emo)(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n    #unity-tracker {\n        border-width: 0;\n        background-color: white;\n        border-radius: 3px;\n    }\n"], ["\n    #unity-tracker {\n        border-width: 0;\n        background-color: white;\n        border-radius: 3px;\n    }\n"])));
 var Slider = function (_a) {
     var classProp = _a.class, style = _a.style, value = _a.value, onChange = _a.onChange, _min = _a.min, _max = _a.max;
     var ref = (0, hooks_1.useRef)();
@@ -63,4 +57,3 @@ var Slider = function (_a) {
         (0, preact_1.h)("div", { ref: thumbRef, class: "w-[24px] h-[24px] default-bg-color absolute rounded-full translate-x-[-10px]" }));
 };
 exports.Slider = Slider;
-var templateObject_1;

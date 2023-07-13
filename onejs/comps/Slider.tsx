@@ -1,6 +1,5 @@
 import { Dom } from "OneJS/Dom"
-import { ChangeEvent, MouseDownEvent, MouseMoveEvent } from "UnityEngine/UIElements"
-import { emo } from "onejs/styled"
+import { MouseDownEvent, MouseMoveEvent } from "UnityEngine/UIElements"
 import { h } from "preact"
 import { useEffect, useRef, useState } from "preact/hooks"
 import { Style } from "preact/jsx"
@@ -13,14 +12,6 @@ export type SliderProps = {
     min?: number
     max?: number
 }
-
-const sliderClass = emo`
-    #unity-tracker {
-        border-width: 0;
-        background-color: white;
-        border-radius: 3px;
-    }
-`
 
 export const Slider = ({ class: classProp, style, value, onChange, min: _min, max: _max }: SliderProps) => {
     const ref = useRef<Dom>()
