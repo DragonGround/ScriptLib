@@ -254,8 +254,16 @@ function setStyleListEasingFunction(propertyName, valueType) {
 }
 function setStyleTranslate(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        var v = (0, float_parser_1.parseFloat3)(value);
-        style[propertyName] = !value ? new UIElements_1.StyleTranslate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTranslate(new UIElements_1.Translate(new UIElements_1.Length(v.x), new UIElements_1.Length(v.y), v.z));
+        if (typeof value == "string") {
+            var tokens = value.split(/\s*,\s*|\s+/).filter(Boolean);
+            var v1 = _getLength(tokens[0]);
+            var v2 = _getLength(tokens[1]);
+            style[propertyName] = new UIElements_1.StyleTranslate(new UIElements_1.Translate(v1 || new UIElements_1.Length(0), v2 || new UIElements_1.Length(0), 0));
+        }
+        else {
+            var v = (0, float_parser_1.parseFloat3)(value);
+            style[propertyName] = !value ? new UIElements_1.StyleTranslate(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleTranslate(new UIElements_1.Translate(new UIElements_1.Length(v.x), new UIElements_1.Length(v.y), v.z));
+        }
     };
 }
 function setStyleFont(propertyName) {

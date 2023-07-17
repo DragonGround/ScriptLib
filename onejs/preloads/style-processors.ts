@@ -280,8 +280,15 @@ function setStyleListEasingFunction(propertyName: keyof Style, valueType) {
 
 function setStyleTranslate(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        var v = parseFloat3(value)
-        style[propertyName] = !value ? new StyleTranslate(StyleKeyword.Initial) : new StyleTranslate(new Translate(new Length(v.x), new Length(v.y), v.z))
+        if (typeof value == "string") {
+            let tokens = value.split(/\s*,\s*|\s+/).filter(Boolean)
+            let v1 = _getLength(tokens[0])
+            let v2 = _getLength(tokens[1])
+            style[propertyName] = new StyleTranslate(new Translate(v1 || new Length(0), v2 || new Length(0), 0))
+        } else {
+            var v = parseFloat3(value)
+            style[propertyName] = !value ? new StyleTranslate(StyleKeyword.Initial) : new StyleTranslate(new Translate(new Length(v.x), new Length(v.y), v.z))
+        }
     }
 }
 

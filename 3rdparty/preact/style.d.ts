@@ -77,7 +77,7 @@ declare module "preact/jsx" {
         transitionDuration?: number[]  // StyleList<TimeValue>
         transitionProperty?: (keyof StyleKeys)[]   // StyleList<StylePropertyName>
         transitionTimingFunction?: (keyof typeof EasingMode)[]  // StyleList<EasingFunction>
-        translate?: float2 | number[] // StyleTranslate
+        translate?: float2 | number[] | string // StyleTranslate
         unityBackgroundImageTintColor?: ColorInfo   // StyleColor
         unityBackgroundScaleMode?: keyof typeof ScaleMode
 
