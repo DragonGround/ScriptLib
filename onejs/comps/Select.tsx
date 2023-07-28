@@ -61,21 +61,28 @@ export interface ListboxOptionsProps {
 }
 
 Listbox.Options = ({ class: classProp, children }: ListboxOptionsProps) => {
-    const { isOpen, offset } = useContext(ListboxContext)
+    const { isOpen, setIsOpen, offset } = useContext(ListboxContext)
     const ref = useRef<Dom>()
+    const innerRef = useRef<Dom>()
 
     useEffect(() => {
         if (!isOpen) return
         document.body.appendChild(ref.current as any)
         setTimeout(() => {
-            ref.current.style.opacity = 1
-            ref.current.style.top = `${offset.current.y}px`
-            ref.current.style.left = `${offset.current.x}px`
-            ref.current.style.width = `${offset.current.width}px`
+            innerRef.current.style.opacity = 1
+            innerRef.current.style.top = `${offset.current.y}px`
+            innerRef.current.style.left = `${offset.current.x}px`
+            innerRef.current.style.width = `${offset.current.width}px`
         })
     }, [isOpen])
 
-    return isOpen ? <div ref={ref} class={`opacity-0 transition-[opacity] duration-200 ${classProp}`}>{children}</div> : null
+    function onClick() {
+        setIsOpen(false)
+    }
+
+    return isOpen ? <div ref={ref} class={`absolute w-full h-full`} onClick={onClick}>
+        <div ref={innerRef} class={`opacity-0 transition-[opacity] duration-200 ${classProp}`}>{children}</div>
+    </div> : null
 }
 
 export interface ListboxOptionProps {
@@ -120,7 +127,7 @@ export const Select = ({ class: classProp, items, index, onChange, style }: Sele
             <div class="">{selectedItem.name}</div>
             <FAIcon name="down-dir" class="active-text-color translate-y-1" />
         </Listbox.Button>
-        <Listbox.Options class="absolute default-bg-color default-text-color rounded-sm py-2 mt-2">
+        <Listbox.Options class="default-bg-color default-text-color rounded-sm py-2 mt-2">
             {items.map((item, i) => (
                 <Listbox.Option index={i} class={`hover:hover-bg-color hover:active-text-color px-[12px] py-[10px] flex-row justify-between`} item={item}>
                     {({ selected }) => <Fragment>
