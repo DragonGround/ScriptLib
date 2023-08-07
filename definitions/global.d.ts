@@ -12,7 +12,10 @@ declare function logTimeEnd(obj: any): void
 
 declare function struct<T>(type: { new(): T }, obj: any): T
 
-declare var webapi: { getText(uri, callback: (txt: string) => void): void }
+declare var webapi: { 
+    getText(uri, callback: (txt: string) => void): void,
+    getImage(uri, callback: (txt: Texture2D) => void): void,
+ }
 
 declare var __dirname: string
 declare var System: any
