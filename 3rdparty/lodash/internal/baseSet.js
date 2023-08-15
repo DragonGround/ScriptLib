@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var assignValue_js_1 = require("./assignValue.js");
-var castPath_js_1 = require("./castPath.js");
-var isIndex_js_1 = require("./isIndex.js");
-var isObject_js_1 = require("../isObject.js");
-var toKey_js_1 = require("./toKey.js");
+var assignValue_js_1 = __importDefault(require("./assignValue.js"));
+var castPath_js_1 = __importDefault(require("./castPath.js"));
+var isIndex_js_1 = __importDefault(require("./isIndex.js"));
+var isObject_js_1 = __importDefault(require("../isObject.js"));
+var toKey_js_1 = __importDefault(require("./toKey.js"));
 function baseSet(object, path, value, customizer) {
     if (!(0, isObject_js_1.default)(object)) {
         return object;

@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var string_indexes_1 = require("string-indexes");
+var string_indexes_1 = __importDefault(require("string-indexes"));
 var constants_1 = require("./constants");
 var SELECTOR = constants_1.TOKEN_TYPE.SELECTOR, BODY_START = constants_1.TOKEN_TYPE.BODY_START, BODY_END = constants_1.TOKEN_TYPE.BODY_END;
 var mergeTokensSorted = function (t1, t2) {

@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var baseAssignValue_1 = require("./baseAssignValue");
-var eq_1 = require("../eq");
+var baseAssignValue_1 = __importDefault(require("./baseAssignValue"));
+var eq_1 = __importDefault(require("../eq"));
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 function assignValue(object, key, value) {
     var objValue = object[key];

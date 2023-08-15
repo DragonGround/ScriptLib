@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var baseGet_js_1 = require("./baseGet.js");
-var baseSet_js_1 = require("./baseSet.js");
-var castPath_js_1 = require("./castPath.js");
+var baseGet_js_1 = __importDefault(require("./baseGet.js"));
+var baseSet_js_1 = __importDefault(require("./baseSet.js"));
+var castPath_js_1 = __importDefault(require("./castPath.js"));
 function basePickBy(object, paths, predicate) {
     var index = -1;
     var length = paths.length;

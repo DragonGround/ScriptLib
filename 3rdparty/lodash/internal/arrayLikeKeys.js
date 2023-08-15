@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var isArguments_js_1 = require("../isArguments.js");
-var isBuffer_js_1 = require("../isBuffer.js");
-var isIndex_js_1 = require("./isIndex.js");
-var isTypedArray_js_1 = require("../isTypedArray.js");
+var isArguments_js_1 = __importDefault(require("../isArguments.js"));
+var isBuffer_js_1 = __importDefault(require("../isBuffer.js"));
+var isIndex_js_1 = __importDefault(require("./isIndex.js"));
+var isTypedArray_js_1 = __importDefault(require("../isTypedArray.js"));
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 function arrayLikeKeys(value, inherited) {
     var isArr = Array.isArray(value);

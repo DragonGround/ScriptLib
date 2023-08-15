@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unmount = exports.applyRef = exports.commitRoot = exports.diff = void 0;
 var constants_1 = require("../constants");
@@ -7,7 +10,7 @@ var create_element_1 = require("../create-element");
 var children_1 = require("./children");
 var props_1 = require("./props");
 var util_1 = require("../util");
-var options_1 = require("../options");
+var options_1 = __importDefault(require("../options"));
 function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
     var tmp, newType = newVNode.type;
     if (newVNode.constructor !== undefined)

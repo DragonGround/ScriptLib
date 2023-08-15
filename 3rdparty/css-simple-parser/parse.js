@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var constants_1 = require("./constants");
-var tokenizer_1 = require("./tokenizer");
+var tokenizer_1 = __importDefault(require("./tokenizer"));
 var SELECTOR = constants_1.TOKEN_TYPE.SELECTOR, BODY_START = constants_1.TOKEN_TYPE.BODY_START, BODY_END = constants_1.TOKEN_TYPE.BODY_END;
 var getNodeBody = function (node, css) {
     var children = node.children;

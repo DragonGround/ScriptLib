@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var now_1 = require("./now");
+var now_1 = __importDefault(require("./now"));
 var Group = (function () {
     function Group() {
         this._tweens = {};

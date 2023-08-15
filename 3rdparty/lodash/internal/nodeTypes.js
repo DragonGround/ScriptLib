@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var freeGlobal_js_1 = require("./freeGlobal.js");
+var freeGlobal_js_1 = __importDefault(require("./freeGlobal.js"));
 var freeExports = typeof exports === 'object' && exports !== null && !exports.nodeType && exports;
 var freeModule = freeExports && typeof module === 'object' && module !== null && !module.nodeType && module;
 var moduleExports = freeModule && freeModule.exports === freeExports;

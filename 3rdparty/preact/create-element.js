@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidElement = exports.Fragment = exports.createRef = exports.createVNode = exports.createElement = void 0;
 var util_1 = require("./util");
-var options_1 = require("./options");
+var options_1 = __importDefault(require("./options"));
 var vnodeId = 0;
 function createElement(type, props, children) {
     var normalizedProps = {}, key, ref, i;

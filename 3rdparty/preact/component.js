@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enqueueRender = exports.getDomSibling = exports.Component = void 0;
 var util_1 = require("./util");
 var index_1 = require("./diff/index");
-var options_1 = require("./options");
+var options_1 = __importDefault(require("./options"));
 var create_element_1 = require("./create-element");
 function Component(props, context) {
     this.props = props;

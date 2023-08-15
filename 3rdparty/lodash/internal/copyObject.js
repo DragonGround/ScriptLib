@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var assignValue_js_1 = require("./assignValue.js");
-var baseAssignValue_js_1 = require("./baseAssignValue.js");
+var assignValue_js_1 = __importDefault(require("./assignValue.js"));
+var baseAssignValue_js_1 = __importDefault(require("./baseAssignValue.js"));
 function copyObject(source, props, object, customizer) {
     var isNew = !object;
     object || (object = {});

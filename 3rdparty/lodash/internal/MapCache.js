@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Hash_js_1 = require("./Hash.js");
+var Hash_js_1 = __importDefault(require("./Hash.js"));
 function getMapData(_a, key) {
     var __data__ = _a.__data__;
     var data = __data__;

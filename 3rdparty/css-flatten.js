@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var css_simple_parser_1 = require("css-simple-parser");
+var css_simple_parser_1 = __importDefault(require("css-simple-parser"));
 var Resolve = {
     ampersand: function (resolved, selector, parents) {
         for (var pi = 0, pl = parents.length; pi < pl; pi++) {

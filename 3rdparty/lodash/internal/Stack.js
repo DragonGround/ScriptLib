@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var ListCache_js_1 = require("./ListCache.js");
-var MapCache_js_1 = require("./MapCache.js");
+var ListCache_js_1 = __importDefault(require("./ListCache.js"));
+var MapCache_js_1 = __importDefault(require("./MapCache.js"));
 var LARGE_ARRAY_SIZE = 200;
 var Stack = (function () {
     function Stack(entries) {

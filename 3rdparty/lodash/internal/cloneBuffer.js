@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var root_js_1 = require("./root.js");
+var root_js_1 = __importDefault(require("./root.js"));
 var freeExports = typeof exports === 'object' && exports !== null && !exports.nodeType && exports;
 var freeModule = freeExports && typeof module === 'object' && module !== null && !module.nodeType && module;
 var moduleExports = freeModule && freeModule.exports === freeExports;

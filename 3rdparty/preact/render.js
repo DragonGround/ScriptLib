@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hydrate = exports.render = void 0;
 var constants_1 = require("./constants");
 var index_1 = require("./diff/index");
 var create_element_1 = require("./create-element");
-var options_1 = require("./options");
+var options_1 = __importDefault(require("./options"));
 var util_1 = require("./util");
 function render(vnode, parentDom, replaceNode) {
     if (options_1.default._root)

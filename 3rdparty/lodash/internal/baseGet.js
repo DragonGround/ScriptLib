@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var castPath_js_1 = require("./castPath.js");
-var toKey_js_1 = require("./toKey.js");
+var castPath_js_1 = __importDefault(require("./castPath.js"));
+var toKey_js_1 = __importDefault(require("./toKey.js"));
 function baseGet(object, path) {
     path = (0, castPath_js_1.default)(path, object);
     var index = 0;

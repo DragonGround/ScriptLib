@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.options = exports.toChildArray = exports.createContext = exports.cloneElement = exports.Component = exports.isValidElement = exports.createRef = exports.Fragment = exports.h = exports.createElement = exports.hydrate = exports.render = void 0;
 var render_1 = require("./render");
@@ -19,4 +22,4 @@ Object.defineProperty(exports, "createContext", { enumerable: true, get: functio
 var children_1 = require("./diff/children");
 Object.defineProperty(exports, "toChildArray", { enumerable: true, get: function () { return children_1.toChildArray; } });
 var options_1 = require("./options");
-Object.defineProperty(exports, "options", { enumerable: true, get: function () { return options_1.default; } });
+Object.defineProperty(exports, "options", { enumerable: true, get: function () { return __importDefault(options_1).default; } });

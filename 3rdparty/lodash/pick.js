@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var basePick_1 = require("./internal/basePick");
+var basePick_1 = __importDefault(require("./internal/basePick"));
 function pick(object) {
     var paths = [];
     for (var _i = 1; _i < arguments.length; _i++) {
