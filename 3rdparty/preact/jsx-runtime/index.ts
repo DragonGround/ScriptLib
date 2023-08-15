@@ -76,3 +76,5 @@ export {
 	createVNode as jsxDEV,
 	Fragment
 };
+
+export { type JSXInternal as JSX } from 'preact/jsx'
