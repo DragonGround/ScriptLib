@@ -1,9 +1,9 @@
 import {
-  MutableRef,
-  StateUpdater,
-  useCallback,
-  useEffect,
-  useState,
+    MutableRef,
+    StateUpdater,
+    useCallback,
+    useEffect,
+    useState,
 } from "preact/hooks"
 
 /**
@@ -18,50 +18,50 @@ import {
  * @returns
  */
 export function useEventfulState<
-  T extends {
-    [k in K | `add_${E}` | `remove_${E}`]: k extends `add_${E}` | `remove_${E}`
-      ? (handler: (value: T[K]) => any) => void
-      : any
-  },
-  K extends string & keyof T,
-  E extends string = `On${K}Changed`
+    T extends {
+        [k in K | `add_${E}` | `remove_${E}`]: k extends `add_${E}` | `remove_${E}`
+        ? (handler: (value: T[K]) => any) => void
+        : any
+    },
+    K extends string & keyof T,
+    E extends string = `On${K}Changed`
 >(obj: T, propertyName: K, eventName?: E): [T[K], StateUpdater<T[K]>] {
-  const [val, setVal] = useState<T[K]>(obj[propertyName])
-  const [, updateState] = useState({})
-  const forceUpdate = useCallback(() => updateState({}), [])
+    const [val, setVal] = useState<T[K]>(obj[propertyName])
+    const [, updateState] = useState({})
+    const forceUpdate = useCallback(() => updateState({}), [])
 
-  eventName ||= `On${propertyName}Changed` as E
-  const addEventFunc = obj[`add_${eventName}`]
-  const removeEventFunc = obj[`remove_${eventName}`]
+    eventName ||= `On${propertyName}Changed` as E
+    const addEventFunc = obj[`add_${eventName}`]
+    const removeEventFunc = obj[`remove_${eventName}`]
 
-  if (!addEventFunc || !removeEventFunc)
-    throw new Error(
-      `[useEventfulState] The object does not have an event named ${eventName}`
-    )
+    if (!addEventFunc || !removeEventFunc)
+        throw new Error(
+            `[useEventfulState] The object does not have an event named ${eventName}`
+        )
 
-  function onValueChangedCallback(v: T[K]) {
-    setVal(v)
-    forceUpdate()
-  }
-
-  function removeHandler() {
-    removeEventFunc.call(obj, onValueChangedCallback)
-  }
-
-  useEffect(() => {
-    setVal(obj[propertyName])
-    addEventFunc.call(obj, onValueChangedCallback)
-    onEngineReload(removeHandler)
-    return () => {
-      removeHandler()
-      unregisterOnEngineReload(removeHandler)
+    function onValueChangedCallback(v: T[K]) {
+        setVal(v)
+        forceUpdate()
     }
-  }, [obj])
-  function setValWrapper(v: T[K]) {
-    obj[propertyName] = v
-    // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
-  }
-  return [val, setValWrapper]
+
+    function removeHandler() {
+        removeEventFunc.call(obj, onValueChangedCallback)
+    }
+
+    useEffect(() => {
+        setVal(obj[propertyName])
+        addEventFunc.call(obj, onValueChangedCallback)
+        onEngineReload(removeHandler)
+        return () => {
+            removeHandler()
+            unregisterOnEngineReload(removeHandler)
+        }
+    }, [obj])
+    function setValWrapper(v: T[K]) {
+        obj[propertyName] = v
+        // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
+    }
+    return [val, setValWrapper]
 }
 
 /**
@@ -74,29 +74,29 @@ export function useEventfulState<
  * of the callback will be cleaned up any dependency changes.
  */
 export function useEvent<
-  T extends {
-    [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
-  },
-  E extends string
+    T extends {
+        [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
+    },
+    E extends string
 >(
-  obj: T,
-  eventName: E,
-  callback: InferEventHandler<T[`add_${E}`]> &
-    InferEventHandler<T[`remove_${E}`]>,
-  dependencies: any[] = []
+    obj: T,
+    eventName: E,
+    callback: InferEventHandler<T[`add_${E}`]> &
+        InferEventHandler<T[`remove_${E}`]>,
+    dependencies: any[] = []
 ) {
-  function removeHandler() {
-    obj[`remove_${eventName}`](callback)
-  }
-
-  useEffect(() => {
-    obj[`add_${eventName}`](callback)
-    onEngineReload(removeHandler)
-    return () => {
-      removeHandler()
-      unregisterOnEngineReload(removeHandler)
+    function removeHandler() {
+        obj[`remove_${eventName}`](callback)
     }
-  }, dependencies)
+
+    useEffect(() => {
+        obj[`add_${eventName}`](callback)
+        onEngineReload(removeHandler)
+        return () => {
+            removeHandler()
+            unregisterOnEngineReload(removeHandler)
+        }
+    }, dependencies)
 }
 
 /**
@@ -110,36 +110,89 @@ export function useEvent<
  * of the callback will be cleaned up any dependency changes.
  */
 export function useRefEvent<
-  T extends {
-    [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
-  },
-  E extends string
+    T extends {
+        [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
+    },
+    E extends string
 >(
-  ref: MutableRef<Dom>,
-  eventName: E,
-  callback: InferEventHandler<T[`add_${E}`]> &
-    InferEventHandler<T[`remove_${E}`]>,
-  dependencies: any[] = []
+    ref: MutableRef<Dom>,
+    eventName: E,
+    callback: InferEventHandler<T[`add_${E}`]> &
+        InferEventHandler<T[`remove_${E}`]>,
+    dependencies: any[] = []
 ) {
-  function removeHandler() {
-    const obj = ref.current.ve as T
-    obj[`remove_${eventName}`](callback)
-  }
-
-  useEffect(() => {
-    const obj = ref.current.ve as T
-    obj[`add_${eventName}`](callback)
-    onEngineReload(removeHandler)
-
-    return () => {
-      removeHandler()
-      unregisterOnEngineReload(removeHandler)
+    function removeHandler() {
+        const obj = ref.current.ve as T
+        obj[`remove_${eventName}`](callback)
     }
-  }, dependencies)
+
+    useEffect(() => {
+        const obj = ref.current.ve as T
+        obj[`add_${eventName}`](callback)
+        onEngineReload(removeHandler)
+
+        return () => {
+            removeHandler()
+            unregisterOnEngineReload(removeHandler)
+        }
+    }, dependencies)
 }
 
 type InferEventHandler<T> = T extends (
-  handler: (...args: infer P) => infer R
+    handler: (...args: infer P) => infer R
 ) => void
-  ? (...args: P) => R
-  : never
+    ? (...args: P) => R
+    : never
+
+/**
+ * Describes a C# class or struct that contains a property that is a C# event.
+ * For example, given a C# class that declares an event called `OnValueChanged`
+ * whose delegates accept a single parameter of type `int`, you can declare the
+ * type as follows:
+ *
+ *   type MyType = HasCsharpEvent<"OnValueChanged", number> & {
+ *     // other properties...
+ *   }
+ * 
+ * For event delegates that take more than one value, see related types
+ * `HasCsharpEvent2` and `HasCsharpEvent3`.
+ */
+export type HasCsharpEvent<EventName extends string, TVal> = HasCSharpEventBase<
+    EventName,
+    (val: TVal) => void
+>;
+
+export type HasCsharpEvent2<
+    EventName extends string,
+    TVal1,
+    TVal2
+> = HasCSharpEventBase<EventName, (val1: TVal1, val2: TVal2) => void>;
+
+export type HasCsharpEvent3<
+    EventName extends string,
+    TVal1,
+    TVal2,
+    TVal3
+> = HasCSharpEventBase<
+    EventName,
+    (val1: TVal1, val2: TVal2, val3: TVal3) => void
+>;
+
+/**
+ * A type that describes a C# class or struct that contains the following
+ * properties/fields that conform to the useEventfulState() protocol:
+ * 
+ * - a property with an arbitrary name and type
+ * - a C# event named `On{PropertyName}Changed`, whose delegate accepts a single
+ *   parameter of the same type as the property
+ */
+export type HasEventfulProperty<PropName extends string, TVal> = Record<
+    PropName,
+    TVal
+> &
+    HasCsharpEvent<`On${Capitalize<PropName>}Changed`, TVal>;
+
+type HasCSharpEventBase<EventName extends string, TCallback> = Record<
+    `add_${EventName}` | `remove_${EventName}`,
+    (handler: TCallback) => void
+>;
