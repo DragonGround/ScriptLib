@@ -49,13 +49,14 @@ export function useEventfulState<
     }
 
     useEffect(() => {
+        setVal(obj[propertyName])
         addEventFunc.call(obj, onValueChangedCallback)
         onEngineReload(removeHandler)
         return () => {
             removeHandler()
             unregisterOnEngineReload(removeHandler)
         }
-    }, [])
+    }, [obj])
     function setValWrapper(v: T[K]) {
         obj[propertyName] = v
         // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.

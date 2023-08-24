@@ -19,13 +19,14 @@ function useEventfulState(obj, propertyName, eventName) {
         removeEventFunc.call(obj, onValueChangedCallback);
     }
     (0, hooks_1.useEffect)(function () {
+        setVal(obj[propertyName]);
         addEventFunc.call(obj, onValueChangedCallback);
         onEngineReload(removeHandler);
         return function () {
             removeHandler();
             unregisterOnEngineReload(removeHandler);
         };
-    }, []);
+    }, [obj]);
     function setValWrapper(v) {
         obj[propertyName] = v;
     }
