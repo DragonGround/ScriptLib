@@ -16,13 +16,15 @@ declare module "preact/jsx" {
          * Base elements
          */
 
+        type RecursiveElement = string | number | boolean | Element | null | undefined | RecursiveElement[]
+
         export interface VisualElement {
             id?: string
             ref?: Ref<any>
             key?: string | number
             disabled?: boolean
 
-            children?: (string | number | boolean | Element | null | undefined) | (string | number | boolean | Element | null | undefined)[]
+            children?: RecursiveElement
 
             dangerouslySetInnerHTML?: {
                 __html: string;
