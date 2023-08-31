@@ -10,16 +10,18 @@ var Listbox = function (_a) {
     var _b = (0, hooks_1.useState)(false), isOpen = _b[0], setIsOpen = _b[1];
     var _c = (0, hooks_1.useState)(index || 0), selectedIndex = _c[0], setSelectedIndex = _c[1];
     var ref = (0, hooks_1.useRef)();
-    var offset = (0, hooks_1.useRef)({ x: 0, y: 0, width: 0 });
-    (0, hooks_1.useEffect)(function () {
-        offset.current.x = ref.current.ve.worldBound.x;
-        offset.current.y = ref.current.ve.worldBound.y + ref.current.ve.worldBound.height;
-        offset.current.width = ref.current.ve.worldBound.width;
-    }, []);
     (0, hooks_1.useEffect)(function () {
         onChange && onChange(items[selectedIndex]);
     }, [selectedIndex]);
-    return (0, preact_1.h)(ListboxContext.Provider, { value: { isOpen: isOpen, setIsOpen: setIsOpen, selectedIndex: selectedIndex, setSelectedIndex: setSelectedIndex, items: items, offset: offset } },
+    function calculatePopupStyle() {
+        var bound = ref.current.ve.worldBound;
+        return {
+            top: bound.y + bound.height,
+            left: bound.x,
+            width: bound.width,
+        };
+    }
+    return (0, preact_1.h)(ListboxContext.Provider, { value: { isOpen: isOpen, setIsOpen: setIsOpen, selectedIndex: selectedIndex, setSelectedIndex: setSelectedIndex, items: items, calculatePopupStyle: calculatePopupStyle } },
         (0, preact_1.h)("div", { ref: ref, class: "".concat(classProp), style: style }, children));
 };
 exports.Listbox = Listbox;
@@ -33,25 +35,20 @@ exports.Listbox.Button = function (_a) {
 };
 exports.Listbox.Options = function (_a) {
     var classProp = _a.class, children = _a.children;
-    var _b = (0, hooks_1.useContext)(ListboxContext), isOpen = _b.isOpen, setIsOpen = _b.setIsOpen, offset = _b.offset;
+    var _b = (0, hooks_1.useContext)(ListboxContext), isOpen = _b.isOpen, setIsOpen = _b.setIsOpen, calculatePopupStyle = _b.calculatePopupStyle;
     var ref = (0, hooks_1.useRef)();
     var innerRef = (0, hooks_1.useRef)();
     (0, hooks_1.useEffect)(function () {
         if (!isOpen)
             return;
         document.body.appendChild(ref.current);
-        setTimeout(function () {
-            innerRef.current.style.opacity = 1;
-            innerRef.current.style.top = "".concat(offset.current.y, "px");
-            innerRef.current.style.left = "".concat(offset.current.x, "px");
-            innerRef.current.style.width = "".concat(offset.current.width, "px");
-        });
+        innerRef.current.style.opacity = 1;
     }, [isOpen]);
     function onClick() {
         setIsOpen(false);
     }
     return isOpen ? (0, preact_1.h)("div", { ref: ref, class: "absolute w-full h-full", onClick: onClick },
-        (0, preact_1.h)("div", { ref: innerRef, class: "opacity-0 transition-[opacity] duration-200 ".concat(classProp) }, children)) : null;
+        (0, preact_1.h)("div", { ref: innerRef, class: "opacity-0 transition-[opacity] duration-200 ".concat(classProp), style: calculatePopupStyle() }, children)) : null;
 };
 exports.Listbox.Option = function (_a) {
     var classProp = _a.class, index = _a.index, children = _a.children, item = _a.item, style = _a.style;

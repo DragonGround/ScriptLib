@@ -20,19 +20,21 @@ export const Listbox = ({ class: classProp, children, items, onChange, index, st
     const [isOpen, setIsOpen] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState(index || 0)
     const ref = useRef<Dom>()
-    const offset = useRef({ x: 0, y: 0, width: 0 })
-
-    useEffect(() => {
-        offset.current.x = ref.current.ve.worldBound.x
-        offset.current.y = ref.current.ve.worldBound.y + ref.current.ve.worldBound.height
-        offset.current.width = ref.current.ve.worldBound.width
-    }, [])
 
     useEffect(() => {
         onChange && onChange(items[selectedIndex])
     }, [selectedIndex])
 
-    return <ListboxContext.Provider value={{ isOpen, setIsOpen, selectedIndex, setSelectedIndex, items, offset }}>
+    function calculatePopupStyle() {
+        const bound = ref.current.ve.worldBound
+        return {
+            top: bound.y + bound.height,
+            left: bound.x,
+            width: bound.width,
+        }
+    }
+
+    return <ListboxContext.Provider value={{ isOpen, setIsOpen, selectedIndex, setSelectedIndex, items, calculatePopupStyle }}>
         <div ref={ref} class={`${classProp}`} style={style}>{children}</div>
     </ListboxContext.Provider>
 }
@@ -62,19 +64,14 @@ export interface ListboxOptionsProps {
 }
 
 Listbox.Options = ({ class: classProp, children }: ListboxOptionsProps) => {
-    const { isOpen, setIsOpen, offset } = useContext(ListboxContext)
+    const { isOpen, setIsOpen, calculatePopupStyle } = useContext(ListboxContext)
     const ref = useRef<Dom>()
     const innerRef = useRef<Dom>()
 
     useEffect(() => {
         if (!isOpen) return
         document.body.appendChild(ref.current as any)
-        setTimeout(() => {
-            innerRef.current.style.opacity = 1
-            innerRef.current.style.top = `${offset.current.y}px`
-            innerRef.current.style.left = `${offset.current.x}px`
-            innerRef.current.style.width = `${offset.current.width}px`
-        })
+        innerRef.current.style.opacity = 1
     }, [isOpen])
 
     function onClick() {
@@ -82,7 +79,7 @@ Listbox.Options = ({ class: classProp, children }: ListboxOptionsProps) => {
     }
 
     return isOpen ? <div ref={ref} class={`absolute w-full h-full`} onClick={onClick}>
-        <div ref={innerRef} class={`opacity-0 transition-[opacity] duration-200 ${classProp}`}>{children}</div>
+        <div ref={innerRef} class={`opacity-0 transition-[opacity] duration-200 ${classProp}`} style={calculatePopupStyle()}>{children}</div>
     </div> : null
 }
 
