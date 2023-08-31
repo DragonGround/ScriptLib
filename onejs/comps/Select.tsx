@@ -3,6 +3,7 @@ import { h, Fragment, createContext } from "preact"
 import { useContext, useEffect, useRef, useState } from "preact/hooks"
 import { Style } from "preact/jsx"
 import { FAIcon } from "onejs/fonts/fontawesome"
+import { MeshGenerationContext } from "UnityEngine/UIElements"
 
 export interface ListboxProps {
     class?: string
@@ -22,9 +23,9 @@ export const Listbox = ({ class: classProp, children, items, onChange, index, st
     const offset = useRef({ x: 0, y: 0, width: 0 })
 
     useEffect(() => {
-        offset.current.x = ref.current.ve.layout.x
-        offset.current.y = ref.current.ve.layout.y + ref.current.ve.layout.height
-        offset.current.width = ref.current.ve.layout.width
+        offset.current.x = ref.current.ve.worldBound.x
+        offset.current.y = ref.current.ve.worldBound.y + ref.current.ve.worldBound.height
+        offset.current.width = ref.current.ve.worldBound.width
     }, [])
 
     useEffect(() => {

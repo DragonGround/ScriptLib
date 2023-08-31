@@ -12,9 +12,9 @@ var Listbox = function (_a) {
     var ref = (0, hooks_1.useRef)();
     var offset = (0, hooks_1.useRef)({ x: 0, y: 0, width: 0 });
     (0, hooks_1.useEffect)(function () {
-        offset.current.x = ref.current.ve.layout.x;
-        offset.current.y = ref.current.ve.layout.y + ref.current.ve.layout.height;
-        offset.current.width = ref.current.ve.layout.width;
+        offset.current.x = ref.current.ve.worldBound.x;
+        offset.current.y = ref.current.ve.worldBound.y + ref.current.ve.worldBound.height;
+        offset.current.width = ref.current.ve.worldBound.width;
     }, []);
     (0, hooks_1.useEffect)(function () {
         onChange && onChange(items[selectedIndex]);
