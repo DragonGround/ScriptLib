@@ -42,7 +42,9 @@ exports.Listbox.Options = function (_a) {
         if (!isOpen)
             return;
         document.body.appendChild(ref.current);
-        innerRef.current.style.opacity = 1;
+        setTimeout(function () {
+            innerRef.current.style.opacity = 1;
+        });
     }, [isOpen]);
     function onClick() {
         setIsOpen(false);

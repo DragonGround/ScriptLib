@@ -71,7 +71,9 @@ Listbox.Options = ({ class: classProp, children }: ListboxOptionsProps) => {
     useEffect(() => {
         if (!isOpen) return
         document.body.appendChild(ref.current as any)
-        innerRef.current.style.opacity = 1
+        setTimeout(() => {
+            innerRef.current.style.opacity = 1
+        })
     }, [isOpen])
 
     function onClick() {
