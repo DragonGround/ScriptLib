@@ -19,16 +19,16 @@ import {
  */
 export function useEventfulState<
     T extends {
-        [k in K | `add_${E}` | `remove_${E}`]: k extends `add_${E}` | `remove_${E}`
-        ? (handler: (value: T[K]) => any) => void
-        : any
+        [k in K | `add_${E}` | `remove_${E}`]: k extends
+            | `add_${E}`
+            | `remove_${E}`
+            ? (handler: (value: T[K]) => any) => void
+            : any
     },
     K extends string & keyof T,
     E extends string = `On${K}Changed`
 >(obj: T, propertyName: K, eventName?: E): [T[K], StateUpdater<T[K]>] {
     const [val, setVal] = useState<T[K]>(obj[propertyName])
-    const [, updateState] = useState({})
-    const forceUpdate = useCallback(() => updateState({}), [])
 
     eventName ||= `On${propertyName}Changed` as E
     const addEventFunc = obj[`add_${eventName}`]
@@ -39,28 +39,28 @@ export function useEventfulState<
             `[useEventfulState] The object does not have an event named ${eventName}`
         )
 
-    function onValueChangedCallback(v: T[K]) {
-        setVal(v)
-        forceUpdate()
-    }
-
     function removeHandler() {
-        removeEventFunc.call(obj, onValueChangedCallback)
+        removeEventFunc.call(obj, setVal)
     }
 
     useEffect(() => {
         setVal(obj[propertyName])
-        addEventFunc.call(obj, onValueChangedCallback)
+        addEventFunc.call(obj, setVal)
         onEngineReload(removeHandler)
         return () => {
             removeHandler()
             unregisterOnEngineReload(removeHandler)
         }
     }, [obj])
-    function setValWrapper(v: T[K]) {
-        obj[propertyName] = v
-        // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
-    }
+
+    const setValWrapper = useCallback(
+        (v: T[K]) => {
+            obj[propertyName] = v
+            // setVal(v) // No need to set the state here in JS. The event handling stuff above will do.
+        },
+        [obj]
+    )
+
     return [val, setValWrapper]
 }
 
@@ -75,7 +75,9 @@ export function useEventfulState<
  */
 export function useEvent<
     T extends {
-        [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
+        [k in `add_${E}` | `remove_${E}`]: (
+            handler: (...args: any) => any
+        ) => void
     },
     E extends string
 >(
@@ -111,7 +113,9 @@ export function useEvent<
  */
 export function useRefEvent<
     T extends {
-        [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
+        [k in `add_${E}` | `remove_${E}`]: (
+            handler: (...args: any) => any
+        ) => void
     },
     E extends string
 >(
@@ -153,20 +157,20 @@ type InferEventHandler<T> = T extends (
  *   type MyType = HasCsharpEvent<"OnValueChanged", number> & {
  *     // other properties...
  *   }
- * 
+ *
  * For event delegates that take more than one value, see related types
  * `HasCsharpEvent2` and `HasCsharpEvent3`.
  */
 export type HasCsharpEvent<EventName extends string, TVal> = HasCSharpEventBase<
     EventName,
     (val: TVal) => void
->;
+>
 
 export type HasCsharpEvent2<
     EventName extends string,
     TVal1,
     TVal2
-> = HasCSharpEventBase<EventName, (val1: TVal1, val2: TVal2) => void>;
+> = HasCSharpEventBase<EventName, (val1: TVal1, val2: TVal2) => void>
 
 export type HasCsharpEvent3<
     EventName extends string,
@@ -176,12 +180,12 @@ export type HasCsharpEvent3<
 > = HasCSharpEventBase<
     EventName,
     (val1: TVal1, val2: TVal2, val3: TVal3) => void
->;
+>
 
 /**
  * A type that describes a C# class or struct that contains the following
  * properties/fields that conform to the useEventfulState() protocol:
- * 
+ *
  * - a property with an arbitrary name and type
  * - a C# event named `On{PropertyName}Changed`, whose delegate accepts a single
  *   parameter of the same type as the property
@@ -190,9 +194,9 @@ export type HasEventfulProperty<PropName extends string, TVal> = Record<
     PropName,
     TVal
 > &
-    HasCsharpEvent<`On${Capitalize<PropName>}Changed`, TVal>;
+    HasCsharpEvent<`On${Capitalize<PropName>}Changed`, TVal>
 
 type HasCSharpEventBase<EventName extends string, TCallback> = Record<
     `add_${EventName}` | `remove_${EventName}`,
     (handler: TCallback) => void
->;
+>
