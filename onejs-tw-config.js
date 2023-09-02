@@ -103,7 +103,6 @@ exports.corePlugins = {
     translate: false,
     rotate: false,
     scale: false,
-    inset: false,
 }
 
 /**
