@@ -160,19 +160,20 @@ declare module "preact/jsx" {
 
         interface BaseField<T> extends BindableElementNoChildren {
             label?: string
+            value?: T
             onValueChanged?: (e: ChangeEvent<T>) => void
         }
 
-        interface BaseFieldTraits<ValueType, UxmlType> extends BaseField<ValueType> {
-            value?: ValueType
+        interface BaseBoolField extends BaseField<boolean> {
+            text?: string
         }
 
         interface Button extends TextElement {
 
         }
 
-        interface RadioButton extends BaseFieldTraits<boolean, UxmlBoolAttributeDescription> {
-            text?: string
+        interface RadioButton extends BaseBoolField {
+
         }
 
         interface RadioButtonGroup extends BindableElement {
@@ -184,8 +185,8 @@ declare module "preact/jsx" {
             interva?: number
         }
 
-        interface Toggle extends BaseFieldTraits<boolean, UxmlBoolAttributeDescription> {
-            text?: string
+        interface Toggle extends BaseBoolField {
+
         }
 
         interface Scroller extends VisualElementNoChildren {
@@ -200,14 +201,14 @@ declare module "preact/jsx" {
             Vertical
         }
 
-        interface Slider extends BaseFieldTraits<float, UxmlFloatAttributeDescription> {
+        interface Slider extends BaseField<float> {
             "low-value"?: number
             "high-value"?: number
             direction?: SliderDirection
             "page-size"?: number
         }
 
-        interface SliderInt extends BaseFieldTraits<int, UxmlIntAttributeDescription> {
+        interface SliderInt extends BaseField<int> {
             "low-value"?: number
             "high-value"?: number
             direction?: SliderDirection
@@ -237,7 +238,7 @@ declare module "preact/jsx" {
          * Text input
          */
 
-        interface TextInputBaseField<TValueType> extends BaseFieldTraits<string, UxmlStringAttributeDescription> {
+        interface TextInputBaseField<TValueType> extends BaseField<string> {
             text?: string
             "max-length"?: number
             "is-password-field"?: boolean
@@ -249,19 +250,23 @@ declare module "preact/jsx" {
             multiline?: boolean
         }
 
-        interface IntegerField extends BaseFieldTraits<number, UxmlIntAttributeDescription> {
+        interface TextValueField<T> extends TextInputBaseField<T> {
+            formatString?: string
+        }
+
+        interface IntegerField extends TextValueField<number> {
 
         }
 
-        interface LongField extends BaseFieldTraits<number, UxmlLongAttributeDescription> {
+        interface LongField extends TextValueField<number> {
 
         }
 
-        interface FloatField extends BaseFieldTraits<number, UxmlFloatAttributeDescription> {
+        interface FloatField extends TextValueField<number> {
 
         }
 
-        interface DoubleField extends BaseFieldTraits<number, UxmlDoubleAttributeDescription> {
+        interface DoubleField extends TextValueField<number> {
 
         }
 
