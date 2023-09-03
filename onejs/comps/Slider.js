@@ -30,12 +30,14 @@ var math_1 = __importDefault(require("math"));
 var preact_1 = require("preact");
 var hooks_1 = require("preact/hooks");
 function Slider(_a) {
-    var min = _a.min, max = _a.max, value = _a.value, onChange = _a.onChange, onPointerDown = _a.onPointerDown, onPointerMove = _a.onPointerMove, onPointerUp = _a.onPointerUp, $class = _a.class, trackClass = _a.trackClass, trackStyle = _a.trackStyle, activeTrackClass = _a.activeTrackClass, activeTrackStyle = _a.activeTrackStyle, thumbClass = _a.thumbClass, thumbStyle = _a.thumbStyle, props = __rest(_a, ["min", "max", "value", "onChange", "onPointerDown", "onPointerMove", "onPointerUp", "class", "trackClass", "trackStyle", "activeTrackClass", "activeTrackStyle", "thumbClass", "thumbStyle"]);
+    var _min = _a.min, _max = _a.max, _value = _a.value, onChange = _a.onChange, onPointerDown = _a.onPointerDown, onPointerMove = _a.onPointerMove, onPointerUp = _a.onPointerUp, $class = _a.class, trackClass = _a.trackClass, trackStyle = _a.trackStyle, activeTrackClass = _a.activeTrackClass, activeTrackStyle = _a.activeTrackStyle, thumbClass = _a.thumbClass, thumbStyle = _a.thumbStyle, props = __rest(_a, ["min", "max", "value", "onChange", "onPointerDown", "onPointerMove", "onPointerUp", "class", "trackClass", "trackStyle", "activeTrackClass", "activeTrackStyle", "thumbClass", "thumbStyle"]);
     var trackRef = (0, hooks_1.useRef)();
     var activeTrackRef = (0, hooks_1.useRef)();
+    var min = _min !== null && _min !== void 0 ? _min : 0;
+    var max = _max !== null && _max !== void 0 ? _max : 1;
+    var value = _value !== null && _value !== void 0 ? _value : min;
     (0, hooks_1.useEffect)(function () {
-        var _a;
-        var ratio = math_1.default.unlerp(min !== null && min !== void 0 ? min : 0, max !== null && max !== void 0 ? max : 1, (_a = value !== null && value !== void 0 ? value : min) !== null && _a !== void 0 ? _a : 0);
+        var ratio = math_1.default.unlerp(min, max, value);
         activeTrackRef.current.style.width = "".concat(Math.round(ratio * 100), "%");
     }, [min, max, value]);
     var handlePointerDown = (0, hooks_1.useCallback)(function (e) {
@@ -59,7 +61,7 @@ function Slider(_a) {
         var width = trackRef.current.ve.layout.width;
         var ratio = math_1.default.saturate(e.localPosition.x / width);
         activeTrackRef.current.style.width = "".concat(Math.round(ratio * 100), "%");
-        onChange === null || onChange === void 0 ? void 0 : onChange(math_1.default.lerp(min !== null && min !== void 0 ? min : 0, max !== null && max !== void 0 ? max : 0, ratio));
+        onChange === null || onChange === void 0 ? void 0 : onChange(math_1.default.lerp(min, max, ratio));
     }, [onChange, min, max]);
     return ((0, preact_1.h)("div", __assign({ ref: trackRef, class: "h-8 justify-center ".concat($class !== null && $class !== void 0 ? $class : ""), onPointerDown: handlePointerDown, onPointerMove: handlePointerMove, onPointerUp: handlePointerUp }, props),
         (0, preact_1.h)("div", { class: "h-2 bg-gray-400 rounded-[4px] ".concat(trackClass !== null && trackClass !== void 0 ? trackClass : ""), style: trackStyle },

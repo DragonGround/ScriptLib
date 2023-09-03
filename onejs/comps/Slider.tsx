@@ -18,12 +18,16 @@ export interface SliderProps extends JSX.VisualElement {
     thumbStyle?: Style
 }
 
-export function Slider({ min, max, value, onChange, onPointerDown, onPointerMove, onPointerUp, class: $class, trackClass, trackStyle, activeTrackClass, activeTrackStyle, thumbClass, thumbStyle, ...props }: SliderProps): JSX.Element {
+export function Slider({ min: _min, max: _max, value: _value, onChange, onPointerDown, onPointerMove, onPointerUp, class: $class, trackClass, trackStyle, activeTrackClass, activeTrackStyle, thumbClass, thumbStyle, ...props }: SliderProps): JSX.Element {
     const trackRef = useRef<Dom>()
     const activeTrackRef = useRef<Dom>()
 
+    const min = _min ?? 0
+    const max = _max ?? 1
+    const value = _value ?? min
+
     useEffect(() => {
-        const ratio = math.unlerp(min ?? 0, max ?? 1, value ?? min ?? 0)
+        const ratio = math.unlerp(min, max, value)
         activeTrackRef.current.style.width = `${Math.round(ratio * 100)}%`
     }, [min, max, value])
 
@@ -51,7 +55,7 @@ export function Slider({ min, max, value, onChange, onPointerDown, onPointerMove
         const width = trackRef.current.ve.layout.width
         const ratio = math.saturate(e.localPosition.x / width)
         activeTrackRef.current.style.width = `${Math.round(ratio * 100)}%`
-        onChange?.(math.lerp(min ?? 0, max ?? 0, ratio))
+        onChange?.(math.lerp(min, max, ratio))
     }, [onChange, min, max])
 
     return (
