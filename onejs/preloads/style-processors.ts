@@ -184,7 +184,7 @@ function setStyleCursor(propertyName: keyof Style) {
     }
 }
 
-const rotateRegex = /(-?\d*\.?\d+)(deg|grad|rad|turn)/g
+const rotateRegex = /(-?\d+\.?\d*|\.\d+)(deg|grad|rad|turn)/g
 const stringToEnum: { [key: string]: AngleUnit } = {
     'deg': AngleUnit.Degree,
     'grad': AngleUnit.Gradian,
@@ -194,7 +194,8 @@ const stringToEnum: { [key: string]: AngleUnit } = {
 
 function setStyleRotate(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        let match;
+        let match
+        rotateRegex.lastIndex = 0
         if (typeof value == "string" && (match = rotateRegex.exec(value)) !== null) {
             style[propertyName] = new StyleRotate(new Rotate(new Angle(Number(match[1]), stringToEnum[match[2]])))
         } else if (typeof value == "number") {

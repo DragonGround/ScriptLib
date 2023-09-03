@@ -168,7 +168,7 @@ function setStyleCursor(propertyName) {
         style[propertyName] = !value ? new UIElements_1.StyleCursor(UIElements_1.StyleKeyword.Initial) : new UIElements_1.StyleCursor(new UIElements_1.Cursor());
     };
 }
-var rotateRegex = /(-?\d*\.?\d+)(deg|grad|rad|turn)/g;
+var rotateRegex = /(-?\d+\.?\d*|\.\d+)(deg|grad|rad|turn)/g;
 var stringToEnum = {
     'deg': UIElements_1.AngleUnit.Degree,
     'grad': UIElements_1.AngleUnit.Gradian,
@@ -178,6 +178,7 @@ var stringToEnum = {
 function setStyleRotate(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
         var match;
+        rotateRegex.lastIndex = 0;
         if (typeof value == "string" && (match = rotateRegex.exec(value)) !== null) {
             style[propertyName] = new UIElements_1.StyleRotate(new UIElements_1.Rotate(new UIElements_1.Angle(Number(match[1]), stringToEnum[match[2]])));
         }
