@@ -1,10 +1,75 @@
+import math from "math"
+import { JSX, h } from "preact"
 import { Dom } from "OneJS/Dom"
-import { MouseDownEvent, MouseMoveEvent } from "UnityEngine/UIElements"
-import { h } from "preact"
-import { useEffect, useRef, useState } from "preact/hooks"
 import { Style } from "preact/jsx"
+import { useCallback, useEffect, useRef, useState } from "preact/hooks"
+import { IPointerEvent, MouseDownEvent, MouseMoveEvent, PointerDownEvent, PointerMoveEvent, PointerUpEvent } from "UnityEngine/UIElements"
 
-export type SliderProps = {
+export interface SliderProps extends JSX.VisualElement {
+    min?: number
+    max?: number
+    value?: number
+    onChange?: (value: number) => void
+    trackClass?: string
+    trackStyle?: Style
+    activeTrackClass?: string
+    activeTrackStyle?: Style
+    thumbClass?: string
+    thumbStyle?: Style
+}
+
+export function Slider({ min: _min, max: _max, value: _value, onChange, onPointerDown, onPointerMove, onPointerUp, class: $class, trackClass, trackStyle, activeTrackClass, activeTrackStyle, thumbClass, thumbStyle, ...props }: SliderProps): JSX.Element {
+    const trackRef = useRef<Dom>()
+    const activeTrackRef = useRef<Dom>()
+
+    const min = _min ?? 0
+    const max = _max ?? 1
+    const value = _value ?? min
+
+    useEffect(() => {
+        const ratio = math.unlerp(min, max, value)
+        activeTrackRef.current.style.width = `${Math.round(ratio * 100)}%`
+    }, [min, max, value])
+
+    const handlePointerDown = useCallback((e: PointerDownEvent) => {
+        e.currentTarget.CapturePointer(e.pointerId)
+        handlerPointerEvent(e)
+        onPointerDown?.(e)
+    }, [onPointerDown])
+
+    const handlePointerMove = useCallback((e: PointerMoveEvent) => {
+        if (e.currentTarget.HasPointerCapture(e.pointerId)) {
+            handlerPointerEvent(e)
+        }
+        onPointerMove?.(e)
+    }, [onPointerMove])
+
+    const handlePointerUp = useCallback((e: PointerUpEvent) => {
+        if (e.currentTarget.HasPointerCapture(e.pointerId)) {
+            e.currentTarget.ReleasePointer(e.pointerId)
+        }
+        onPointerUp?.(e)
+    }, [onPointerUp])
+
+    const handlerPointerEvent = useCallback((e: IPointerEvent) => {
+        const width = trackRef.current.ve.layout.width
+        const ratio = math.saturate(e.localPosition.x / width)
+        activeTrackRef.current.style.width = `${Math.round(ratio * 100)}%`
+        onChange?.(math.lerp(min, max, ratio))
+    }, [onChange, min, max])
+
+    return (
+        <div ref={trackRef} class={`h-8 justify-center ${$class ?? ""}`} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} {...props}>
+            <div class={`h-2 bg-gray-400 rounded-[4px] ${trackClass ?? ""}`} style={trackStyle}>
+                <div ref={activeTrackRef} class={`accented-bg-color h-2 rounded-[4px] ${activeTrackClass ?? ""}`} style={activeTrackStyle}>
+                    <div class={`w-6 h-6 default-bg-color border border-gray-400 rounded-full absolute right-0 bottom-1 translate-3 ${thumbClass ?? ""}`} style={thumbStyle} />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export type OldSliderProps = {
     class?: string
     style?: Style
     value?: number
@@ -13,7 +78,11 @@ export type SliderProps = {
     max?: number
 }
 
-export const Slider = ({ class: classProp, style, value, onChange, min: _min, max: _max }: SliderProps) => {
+/**
+ * OldSlider is included here for DOM manipulation reference. For practical use, opt for Slider instead.
+ * Slider is more modular and uses PointerCapture for better tracking.
+ */
+export const OldSlider = ({ class: classProp, style, value, onChange, min: _min, max: _max }: OldSliderProps) => {
     const ref = useRef<Dom>()
     const progressRef = useRef<Dom>()
     const thumbRef = useRef<Dom>()
