@@ -39,12 +39,6 @@ exports.plugins = [
             ".text-center": {
                 "-unity-text-align": "middle-center",
             },
-            ".inset-0": {
-                top: "0px",
-                bottom: "0px",
-                left: "0px",
-                right: "0px",
-            },
             ".transition-none": { "transition-property": "none" },
             ".transition-all": {
                 "transition-property": "all",
@@ -85,6 +79,21 @@ exports.plugins = [
             {
                 supportsNegativeValues: true,
                 values: theme("rotate"),
+            }
+        )
+
+        matchUtilities(
+            {
+                inset: (value) => ({
+                    top: value,
+                    bottom: value,
+                    left: value,
+                    right: value,
+                }),
+            },
+            {
+                supportsNegativeValues: true,
+                values: theme("inset"),
             }
         )
     }),
