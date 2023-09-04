@@ -109,9 +109,12 @@ exports.corePlugins = {
     divideOpacity: false,
     ringOpacity: false,
     textOpacity: false,
+    transform: false,
     translate: false,
     rotate: false,
     scale: false,
+    fontWeight: false,
+    lineHeight: false,
 }
 
 /**
