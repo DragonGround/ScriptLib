@@ -4,6 +4,7 @@ declare function getType(obj: any): any
 declare function onEngineReload(callback: Function): void
 declare function unregisterOnEngineReload(callback: Function): void
 declare function onEngineDestroy(callback: Function): void
+declare function unregisterOnEngineDestroy(callback: Function): void
 declare function log(obj: any): void
 declare function error(obj: any): void
 declare function warn(obj: any): void
