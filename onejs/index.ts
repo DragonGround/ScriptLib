@@ -27,7 +27,7 @@ export function useEventfulState<
     //  to handle the case where the object property is an array
     //  and the changed event is raised with the same array instance.
     const [state, setState] = useState({ value: obj?.[propertyName] })
-    const setValue = useCallback((value: T[K]) => setState({ value }), [])
+    const setValue = useCallback((value) => setState({ value }), [])
 
     useEffect(() => {
         if (obj == null) return
@@ -63,7 +63,7 @@ export function useEventfulState<
         [obj]
     )
 
-    return [state.value, setValWrapper]
+    return [state.value as T[K], setValWrapper]
 }
 
 /**
