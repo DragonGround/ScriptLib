@@ -63,8 +63,8 @@ exports.plugins = [
         matchUtilities(
             {
                 scale: (value) => ({ scale: value }),
-                "scale-x": (value) => ({ scale: `${value} 0` }),
-                "scale-y": (value) => ({ scale: `0 ${value}` }),
+                "scale-x": (value) => ({ scale: `${value} 1` }),
+                "scale-y": (value) => ({ scale: `1 ${value}` }),
             },
             {
                 supportsNegativeValues: true,
