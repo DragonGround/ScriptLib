@@ -7,6 +7,8 @@ declare module "OneJS/Dom" {
     export class Dom {
         id: string
         ve: VisualElement
+        childNodes: Dom[]
+        firstChild: Dom
         parentNode: Dom
         nextSibling: Dom
         style: DomStyle
