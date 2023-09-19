@@ -5,7 +5,7 @@ declare module "System/Collections" {
     }
 
     export interface IEnumeratorAny {
-        Current(): any
+        get_Current(): any
         MoveNext(): boolean
         Reset(): void
     }

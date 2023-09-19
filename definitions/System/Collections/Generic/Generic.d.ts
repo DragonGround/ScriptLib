@@ -4,7 +4,7 @@ declare module "System/Collections/Generic" {
     }
 
     export interface IEnumerator<T = void> {
-        Current: T
+        get_Current(): T
         MoveNext(): boolean
         Reset(): void
     }
