@@ -36,9 +36,6 @@ exports.plugins = [
             ".bold-italic": {
                 "-unity-font-style": "bold-and-italic",
             },
-            ".text-center": {
-                "-unity-text-align": "middle-center",
-            },
             ".transition-none": { "transition-property": "none" },
             ".transition-all": {
                 "transition-property": "all",
@@ -47,6 +44,25 @@ exports.plugins = [
             ".scale-none": { scale: "none" },
             ".rotate-none": { rotate: "none" },
         })
+
+        matchUtilities(
+            {
+                text: (value) => ({ "-unity-text-align": value }),
+            },
+            {
+                values: {
+                    left: "middle-left",
+                    center: "middle-center",
+                    right: "middle-right",
+                    "upper-left": "upper-left",
+                    "upper-center": "upper-center",
+                    "upper-right": "upper-right",
+                    "lower-left": "lower-left",
+                    "lower-center": "lower-center",
+                    "lower-right": "lower-right",
+                },
+            }
+        )
 
         matchUtilities(
             {
@@ -137,19 +153,9 @@ function rem2px(input, fontSize = 16) {
             }
             return ret
         case "string":
-            return input.replace(
-                /(\d*\.?\d+)rem$/,
-                (_, val) => `${parseFloat(val) * fontSize}px`
-            )
+            return input.replace(/(\d*\.?\d+)rem$/, (_, val) => `${parseFloat(val) * fontSize}px`)
         case "function":
-            return eval(
-                input
-                    .toString()
-                    .replace(
-                        /(\d*\.?\d+)rem/g,
-                        (_, val) => `${parseFloat(val) * fontSize}px`
-                    )
-            )
+            return eval(input.toString().replace(/(\d*\.?\d+)rem/g, (_, val) => `${parseFloat(val) * fontSize}px`))
         default:
             return input
     }
