@@ -39,7 +39,6 @@ exports.plugins = [
             ".transition-none": { "transition-property": "none" },
             ".transition-all": {
                 "transition-property": "all",
-                "transition-duration": "150ms",
             },
             ".scale-none": { scale: "none" },
             ".rotate-none": { rotate: "none" },
