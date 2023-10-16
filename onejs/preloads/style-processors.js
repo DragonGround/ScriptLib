@@ -129,14 +129,14 @@ function _getLength(value) {
     var v = undefined;
     if (typeof value === "string") {
         if (value.endsWith("%")) {
-            var n_1 = parseFloat(value.replace("%", ""));
-            if (!isNaN(n_1))
-                v = new UIElements_1.Length(n_1, UIElements_1.LengthUnit.Percent);
+            var n = parseFloat(value.replace("%", ""));
+            if (!isNaN(n))
+                v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Percent);
         }
         else {
-            var n_2 = parseFloat(value.endsWith("px") ? value.replace("px", "") : value);
-            if (!isNaN(n_2))
-                v = new UIElements_1.Length(n_2, UIElements_1.LengthUnit.Pixel);
+            var n = parseFloat(value.endsWith("px") ? value.replace("px", "") : value);
+            if (!isNaN(n))
+                v = new UIElements_1.Length(n, UIElements_1.LengthUnit.Pixel);
         }
     }
     else if (typeof value === "number") {

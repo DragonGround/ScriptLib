@@ -229,7 +229,7 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
             dom = document.createElementNS('http://www.w3.org/2000/svg', nodeType);
         }
         else {
-            dom = document.createElement(nodeType, newProps.is && newProps);
+            dom = document.createElement(nodeType);
         }
         excessDomChildren = null;
         isHydrating = false;

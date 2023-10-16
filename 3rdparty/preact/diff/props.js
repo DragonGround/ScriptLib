@@ -59,9 +59,7 @@ function setProperty(dom, name, value, oldValue, isSvg) {
             name = name.toLowerCase().slice(2);
         else
             name = name.slice(2);
-        if (!dom._listeners)
-            dom._listeners = {};
-        dom._listeners[name + useCapture] = value;
+        dom.AddToListener(name + useCapture, value);
         if (value) {
             if (!oldValue) {
                 var handler = useCapture ? eventProxyCapture : eventProxy;

@@ -201,7 +201,7 @@ export function enqueueRender(c) {
 		prevDebounce !== options.debounceRendering
 	) {
 		prevDebounce = options.debounceRendering;
-		(prevDebounce || setTimeout)(process);
+		(prevDebounce || setTimeout)(process, 0);
 	}
 }
 

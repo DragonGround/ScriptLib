@@ -95,7 +95,7 @@ function enqueueRender(c) {
         !process._rerenderCount++) ||
         prevDebounce !== options_1.default.debounceRendering) {
         prevDebounce = options_1.default.debounceRendering;
-        (prevDebounce || setTimeout)(process);
+        (prevDebounce || setTimeout)(process, 0);
     }
 }
 exports.enqueueRender = enqueueRender;
