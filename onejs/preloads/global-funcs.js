@@ -13,3 +13,11 @@ function assign_struct(type, obj) {
     return result;
 }
 globalThis.assign_struct = assign_struct;
+globalThis.callWithThisObj = function (func, thisObj, args) {
+    if (args.Length == 0)
+        func.call(thisObj);
+    else if (args.Length == 1)
+        func.call(thisObj, args[0]);
+    else if (args.Length == 2)
+        func.call(thisObj, args[0], args[1]);
+};
