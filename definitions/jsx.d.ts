@@ -238,7 +238,7 @@ declare module "preact/jsx" {
          * Text input
          */
 
-        interface TextInputBaseField<TValueType> extends BaseField<string> {
+        interface TextInputBaseField<T> extends BaseField<T> {
             text?: string
             "max-length"?: number
             "is-password-field"?: boolean
