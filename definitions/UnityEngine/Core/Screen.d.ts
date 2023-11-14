@@ -7,6 +7,7 @@ declare module "UnityEngine" {
         width: number
         height: number
         refreshRate: number
+        refreshRateRatio: RefreshRate
         ToString(): string
     }
 
