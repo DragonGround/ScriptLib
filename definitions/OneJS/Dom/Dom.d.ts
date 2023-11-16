@@ -4,7 +4,7 @@ declare module "OneJS/Dom" {
     import { Vector2 } from "UnityEngine"
     import { EventBase, IStyle, VisualElement } from "UnityEngine/UIElements"
 
-    export class Dom {
+    export class BaseDom {
         id: string
         ve: VisualElement
         childNodes: Dom[]
@@ -31,5 +31,13 @@ declare module "OneJS/Dom" {
         removeAttribute(name: string): void
         focus(): void
         ToString(): string
+    }
+
+    // export class Dom extends BaseDom {
+
+    // }
+
+    export interface Dom<T extends VisualElement = VisualElement> extends BaseDom {
+        ve: T
     }
 }

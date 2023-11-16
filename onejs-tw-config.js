@@ -44,6 +44,10 @@ exports.plugins = [
             ".rotate-none": { rotate: "none" },
         })
 
+        matchUtilities({
+            fontdef: (value) => ({ "-unity-font-definition": `url("${value}")` }),
+        }, {})
+
         matchUtilities(
             {
                 text: (value) => ({ "-unity-text-align": value }),
