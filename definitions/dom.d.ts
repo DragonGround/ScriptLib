@@ -4,6 +4,18 @@ export { }
 
 declare global {
 
+    interface EngineHostInterop {
+        classes: any[]
+        objects: any[]
+    }
+
+    interface EngineHost {
+        interop: EngineHostInterop
+        subscribe(obj: any, name: string, handler: ((v) => void)): (() => void)
+    }
+
+    var onejs: EngineHost
+
     interface Performance {
         now(): number
     }
