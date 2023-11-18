@@ -14,13 +14,18 @@ import { MutableRef, StateUpdater, useCallback, useEffect, useState } from "prea
  * @returns
  */
 export function useEventfulState<
-    T extends {
-        [k in K | `add_${E}` | `remove_${E}`]: k extends `add_${E}` | `remove_${E}`
-            ? (handler: (value: T[K]) => any) => void
-            : any
-    },
+    T extends { [k in `On${K}Changed`]: OneJS.Event<(value: T[K]) => void> },
+    K extends string & keyof T
+>(obj: T, propertyName: K): [T[K], StateUpdater<T[K]>]
+export function useEventfulState<T, K extends string & keyof T, E extends OneJS.EventKeys<T>>(
+    obj: T,
+    propertyName: K,
+    eventName: E
+): [T[K], StateUpdater<T[K]>]
+export function useEventfulState<
+    T extends { [k in keyof T]: k extends E ? OneJS.Event<(value: T[K]) => void> : any },
     K extends string & keyof T,
-    E extends string = `On${K}Changed`
+    E extends OneJS.EventKeys<T>
 >(obj: T, propertyName: K, eventName?: E): [T[K], StateUpdater<T[K]>] {
     // Guarantee the component is re-rendered on changed event,
     //  by ensuring that the state is always updated with a different identity
@@ -32,25 +37,9 @@ export function useEventfulState<
     useEffect(() => {
         if (obj == null) return
 
-        eventName ||= `On${propertyName}Changed` as E
-        const addEventFunc = obj[`add_${eventName}`]
-        const removeEventFunc = obj[`remove_${eventName}`]
-
-        if (!addEventFunc || !removeEventFunc)
-            throw new Error(`[useEventfulState] The object does not have an event named ${eventName}`)
-
+        eventName ??= `On${propertyName}Changed` as E
         setValue(obj[propertyName])
-        addEventFunc.call(obj, setValue)
-        onEngineReload(removeHandler)
-
-        return () => {
-            removeHandler()
-            unregisterOnEngineReload(removeHandler)
-        }
-
-        function removeHandler() {
-            removeEventFunc.call(obj, setValue)
-        }
+        return onejs.subscribe(obj, eventName, setValue as OneJS.EventGenericType<T[E]>)
     }, [obj])
 
     const setValWrapper = useCallback(
@@ -75,31 +64,16 @@ export function useEventfulState<
  * @param dependencies: The dependencies to pass to useEffect. Previous versions
  * of the callback will be cleaned up any dependency changes.
  */
-export function useEvent<
-    T extends {
-        [k in `add_${E}` | `remove_${E}`]: (handler: (...args: any) => any) => void
-    },
-    E extends string
->(
+export function useEvent<T, E extends OneJS.EventKeys<T>>(
     obj: T,
     eventName: E,
-    callback: InferEventHandler<T[`add_${E}`]> & InferEventHandler<T[`remove_${E}`]>,
+    callback: OneJS.EventGenericType<T[E]>,
     dependencies: any[] = []
 ) {
     useEffect(() => {
         if (obj == null) return
 
-        obj[`add_${eventName}`](callback)
-        onEngineReload(removeHandler)
-
-        return () => {
-            removeHandler()
-            unregisterOnEngineReload(removeHandler)
-        }
-
-        function removeHandler() {
-            obj[`remove_${eventName}`](callback)
-        }
+        return onejs.subscribe(obj, eventName, callback)
     }, dependencies)
 }
 
@@ -113,37 +87,19 @@ export function useEvent<
  * @param dependencies: The dependencies to pass to useEffect. Previous versions
  * of the callback will be cleaned up any dependency changes.
  */
-export function useRefEvent<
-    T extends {
-        [k in `add_${E}` | `remove_${E}` | keyof VisualElement]: k extends `add_${E}` | `remove_${E}`
-            ? (handler: (...args: any) => any) => void
-            : VisualElement[Extract<k, keyof VisualElement>]
-    },
-    E extends string
->(
+export function useRefEvent<T extends VisualElement, E extends OneJS.EventKeys<T>>(
     ref: MutableRef<Dom>,
     eventName: E,
-    callback: InferEventHandler<T[`add_${E}`]> & InferEventHandler<T[`remove_${E}`]>,
+    callback: OneJS.EventGenericType<T[E]>,
     dependencies: any[] = []
 ) {
-    function removeHandler() {
-        const obj = ref.current.ve as T
-        obj[`remove_${eventName}`](callback)
-    }
-
     useEffect(() => {
-        const obj = ref.current.ve as T
-        obj[`add_${eventName}`](callback)
-        onEngineReload(removeHandler)
+        if (callback == null) return
 
-        return () => {
-            removeHandler()
-            unregisterOnEngineReload(removeHandler)
-        }
+        const obj = ref.current.ve as T
+        return onejs.subscribe(obj, eventName, callback)
     }, dependencies)
 }
-
-type InferEventHandler<T> = T extends (handler: (...args: infer P) => infer R) => void ? (...args: P) => R : never
 
 /**
  * Describes a C# class or struct that contains a property that is a C# event.
