@@ -71,6 +71,8 @@ Tab.List = ({ class: classProp, children, style }: TabListProps) => {
 Tab.Panels = ({ class: classProp, children, style }: TabPanelsProps) => {
     const { selectedTabIndex, setSelectedTabIndex } = useContext(TabGroupContext)
 
+    // return <div class={`${classProp}`} style={style}>{children.map((c, i) => <div style={{display: i == selectedTabIndex ? "Flex" : "None" }}>{c}</div>)}</div>
+
     return <div class={`${classProp}`} style={style}>{children[selectedTabIndex]}</div>
 }
 

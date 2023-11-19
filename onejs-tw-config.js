@@ -39,7 +39,29 @@ exports.plugins = [
             ".transition-none": { "transition-property": "none" },
             ".transition-all": {
                 "transition-property": "all",
+                "transition-duration": "150ms",
             },
+            ".transition": {
+                "transition-property": "color, background-color, border-color, opacity",
+                "transition-duration": "150ms",
+            },
+            ".transition-colors": {
+                "transition-property": "color, background-color, border-color",
+                "transition-duration": "150ms",
+            },
+            ".transition-opacity": {
+                "transition-property": "opacity",
+                "transition-duration": "150ms",
+            },
+            ".duration-0": { "transition-duration": "0s" },
+            ".duration-75": { "transition-duration": "75ms" },
+            ".duration-100": { "transition-duration": "100ms" },
+            ".duration-150": { "transition-duration": "150ms" },
+            ".duration-200": { "transition-duration": "200ms" },
+            ".duration-300": { "transition-duration": "300ms" },
+            ".duration-500": { "transition-duration": "500ms" },
+            ".duration-700": { "transition-duration": "700ms" },
+            ".duration-1000": { "transition-duration": "1000ms" },
             ".scale-none": { scale: "none" },
             ".rotate-none": { rotate: "none" },
         })
@@ -122,6 +144,7 @@ exports.corePlugins = {
     // USS cannot support dynamic custom properties within rgb()
     // which is what is used by Tailwind for opacity scales
     transitionProperty: false,
+    transitionDuration: false,
     backdropOpacity: false,
     backgroundOpacity: false,
     borderOpacity: false,
