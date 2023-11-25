@@ -18,31 +18,7 @@ declare module "preact/jsx" {
 
         type RecursiveElement = string | number | boolean | Element | null | undefined | RecursiveElement[]
 
-        export interface VisualElement {
-            id?: string
-            ref?: Ref<any>
-            key?: string | number
-            disabled?: boolean
-
-            children?: RecursiveElement
-
-            dangerouslySetInnerHTML?: {
-                __html: string;
-            }
-
-            name?: string
-            class?: string
-            style?: Style
-            tooltip?: string
-            focusable?: boolean
-            tabindex?: number
-            "picking-mode"?: PickingMode
-            "view-data-key"?: string
-
-            onPointerCaptureOut?: (e: PointerCaptureOutEvent) => void
-            onPointerCapture?: (e: PointerCaptureEvent) => void
-            onMouseCaptureOut?: (e: MouseCaptureOutEvent) => void
-            onMouseCapture?: (e: MouseCaptureEvent) => void
+        interface CommonEvents {
             onValidateCommand?: (e: ValidateCommandEvent) => void
             onExecuteCommand?: (e: ExecuteCommandEvent) => void
             onDragExited?: (e: DragExitedEvent) => void
@@ -93,6 +69,39 @@ declare module "preact/jsx" {
             onTransitionEnd?: (e: TransitionEndEvent) => void
             onTransitionCancel?: (e: TransitionCancelEvent) => void
             // onIMGUI?: (e: IMGUIEvent) => void
+        }
+
+        type AppendCapture<T> = {
+            [K in keyof T as `${Extract<K, string>}Capture`]: T[K]
+        };
+
+        export interface VisualElement extends CommonEvents, AppendCapture<CommonEvents> {
+            id?: string
+            ref?: Ref<any>
+            key?: string | number
+            disabled?: boolean
+
+            children?: RecursiveElement
+
+            dangerouslySetInnerHTML?: {
+                __html: string;
+            }
+
+            name?: string
+            class?: string
+            style?: Style
+            tooltip?: string
+            focusable?: boolean
+            tabindex?: number
+            "picking-mode"?: PickingMode
+            "view-data-key"?: string
+
+            onPointerCaptureOut?: (e: PointerCaptureOutEvent) => void
+            onPointerCapture?: (e: PointerCaptureEvent) => void
+            onMouseCaptureOut?: (e: MouseCaptureOutEvent) => void
+            onMouseCapture?: (e: MouseCaptureEvent) => void
+
+
         }
 
         type VisualElementNoChildren = Omit<VisualElement, "children">
