@@ -152,12 +152,12 @@ function setStyleLength(propertyName) {
 }
 function setStyleFloat(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = !value ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(value);
+        style[propertyName] = !value && value !== 0 ? new UIElements_1.StyleFloat(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleFloat(value);
     };
 }
 function setStyleInt(propertyName) {
     styleProcessors[propertyName] = function (style, value) {
-        style[propertyName] = !value ? new UIElements_1.StyleInt(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleInt(value);
+        style[propertyName] = !value && value !== 0 ? new UIElements_1.StyleInt(UIElements_1.StyleKeyword.Initial) : Utils_1.UIStyleUtil.GetStyleInt(value);
     };
 }
 function setStyleCursor(propertyName) {

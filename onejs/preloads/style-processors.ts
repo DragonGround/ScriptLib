@@ -165,13 +165,13 @@ function setStyleLength(propertyName: keyof Style) {
 
 function setStyleFloat(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = !value ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(value)
+        style[propertyName] = !value && value !== 0 ? new StyleFloat(StyleKeyword.Initial) : UIStyleUtil.GetStyleFloat(value)
     }
 }
 
 function setStyleInt(propertyName: keyof Style) {
     styleProcessors[propertyName] = (style, value) => {
-        style[propertyName] = !value ? new StyleInt(StyleKeyword.Initial) : UIStyleUtil.GetStyleInt(value)
+        style[propertyName] = !value && value !== 0 ? new StyleInt(StyleKeyword.Initial) : UIStyleUtil.GetStyleInt(value)
     }
 }
 
