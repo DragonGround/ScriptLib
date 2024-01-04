@@ -16,7 +16,7 @@ declare module "preact/jsx" {
          * Base elements
          */
 
-        type RecursiveElement = string | number | boolean | Element | null | undefined | RecursiveElement[]
+        type RecursiveElement = string | number | object | bigint | boolean | Element | null | undefined | RecursiveElement[]
 
         interface CommonEvents {
             onValidateCommand?: (e: ValidateCommandEvent) => void
