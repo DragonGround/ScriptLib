@@ -4,7 +4,7 @@
 declare module "preact/jsx" {
     import { Color, Font, Texture, Texture2D, FontStyle, ScaleMode, TextAnchor, Sprite } from "UnityEngine"
     import { float2, float3, float4 } from "Unity/Mathematics"
-    import { Align, DisplayStyle, EasingFunction, EasingMode, FlexDirection, FontDefinition, Justify, Overflow, OverflowClipBox, Position, TextOverflow, TextOverflowPosition, Visibility, WhiteSpace, Wrap } from "UnityEngine/UIElements"
+    import { Align, BackgroundRepeat, DisplayStyle, EasingFunction, EasingMode, FlexDirection, FontDefinition, Justify, Overflow, OverflowClipBox, Position, TextOverflow, TextOverflowPosition, Visibility, WhiteSpace, Wrap } from "UnityEngine/UIElements"
 
     export type ColorInfo = float4 | number[] | string | Color
     type TextShadowInfo = { offset: float2 | number[], blurRadius: number, color: ColorInfo }
@@ -16,6 +16,11 @@ declare module "preact/jsx" {
         alignSelf?: keyof typeof Align
         backgroundColor?: ColorInfo    // StyleColor
         backgroundImage?: Sprite | Texture | string   // StyleBackground
+        backgroundSize?: BackgroundSize | string   // StyleBackgroundSize
+        backgroundRepeat?: BackgroundRepeat | string   // StyleBackgroundRepeat
+        // backgroundPosition?: string   // TODO StyleBackgroundPosition (Custom)
+        backgroundPositionX?: BackgroundPosition | string   // StyleBackgroundPosition
+        backgroundPositionY?: BackgroundPosition | string   // StyleBackgroundPosition
 
         borderColor?: ColorInfo // StyleBorderColor (Custom)
         borderWidth?: number | number[] // StyleBorderWidth (Custom)
@@ -110,6 +115,10 @@ declare module "preact/jsx" {
         "all": any,
         "background-color": any,
         "background-image": any,
+        "background-size": any,
+        "background-repeat": any,
+        "background-position-x": any,
+        "background-position-y": any,
         "border-bottom-color": any,
         "border-bottom-left-radius": any,
         "border-bottom-right-radius": any,

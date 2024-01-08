@@ -11,6 +11,10 @@ setStyleEnum("alignItems", UIElements_1.Align);
 setStyleEnum("alignSelf", UIElements_1.Align);
 setStyleColor("backgroundColor");
 setStyleBackground("backgroundImage");
+setStyleBackgroundSize("backgroundSize");
+setStyleBackgroundRepeat("backgroundRepeat");
+setStyleBackgroundPosition("backgroundPositionX");
+setStyleBackgroundPosition("backgroundPositionY");
 setStyleBorderColor("borderColor");
 setStyleBorderWidth("borderWidth");
 setStyleBorderRadius("borderRadius");
@@ -124,6 +128,59 @@ function setStyleBackground(propertyName) {
             style[propertyName] = new UIElements_1.StyleBackground(UIElements_1.Background.FromTexture2D(value));
         }
     };
+}
+function setStyleBackgroundSize(propertyName) {
+    styleProcessors[propertyName] = function (style, value) {
+        style[propertyName] = !value ? new UIElements_1.StyleBackgroundSize(UIElements_1.StyleKeyword.Initial)
+            : new UIElements_1.StyleBackgroundSize(typeof value === "string" ? stringToBackgroundSize(value) : value);
+    };
+}
+function setStyleBackgroundPosition(propertyName) {
+    styleProcessors[propertyName] = function (style, value) {
+        style[propertyName] = !value ? new UIElements_1.StyleBackgroundPosition(UIElements_1.StyleKeyword.Initial)
+            : new UIElements_1.StyleBackgroundPosition(typeof value === "string" ? stringToBackgroundPosition(value) : value);
+    };
+}
+function setStyleBackgroundRepeat(propertyName) {
+    styleProcessors[propertyName] = function (style, value) {
+        style[propertyName] = !value ? new UIElements_1.StyleBackgroundRepeat(UIElements_1.StyleKeyword.Initial)
+            : new UIElements_1.StyleBackgroundRepeat(typeof value === "string" ? stringToBackgroundRepeat(value) : value);
+    };
+}
+function stringToBackgroundSize(input) {
+    var values = input.toLowerCase().split(/\s+/);
+    var x = _getLength(values[0]);
+    var y = values.length > 1 ? _getLength(values[1]) : x;
+    return new UIElements_1.BackgroundSize(x, y);
+}
+function stringToBackgroundPosition(input) {
+    var values = input.toLowerCase().split(/\s+/);
+    var keyword = UIElements_1.BackgroundPositionKeyword[capitalizeFirstLetter(values[0])];
+    if (typeof keyword === "undefined")
+        keyword = UIElements_1.BackgroundPositionKeyword.Center;
+    var offset = _getLength(values.length > 1 ? values[1] : 0);
+    log(keyword);
+    return new UIElements_1.BackgroundPosition(keyword, offset);
+}
+function capitalizeFirstLetter(input) {
+    if (input.length === 0)
+        return input;
+    return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+}
+function stringToBackgroundRepeat(input) {
+    var values = input.toLowerCase().split(/\s+/);
+    var parseRepeatValue = function (value) {
+        switch (value) {
+            case "norepeat": return UIElements_1.Repeat.NoRepeat;
+            case "space": return UIElements_1.Repeat.Space;
+            case "round": return UIElements_1.Repeat.Round;
+            case "repeat": return UIElements_1.Repeat.Repeat;
+            default: return UIElements_1.Repeat.Repeat;
+        }
+    };
+    var x = parseRepeatValue(values[0]);
+    var y = values.length > 1 ? parseRepeatValue(values[1]) : x;
+    return new UIElements_1.BackgroundRepeat(x, y);
 }
 function _getLength(value) {
     var v = undefined;

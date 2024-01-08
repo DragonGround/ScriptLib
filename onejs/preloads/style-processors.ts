@@ -3,7 +3,7 @@ import { parseColor } from "onejs/utils/color-parser"
 import { parseFloat2, parseFloat3 } from "onejs/utils/float-parser"
 import { Style } from "preact/jsx"
 import { Color, FontStyle, RenderTexture, ScaleMode, Sprite, TextAnchor, Texture, Texture2D, Vector2 } from "UnityEngine"
-import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage, AngleUnit } from "UnityEngine/UIElements"
+import { Align, DisplayStyle, FlexDirection, Wrap, Justify, Position, TextOverflow, TimeValue, StylePropertyName, EasingFunction, OverflowClipBox, TextOverflowPosition, Visibility, WhiteSpace, StyleKeyword, StyleColor, StyleBackground, Background, Length, LengthUnit, StyleLength, StyleFloat, StyleInt, Cursor, StyleCursor, StyleRotate, Rotate, Angle, StyleScale, Scale, TextShadow, StyleTextShadow, StyleTransformOrigin, TransformOrigin, StyleTranslate, Translate, StyleFont, StyleFontDefinition, IStyle, Overflow, EasingMode, FontDefinition, VectorImage, AngleUnit, StyleBackgroundRepeat, BackgroundRepeat, Repeat, StyleBackgroundSize, BackgroundSize, BackgroundPosition, StyleBackgroundPosition, BackgroundPositionKeyword } from "UnityEngine/UIElements"
 
 /**
  * Unity Specific Style processors
@@ -16,6 +16,10 @@ setStyleEnum("alignItems", Align)
 setStyleEnum("alignSelf", Align)
 setStyleColor("backgroundColor")
 setStyleBackground("backgroundImage")
+setStyleBackgroundSize("backgroundSize")
+setStyleBackgroundRepeat("backgroundRepeat")
+setStyleBackgroundPosition("backgroundPositionX")
+setStyleBackgroundPosition("backgroundPositionY")
 
 setStyleBorderColor("borderColor")
 setStyleBorderWidth("borderWidth")
@@ -135,6 +139,72 @@ function setStyleBackground(propertyName: keyof Style) {
             style[propertyName] = new StyleBackground(Background.FromTexture2D(value))
         }
     }
+}
+
+function setStyleBackgroundSize(propertyName: keyof Style) {
+    styleProcessors[propertyName] = (style, value) => {
+        style[propertyName] = !value ? new StyleBackgroundSize(StyleKeyword.Initial)
+            : new StyleBackgroundSize(typeof value === "string" ? stringToBackgroundSize(value) : value)
+    }
+}
+
+function setStyleBackgroundPosition(propertyName: keyof Style) {
+    styleProcessors[propertyName] = (style, value) => {
+        style[propertyName] = !value ? new StyleBackgroundPosition(StyleKeyword.Initial)
+            : new StyleBackgroundPosition(typeof value === "string" ? stringToBackgroundPosition(value) : value)
+    }
+}
+
+function setStyleBackgroundRepeat(propertyName: keyof Style) {
+    styleProcessors[propertyName] = (style, value) => {
+        style[propertyName] = !value ? new StyleBackgroundRepeat(StyleKeyword.Initial)
+            : new StyleBackgroundRepeat(typeof value === "string" ? stringToBackgroundRepeat(value) : value)
+    }
+}
+
+function stringToBackgroundSize(input: string): BackgroundSize {
+    let values = input.toLowerCase().split(/\s+/);
+
+    let x: Length = _getLength(values[0]);
+    let y: Length = values.length > 1 ? _getLength(values[1]) : x; // If only one value is provided, use it for both x and y
+
+    return new BackgroundSize(x, y);
+}
+
+function stringToBackgroundPosition(input: string): BackgroundPosition {
+    let values = input.toLowerCase().split(/\s+/);
+
+    let keyword = BackgroundPositionKeyword[capitalizeFirstLetter(values[0])]
+    if (typeof keyword === "undefined") 
+        keyword = BackgroundPositionKeyword.Center
+    let offset = _getLength(values.length > 1 ? values[1] : 0); // If only one value is provided, use it for both x and y
+    log(keyword)
+    return new BackgroundPosition(keyword, offset);
+}
+
+function capitalizeFirstLetter(input: string): string {
+    if (input.length === 0) return input;
+    return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+}
+
+function stringToBackgroundRepeat(input: string): BackgroundRepeat {
+    let values = input.toLowerCase().split(/\s+/);
+
+    // Default to Repeat if the input is not recognized
+    const parseRepeatValue = (value: string): Repeat => {
+        switch (value) {
+            case "norepeat": return Repeat.NoRepeat;
+            case "space": return Repeat.Space;
+            case "round": return Repeat.Round;
+            case "repeat": return Repeat.Repeat;
+            default: return Repeat.Repeat;
+        }
+    };
+
+    let x: Repeat = parseRepeatValue(values[0]);
+    let y: Repeat = values.length > 1 ? parseRepeatValue(values[1]) : x; // If only one value is provided, use it for both x and y
+
+    return new BackgroundRepeat(x, y);
 }
 
 function _getLength(value): Length {
