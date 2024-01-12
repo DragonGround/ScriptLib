@@ -93,9 +93,7 @@ function setProperty(dom, name, value, oldValue, isSvg) {
             }
             catch (e) { }
         }
-        if (typeof value === 'function') {
-        }
-        else if (name == "disabled") {
+        if (name == "disabled") {
             dom.setAttribute(name, value);
         }
         else if (value != null && (value !== false || name[4] === '-')) {

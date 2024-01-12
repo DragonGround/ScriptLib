@@ -6,7 +6,7 @@ import { MutableRef, StateUpdater, useCallback, useEffect, useState } from "prea
  * A convenience hook that, like useState(), returns a stateful value and a function to update it.
  * This one ties the value to a property on a C# object.
  * It takes care of setting up and cleaning up the C# value changed event automatically.
- * Refer here for more info: https://onejs.com/dataflow#reducing-boilerplates
+ * Refer here for more info: https://onejs.com/docs/uiworkflow#reducing-boilerplates
  *
  * @param obj The C# object containing the property to be observed
  * @param propertyName The name of the property to be observed
