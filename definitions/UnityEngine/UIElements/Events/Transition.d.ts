@@ -2,7 +2,7 @@
 
 declare module "UnityEngine/UIElements" {
 
-    export class TransitionEventBase {
+    export class TransitionEventBase extends EventBase {
         stylePropertyNames: StylePropertyNameCollection
         elapsedTime: number
     }
