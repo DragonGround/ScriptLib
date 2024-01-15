@@ -518,7 +518,7 @@ export function unmount(vnode, parentVNode, skipRemove = false) {
 	if (options.unmount) options.unmount(vnode);
 
 	if ((r = vnode.ref)) {
-		if (!r.current || r.current === vnode._dom) {
+		if (r.current !== null || r.current === vnode._dom) { // MODDED: s/!r.current/r.current !== null/
 			applyRef(r, null, parentVNode);
 		}
 	}
