@@ -114,16 +114,36 @@ export function useRefEvent<T extends VisualElement, E extends OneJS.EventKeys<T
  * For event delegates that take more than one value, see related types
  * `HasCsharpEvent2` and `HasCsharpEvent3`.
  */
-export type HasCsharpEvent<EventName extends string, TVal> = HasCSharpEventBase<EventName, (val: TVal) => void>
+type HasCSharpEventBase<
+  EventName extends string,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  TCallback extends Function
+> = Record<`${EventName}`, OneJS.Event<TCallback>>
 
-export type HasCsharpEvent2<EventName extends string, TVal1, TVal2> = HasCSharpEventBase<
-    EventName,
-    (val1: TVal1, val2: TVal2) => void
+export type HasCsharpEvent0<EventName extends string> = HasCSharpEventBase<
+  EventName,
+  () => void
 >
 
-export type HasCsharpEvent3<EventName extends string, TVal1, TVal2, TVal3> = HasCSharpEventBase<
-    EventName,
-    (val1: TVal1, val2: TVal2, val3: TVal3) => void
+export type HasCsharpEvent<EventName extends string, TVal> = HasCSharpEventBase<
+  EventName,
+  (val: TVal) => void
+>
+
+export type HasCsharpEvent2<
+  EventName extends string,
+  TVal1,
+  TVal2
+> = HasCSharpEventBase<EventName, (val1: TVal1, val2: TVal2) => void>
+
+export type HasCsharpEvent3<
+  EventName extends string,
+  TVal1,
+  TVal2,
+  TVal3
+> = HasCSharpEventBase<
+  EventName,
+  (val1: TVal1, val2: TVal2, val3: TVal3) => void
 >
 
 /**
@@ -136,8 +156,3 @@ export type HasCsharpEvent3<EventName extends string, TVal1, TVal2, TVal3> = Has
  */
 export type HasEventfulProperty<PropName extends string, TVal> = Record<PropName, TVal> &
     HasCsharpEvent<`On${Capitalize<PropName>}Changed`, TVal>
-
-type HasCSharpEventBase<EventName extends string, TCallback> = Record<
-    `add_${EventName}` | `remove_${EventName}`,
-    (handler: TCallback) => void
->
