@@ -178,7 +178,6 @@ function stringToBackgroundPosition(input: string): BackgroundPosition {
     if (typeof keyword === "undefined") 
         keyword = BackgroundPositionKeyword.Center
     let offset = _getLength(values.length > 1 ? values[1] : 0); // If only one value is provided, use it for both x and y
-    log(keyword)
     return new BackgroundPosition(keyword, offset);
 }
 

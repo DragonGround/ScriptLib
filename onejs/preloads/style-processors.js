@@ -159,7 +159,6 @@ function stringToBackgroundPosition(input) {
     if (typeof keyword === "undefined")
         keyword = UIElements_1.BackgroundPositionKeyword.Center;
     var offset = _getLength(values.length > 1 ? values[1] : 0);
-    log(keyword);
     return new UIElements_1.BackgroundPosition(keyword, offset);
 }
 function capitalizeFirstLetter(input) {
