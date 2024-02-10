@@ -310,7 +310,7 @@ function unmount(vnode, parentVNode, skipRemove) {
     if (options_1.default.unmount)
         options_1.default.unmount(vnode);
     if ((r = vnode.ref)) {
-        if (!r.current || r.current === vnode._dom) {
+        if (r.current !== null || r.current === vnode._dom) {
             applyRef(r, null, parentVNode);
         }
     }
