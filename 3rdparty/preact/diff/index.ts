@@ -227,7 +227,7 @@ export function diff(
 			}
 
 			let isTopLevelFragment =
-				tmp !== null && tmp.type === Fragment && tmp.key == null; // MODDED
+				tmp !== null && typeof tmp != "undefined" && tmp.type === Fragment && tmp.key == null; // MODDED
 			let renderResult = isTopLevelFragment ? tmp.props.children : tmp;
 
 			diffChildren(

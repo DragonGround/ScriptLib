@@ -150,7 +150,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             if (!isNew && c_1.getSnapshotBeforeUpdate != null) {
                 snapshot_1 = c_1.getSnapshotBeforeUpdate(oldProps_1, oldState_1);
             }
-            var isTopLevelFragment = tmp !== null && tmp.type === create_element_1.Fragment && tmp.key == null;
+            var isTopLevelFragment = tmp !== null && typeof tmp != "undefined" && tmp.type === create_element_1.Fragment && tmp.key == null;
             var renderResult = isTopLevelFragment ? tmp.props.children : tmp;
             (0, children_1.diffChildren)(parentDom, (0, util_1.isArray)(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
             c_1.base = newVNode._dom;
