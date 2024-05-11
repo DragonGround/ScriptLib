@@ -117,9 +117,9 @@ export function diffChildren(
 			oldVNode._children === childVNode._children
 		) {
 			// @ts-ignore olDom should be present on a DOM node
-			if (oldDom) { // MODDED `&& !oldDom.isConnected` removed
-				oldDom = getDomSibling(oldVNode);
-			}
+			// if (oldDom) { // MODDED `&& !oldDom.isConnected` removed
+			// 	oldDom = getDomSibling(oldVNode);
+			// }
 			oldDom = insert(childVNode, oldDom, parentDom);
 		} else if (
 			typeof childVNode.type == 'function' &&
