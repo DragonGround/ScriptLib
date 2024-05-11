@@ -40,7 +40,7 @@ function diffChildren(parentDom, renderResult, newParentVNode, oldParentVNode, g
         }
         if (childVNode._flags & constants_1.INSERT_VNODE ||
             oldVNode._children === childVNode._children) {
-            if (oldDom && !oldDom.isConnected) {
+            if (oldDom) {
                 oldDom = (0, component_1.getDomSibling)(oldVNode);
             }
             oldDom = insert(childVNode, oldDom, parentDom);
