@@ -8,7 +8,8 @@ var options_1 = __importDefault(require("../options"));
 function setStyle(style, key, value) {
     globalThis.__setStyleProperty(style.GetVEStyle(), key, value);
 }
-function setProperty(dom, name, value, oldValue, isSvg) {
+var eventClock = 0;
+function setProperty(dom, name, value, oldValue, namespace) {
     var useCapture;
     o: if (name === 'style') {
         if (typeof value == 'string') {
@@ -35,8 +36,11 @@ function setProperty(dom, name, value, oldValue, isSvg) {
         }
     }
     else if (name[0] === 'o' && name[1] === 'n') {
-        useCapture = name !== (name = name.replace(/Capture$/, ''));
-        if (name.toLowerCase() in dom)
+        useCapture =
+            name !== (name = name.replace(/(PointerCapture)$|Capture$/i, '$1'));
+        if (name.toLowerCase() in dom ||
+            name === 'onFocusOut' ||
+            name === 'onFocusIn')
             name = name.toLowerCase().slice(2);
         else
             name = name.slice(2);
@@ -45,37 +49,39 @@ function setProperty(dom, name, value, oldValue, isSvg) {
         dom._listeners[name + useCapture] = value;
         if (value) {
             if (!oldValue) {
-                var handler = useCapture ? eventProxyCapture : eventProxy;
-                dom.addEventListener(name, handler, useCapture);
+                value._attached = eventClock;
+                dom.addEventListener(name, useCapture ? eventProxyCapture : eventProxy, useCapture);
+            }
+            else {
+                value._attached = oldValue._attached;
             }
         }
         else {
-            var handler = useCapture ? eventProxyCapture : eventProxy;
-            dom.removeEventListener(name, handler, useCapture);
+            dom.removeEventListener(name, useCapture ? eventProxyCapture : eventProxy, useCapture);
         }
     }
-    else if (name !== 'dangerouslySetInnerHTML') {
-        if (isSvg) {
+    else {
+        if (namespace == 'http://www.w3.org/2000/svg') {
             name = name.replace(/xlink(H|:h)/, 'h').replace(/sName$/, 's');
         }
-        else if (name !== 'width' &&
-            name !== 'height' &&
-            name !== 'href' &&
-            name !== 'list' &&
-            name !== 'form' &&
-            name !== 'tabIndex' &&
-            name !== 'download' &&
-            name !== 'rowSpan' &&
-            name !== 'colSpan' &&
+        else if (name != 'width' &&
+            name != 'height' &&
+            name != 'href' &&
+            name != 'list' &&
+            name != 'form' &&
+            name != 'tabIndex' &&
+            name != 'download' &&
+            name != 'rowSpan' &&
+            name != 'colSpan' &&
+            name != 'role' &&
             name in dom) {
             try {
-                dom.setAttribute(name, value == null ? null : value);
+                dom[name] = value == null ? '' : value;
                 break o;
             }
             catch (e) { }
         }
-        if (name == "disabled") {
-            dom.setAttribute(name, value);
+        if (typeof value == 'function') {
         }
         else if (value != null && (value !== false || name[4] === '-')) {
             dom.setAttribute(name, value);
