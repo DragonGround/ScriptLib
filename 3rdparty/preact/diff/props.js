@@ -3,27 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setProperty = exports.diffProps = void 0;
+exports.setProperty = void 0;
 var options_1 = __importDefault(require("../options"));
-function diffProps(dom, newProps, oldProps, isSvg, hydrate) {
-    var i;
-    for (i in oldProps) {
-        if (i !== 'children' && i !== 'key' && !(i in newProps)) {
-            setProperty(dom, i, null, oldProps[i], isSvg);
-        }
-    }
-    for (i in newProps) {
-        if ((!hydrate || typeof newProps[i] == 'function') &&
-            i !== 'children' &&
-            i !== 'key' &&
-            i !== 'value' &&
-            i !== 'checked' &&
-            oldProps[i] !== newProps[i]) {
-            setProperty(dom, i, newProps[i], oldProps[i], isSvg);
-        }
-    }
-}
-exports.diffProps = diffProps;
 function setStyle(style, key, value) {
     globalThis.__setStyleProperty(style.GetVEStyle(), key, value);
 }

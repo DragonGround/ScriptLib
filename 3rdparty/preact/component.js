@@ -3,17 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.enqueueRender = exports.getDomSibling = exports.Component = void 0;
+exports.enqueueRender = exports.getDomSibling = exports.BaseComponent = void 0;
 var util_1 = require("./util");
 var index_1 = require("./diff/index");
 var options_1 = __importDefault(require("./options"));
 var create_element_1 = require("./create-element");
-function Component(props, context) {
+var constants_1 = require("./constants");
+function BaseComponent(props, context) {
     this.props = props;
     this.context = context;
 }
-exports.Component = Component;
-Component.prototype.setState = function (update, callback) {
+exports.BaseComponent = BaseComponent;
+BaseComponent.prototype.setState = function (update, callback) {
     var s;
     if (this._nextState != null && this._nextState !== this.state) {
         s = this._nextState;
@@ -30,12 +31,13 @@ Component.prototype.setState = function (update, callback) {
     if (update == null)
         return;
     if (this._vnode) {
-        if (callback)
-            this._renderCallbacks.push(callback);
+        if (callback) {
+            this._stateCallbacks.push(callback);
+        }
         enqueueRender(this);
     }
 };
-Component.prototype.forceUpdate = function (callback) {
+BaseComponent.prototype.forceUpdate = function (callback) {
     if (this._vnode) {
         this._force = true;
         if (callback)
@@ -43,11 +45,11 @@ Component.prototype.forceUpdate = function (callback) {
         enqueueRender(this);
     }
 };
-Component.prototype.render = create_element_1.Fragment;
+BaseComponent.prototype.render = create_element_1.Fragment;
 function getDomSibling(vnode, childIndex) {
     if (childIndex == null) {
         return vnode._parent
-            ? getDomSibling(vnode._parent, vnode._parent._children.indexOf(vnode) + 1)
+            ? getDomSibling(vnode._parent, vnode._index + 1)
             : null;
     }
     var sibling;
@@ -61,15 +63,18 @@ function getDomSibling(vnode, childIndex) {
 }
 exports.getDomSibling = getDomSibling;
 function renderComponent(component) {
-    var vnode = component._vnode, oldDom = vnode._dom, parentDom = component._parentDom;
-    if (parentDom) {
-        var commitQueue = [];
-        var oldVNode = (0, util_1.assign)({}, vnode);
-        oldVNode._original = vnode._original + 1;
-        (0, index_1.diff)(parentDom, vnode, oldVNode, component._globalContext, parentDom.ownerSVGElement !== undefined, vnode._hydrating != null ? [oldDom] : null, commitQueue, oldDom == null ? getDomSibling(vnode) : oldDom, vnode._hydrating);
-        (0, index_1.commitRoot)(commitQueue, vnode);
-        if (vnode._dom !== oldDom) {
-            updateParentDomPointers(vnode);
+    var oldVNode = component._vnode, oldDom = oldVNode._dom, commitQueue = [], refQueue = [];
+    if (component._parentDom) {
+        var newVNode = (0, util_1.assign)({}, oldVNode);
+        newVNode._original = oldVNode._original + 1;
+        if (options_1.default.vnode)
+            options_1.default.vnode(newVNode);
+        (0, index_1.diff)(component._parentDom, newVNode, oldVNode, component._globalContext, component._parentDom.namespaceURI, oldVNode._flags & constants_1.MODE_HYDRATE ? [oldDom] : null, commitQueue, oldDom == null ? getDomSibling(oldVNode) : oldDom, !!(oldVNode._flags & constants_1.MODE_HYDRATE), refQueue);
+        newVNode._original = oldVNode._original;
+        newVNode._parent._children[newVNode._index] = newVNode;
+        (0, index_1.commitRoot)(commitQueue, newVNode, refQueue);
+        if (newVNode._dom != oldDom) {
+            updateParentDomPointers(newVNode);
         }
     }
 }
@@ -78,7 +83,7 @@ function updateParentDomPointers(vnode) {
         vnode._dom = vnode._component.base = null;
         for (var i = 0; i < vnode._children.length; i++) {
             var child = vnode._children[i];
-            if (child !== null && child._dom !== null) {
+            if (child !== null && typeof child !== "undefined" && child._dom != null) {
                 vnode._dom = vnode._component.base = child._dom;
                 break;
             }
@@ -88,6 +93,9 @@ function updateParentDomPointers(vnode) {
 }
 var rerenderQueue = [];
 var prevDebounce;
+var defer = typeof Promise == 'function'
+    ? Promise.prototype.then.bind(Promise.resolve())
+    : setTimeout;
 function enqueueRender(c) {
     if ((!c._dirty &&
         (c._dirty = true) &&
@@ -95,7 +103,7 @@ function enqueueRender(c) {
         !process._rerenderCount++) ||
         prevDebounce !== options_1.default.debounceRendering) {
         prevDebounce = options_1.default.debounceRendering;
-        (prevDebounce || setTimeout)(process);
+        (prevDebounce || defer)(process);
     }
 }
 exports.enqueueRender = enqueueRender;

@@ -5,26 +5,27 @@ export let i = 0;
 export function createContext(defaultValue, contextId) {
 	contextId = '__cC' + i++;
 
-	const context: any = {
+	const context: any = { // MODDED
 		_id: contextId,
 		_defaultValue: defaultValue,
-		/** @type {import('./internal').FunctionComponent} */
+		/** @type {FunctionComponent} */
 		Consumer(props, contextValue) {
 			// return props.children(
 			// 	context[contextId] ? context[contextId].props.value : defaultValue
 			// );
 			return props.children(contextValue);
 		},
-		/** @type {import('./internal').FunctionComponent} */
+		/** @type {FunctionComponent} */
 		Provider(props) {
 			if (!this.getChildContext) {
-				let subs: any[] = [];
+				/** @type {Component[]} */
+				let subs: any[] = []; // MODDED
 				let ctx = {};
 				ctx[contextId] = this;
 
 				this.getChildContext = () => ctx;
 
-				this.shouldComponentUpdate = function(_props) {
+				this.shouldComponentUpdate = function (_props) {
 					if (this.props.value !== _props.value) {
 						// I think the forced value propagation here was only needed when `options.debounceRendering` was being bypassed:
 						// https://github.com/preactjs/preact/commit/4d339fb803bea09e9f198abf38ca1bf8ea4b7771#diff-54682ce380935a717e41b8bfc54737f6R358
@@ -40,14 +41,14 @@ export function createContext(defaultValue, contextId) {
 						// 	c.context[contextId] = _props.value;
 						// 	enqueueRender(c);
 						// });
-						subs.some((c: any) => {
+						subs.some((c: any) => { // MODDED
 							c._force = true;
 							enqueueRender(c);
 						});
 					}
 				};
 
-				this.sub = (c: any) => {
+				this.sub = (c: any) => { // MODDED
 					subs.push(c);
 					let old = c.componentWillUnmount;
 					c.componentWillUnmount = () => {
@@ -67,5 +68,6 @@ export function createContext(defaultValue, contextId) {
 	// of on the component itself. See:
 	// https://reactjs.org/docs/context.html#contextdisplayname
 
-	return (context.Provider._contextRef = context.Consumer.contextType = context);
+	return (context.Provider._contextRef = context.Consumer.contextType =
+		context);
 }

@@ -1,26 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useId = exports.useErrorBoundary = exports.useDebugValue = exports.useContext = exports.useCallback = exports.useMemo = exports.useImperativeHandle = exports.useRef = exports.useLayoutEffect = exports.useEffect = exports.useReducer = exports.useState = void 0;
-var preact_1 = require("preact/");
+var preact_1 = require("preact");
 var currentIndex;
 var currentComponent;
 var previousComponent;
 var currentHook = 0;
 var afterPaintEffects = [];
 var EMPTY = [];
-var oldBeforeDiff = preact_1.options._diff;
-var oldBeforeRender = preact_1.options._render;
-var oldAfterDiff = preact_1.options.diffed;
-var oldCommit = preact_1.options._commit;
-var oldBeforeUnmount = preact_1.options.unmount;
+var options = (preact_1.options);
+var oldBeforeDiff = options._diff;
+var oldBeforeRender = options._render;
+var oldAfterDiff = options.diffed;
+var oldCommit = options._commit;
+var oldBeforeUnmount = options.unmount;
+var oldRoot = options._root;
 var RAF_TIMEOUT = 100;
 var prevRaf;
-preact_1.options._diff = function (vnode) {
+options._diff = function (vnode) {
     currentComponent = null;
     if (oldBeforeDiff)
         oldBeforeDiff(vnode);
 };
-preact_1.options._render = function (vnode) {
+options._root = function (vnode, parentDom) {
+    if (vnode && parentDom._children && parentDom._children._mask) {
+        vnode._mask = parentDom._children._mask;
+    }
+    if (oldRoot)
+        oldRoot(vnode, parentDom);
+};
+options._render = function (vnode) {
     if (oldBeforeRender)
         oldBeforeRender(vnode);
     currentComponent = vnode._component;
@@ -42,11 +51,12 @@ preact_1.options._render = function (vnode) {
             hooks._pendingEffects.forEach(invokeCleanup);
             hooks._pendingEffects.forEach(invokeEffect);
             hooks._pendingEffects = [];
+            currentIndex = 0;
         }
     }
     previousComponent = currentComponent;
 };
-preact_1.options.diffed = function (vnode) {
+options.diffed = function (vnode) {
     if (oldAfterDiff)
         oldAfterDiff(vnode);
     var c = vnode._component;
@@ -66,7 +76,7 @@ preact_1.options.diffed = function (vnode) {
     }
     previousComponent = currentComponent = null;
 };
-preact_1.options._commit = function (vnode, commitQueue) {
+options._commit = function (vnode, commitQueue) {
     commitQueue.some(function (component) {
         try {
             component._renderCallbacks.forEach(invokeCleanup);
@@ -80,13 +90,13 @@ preact_1.options._commit = function (vnode, commitQueue) {
                     c._renderCallbacks = [];
             });
             commitQueue = [];
-            preact_1.options._catchError(e, component._vnode);
+            options._catchError(e, component._vnode);
         }
     });
     if (oldCommit)
         oldCommit(vnode, commitQueue);
 };
-preact_1.options.unmount = function (vnode) {
+options.unmount = function (vnode) {
     if (oldBeforeUnmount)
         oldBeforeUnmount(vnode);
     var c = vnode._component;
@@ -102,12 +112,12 @@ preact_1.options.unmount = function (vnode) {
         });
         c.__hooks = undefined;
         if (hasErrored_1)
-            preact_1.options._catchError(hasErrored_1, c._vnode);
+            options._catchError(hasErrored_1, c._vnode);
     }
 };
 function getHookState(index, type) {
-    if (preact_1.options._hook) {
-        preact_1.options._hook(currentComponent, index, currentHook || type);
+    if (options._hook) {
+        options._hook(currentComponent, index, currentHook || type);
     }
     currentHook = 0;
     var hooks = currentComponent.__hooks ||
@@ -189,7 +199,7 @@ function useReducer(reducer, initialState, init) {
 exports.useReducer = useReducer;
 function useEffect(callback, args) {
     var state = getHookState(currentIndex++, 3);
-    if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
+    if (!options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
         state._pendingArgs = args;
         currentComponent.__hooks._pendingEffects.push(state);
@@ -198,7 +208,7 @@ function useEffect(callback, args) {
 exports.useEffect = useEffect;
 function useLayoutEffect(callback, args) {
     var state = getHookState(currentIndex++, 4);
-    if (!preact_1.options._skipEffects && argsChanged(state._args, args)) {
+    if (!options._skipEffects && argsChanged(state._args, args)) {
         state._value = callback;
         state._pendingArgs = args;
         currentComponent._renderCallbacks.push(state);
@@ -254,8 +264,8 @@ function useContext(context) {
 }
 exports.useContext = useContext;
 function useDebugValue(value, formatter) {
-    if (preact_1.options.useDebugValue) {
-        preact_1.options.useDebugValue(formatter ? formatter(value) : value);
+    if (options.useDebugValue) {
+        options.useDebugValue(formatter ? formatter(value) : (value));
     }
 }
 exports.useDebugValue = useDebugValue;
@@ -294,7 +304,8 @@ exports.useId = useId;
 function flushAfterPaintEffects() {
     var component;
     while ((component = afterPaintEffects.shift())) {
-        if (!component._parentDom || typeof component.__hooks == "undefined" || component.__hooks === null)
+        if (typeof component._parentDom == "undefined" || component._parentDom === null ||
+            typeof component.__hooks == "undefined" || component.__hooks === null)
             continue;
         try {
             component.__hooks._pendingEffects.forEach(invokeCleanup);
@@ -303,7 +314,7 @@ function flushAfterPaintEffects() {
         }
         catch (e) {
             component.__hooks._pendingEffects = [];
-            preact_1.options._catchError(e, component._vnode);
+            options._catchError(e, component._vnode);
         }
     }
 }
@@ -322,13 +333,13 @@ function afterNextFrame(callback) {
     }
 }
 function afterPaint(newQueueLength) {
-    if (newQueueLength === 1 || prevRaf !== preact_1.options.requestAnimationFrame) {
-        prevRaf = preact_1.options.requestAnimationFrame;
+    if (newQueueLength === 1 || prevRaf !== options.requestAnimationFrame) {
+        prevRaf = options.requestAnimationFrame;
         (prevRaf || afterNextFrame)(flushAfterPaintEffects);
     }
 }
-preact_1.options.debounceRendering = requestAnimationFrame;
-preact_1.options.requestAnimationFrame = requestAnimationFrame;
+options.debounceRendering = requestAnimationFrame;
+options.requestAnimationFrame = requestAnimationFrame;
 function invokeCleanup(hook) {
     var comp = currentComponent;
     var cleanup = hook._cleanup;

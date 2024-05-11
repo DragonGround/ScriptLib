@@ -14,7 +14,7 @@ Object.defineProperty(exports, "Fragment", { enumerable: true, get: function () 
 Object.defineProperty(exports, "createRef", { enumerable: true, get: function () { return create_element_1.createRef; } });
 Object.defineProperty(exports, "isValidElement", { enumerable: true, get: function () { return create_element_1.isValidElement; } });
 var component_1 = require("./component");
-Object.defineProperty(exports, "Component", { enumerable: true, get: function () { return component_1.Component; } });
+Object.defineProperty(exports, "Component", { enumerable: true, get: function () { return component_1.BaseComponent; } });
 var clone_element_1 = require("./clone-element");
 Object.defineProperty(exports, "cloneElement", { enumerable: true, get: function () { return clone_element_1.cloneElement; } });
 var create_context_1 = require("./create-context");

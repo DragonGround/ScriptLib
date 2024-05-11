@@ -3,23 +3,21 @@ import { commitRoot, diff } from './diff/index';
 import { createElement, Fragment } from './create-element';
 import options from './options';
 import { slice } from './util';
-import { PreactElement } from './internal';
 
 /**
  * Render a Preact virtual node into a DOM element
- * @param {import('./internal').ComponentChild} vnode The virtual node to render
- * @param {import('./internal').PreactElement} parentDom The DOM element to
- * render into
- * @param {import('./internal').PreactElement | object} [replaceNode] Optional: Attempt to re-use an
+ * @param {ComponentChild} vnode The virtual node to render
+ * @param {PreactElement} parentDom The DOM element to render into
+ * @param {PreactElement | object} [replaceNode] Optional: Attempt to re-use an
  * existing DOM tree rooted at `replaceNode`
  */
-export function render(vnode, parentDom: PreactElement, replaceNode) {
+export function render(vnode, parentDom, replaceNode) {
 	if (options._root) options._root(vnode, parentDom);
 
 	// We abuse the `replaceNode` parameter in `hydrate()` to signal if we are in
 	// hydration mode or not by passing the `hydrate` function instead of a DOM
 	// element..
-	let isHydrating = typeof replaceNode === 'function';
+	let isHydrating = typeof replaceNode == 'function';
 
 	// To be able to support calling `render()` multiple times on the same
 	// DOM node, we need to obtain a reference to the previous tree. We do
@@ -30,13 +28,12 @@ export function render(vnode, parentDom: PreactElement, replaceNode) {
 		? null
 		: (replaceNode && replaceNode._children) || parentDom._children;
 
-	vnode = (
-		(!isHydrating && replaceNode) ||
-		parentDom
-	)._children = createElement(Fragment, null, [vnode]);
+	vnode = ((!isHydrating && replaceNode) || parentDom)._children =
+		createElement(Fragment, null, [vnode]);
 
 	// List of effects that need to be called after diffing.
-	let commitQueue = [];
+	let commitQueue = [],
+		refQueue = [];
 	diff(
 		parentDom,
 		// Determine the new vnode tree and store it on the DOM element on
@@ -44,7 +41,7 @@ export function render(vnode, parentDom: PreactElement, replaceNode) {
 		vnode,
 		oldVNode || EMPTY_OBJ,
 		EMPTY_OBJ,
-		parentDom.ownerSVGElement !== undefined,
+		parentDom.namespaceURI,
 		!isHydrating && replaceNode
 			? [replaceNode]
 			: oldVNode
@@ -58,18 +55,18 @@ export function render(vnode, parentDom: PreactElement, replaceNode) {
 			: oldVNode
 			? oldVNode._dom
 			: parentDom.firstChild,
-		isHydrating
+		isHydrating,
+		refQueue
 	);
 
 	// Flush all queued effects
-	commitRoot(commitQueue, vnode);
+	commitRoot(commitQueue, vnode, refQueue);
 }
 
 /**
  * Update an existing DOM element with data from a Preact virtual node
- * @param {import('./internal').ComponentChild} vnode The virtual node to render
- * @param {import('./internal').PreactElement} parentDom The DOM element to
- * update
+ * @param {ComponentChild} vnode The virtual node to render
+ * @param {PreactElement} parentDom The DOM element to update
  */
 export function hydrate(vnode, parentDom) {
 	render(vnode, parentDom, hydrate);

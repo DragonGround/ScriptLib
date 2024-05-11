@@ -38,6 +38,7 @@ function createContext(defaultValue, contextId) {
             return props.children;
         }
     };
-    return (context.Provider._contextRef = context.Consumer.contextType = context);
+    return (context.Provider._contextRef = context.Consumer.contextType =
+        context);
 }
 exports.createContext = createContext;
