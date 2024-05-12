@@ -100,7 +100,7 @@ export function getDomSibling(vnode, childIndex?) { // MODDED
 	for (; childIndex < vnode._children.length; childIndex++) {
 		sibling = vnode._children[childIndex];
 
-		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) { // MODDED
+		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null && typeof sibling._dom !== "undefined") { // MODDED
 			// Since updateParentDomPointers keeps _dom pointer correct,
 			// we can rely on _dom to tell us if this subtree contains a
 			// rendered DOM node, and what the first rendered DOM node is

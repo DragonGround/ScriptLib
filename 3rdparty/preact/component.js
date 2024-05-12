@@ -55,7 +55,7 @@ function getDomSibling(vnode, childIndex) {
     var sibling;
     for (; childIndex < vnode._children.length; childIndex++) {
         sibling = vnode._children[childIndex];
-        if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) {
+        if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null && typeof sibling._dom !== "undefined") {
             return sibling._dom;
         }
     }
