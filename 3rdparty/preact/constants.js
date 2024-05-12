@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IS_NON_DIMENSIONAL = exports.EMPTY_ARR = exports.EMPTY_OBJ = void 0;
-exports.EMPTY_OBJ = {};
+exports.IS_NON_DIMENSIONAL = exports.EMPTY_ARR = exports.EMPTY_OBJ = exports.RESET_MODE = exports.MATCHED = exports.INSERT_VNODE = exports.MODE_SUSPENDED = exports.MODE_HYDRATE = void 0;
+exports.MODE_HYDRATE = 1 << 5;
+exports.MODE_SUSPENDED = 1 << 7;
+exports.INSERT_VNODE = 1 << 16;
+exports.MATCHED = 1 << 17;
+exports.RESET_MODE = ~(exports.MODE_HYDRATE | exports.MODE_SUSPENDED);
+exports.EMPTY_OBJ = ({});
 exports.EMPTY_ARR = [];
 exports.IS_NON_DIMENSIONAL = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;

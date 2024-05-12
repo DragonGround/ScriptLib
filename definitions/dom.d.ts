@@ -61,6 +61,7 @@ declare global {
         getElementById(tagName: string): Dom
         createElement(tagName: string, opts?: ElementCreationOptions): Dom
         createElementNS(namespaceURI: string, qualifiedName: string, opts?: ElementCreationOptions): Dom
+        createTextNode(text: string): Dom
         addEventListener(name: string, handler: Function, useCapture?: boolean): void
         removeEventListener(name: string, handler: Function, useCapture?: boolean): void
         addRuntimeUSS(uss: string): any // returns the created Unity StyleSheet ScriptableObject

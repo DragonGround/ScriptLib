@@ -43,9 +43,10 @@ function createVNode(type, props, key, ref, original) {
         _dom: null,
         _nextDom: undefined,
         _component: null,
-        _hydrating: null,
         constructor: undefined,
-        _original: original == null ? ++vnodeId : original
+        _original: original == null ? ++vnodeId : original,
+        _index: -1,
+        _flags: 0
     };
     if (original == null && options_1.default.vnode != null)
         options_1.default.vnode(vnode);
@@ -61,6 +62,6 @@ function Fragment(props) {
 }
 exports.Fragment = Fragment;
 var isValidElement = function (vnode) {
-    return vnode != null && vnode.constructor === undefined;
+    return vnode !== null && typeof vnode !== "undefined" && vnode.constructor == undefined;
 };
 exports.isValidElement = isValidElement;

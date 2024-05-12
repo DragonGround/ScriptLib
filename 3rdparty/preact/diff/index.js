@@ -11,20 +11,19 @@ var children_1 = require("./children");
 var props_1 = require("./props");
 var util_1 = require("../util");
 var options_1 = __importDefault(require("../options"));
-function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating) {
+function diff(parentDom, newVNode, oldVNode, globalContext, namespace, excessDomChildren, commitQueue, oldDom, isHydrating, refQueue) {
     var tmp, newType = newVNode.type;
     if (newVNode.constructor !== undefined)
         return null;
-    if (oldVNode._hydrating != null) {
-        isHydrating = oldVNode._hydrating;
+    if (oldVNode._flags & constants_1.MODE_SUSPENDED) {
+        isHydrating = !!(oldVNode._flags & constants_1.MODE_HYDRATE);
         oldDom = newVNode._dom = oldVNode._dom;
-        newVNode._hydrating = null;
         excessDomChildren = [oldDom];
     }
     if ((tmp = options_1.default._diff))
         tmp(newVNode);
-    try {
-        outer: if (typeof newType == 'function') {
+    outer: if (typeof newType == 'function') {
+        try {
             var c_1, isNew = void 0, oldProps_1, oldState_1, snapshot_1, clearProcessingException = void 0;
             var newProps = newVNode.props;
             tmp = newType.contextType;
@@ -43,7 +42,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
                     newVNode._component = c_1 = new newType(newProps, componentContext);
                 }
                 else {
-                    newVNode._component = c_1 = new component_1.Component(newProps, componentContext);
+                    newVNode._component = c_1 = new component_1.BaseComponent(newProps, componentContext);
                     c_1.constructor = newType;
                     c_1.render = doRender;
                 }
@@ -85,16 +84,15 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
                     c_1.componentWillReceiveProps != null) {
                     c_1.componentWillReceiveProps(newProps, componentContext);
                 }
-                if ((!c_1._force &&
-                    c_1.shouldComponentUpdate != null &&
-                    c_1.shouldComponentUpdate(newProps, c_1._nextState, componentContext) === false) ||
-                    newVNode._original === oldVNode._original) {
+                if (!c_1._force &&
+                    ((c_1.shouldComponentUpdate != null &&
+                        c_1.shouldComponentUpdate(newProps, c_1._nextState, componentContext) === false) ||
+                        newVNode._original === oldVNode._original)) {
                     if (newVNode._original !== oldVNode._original) {
                         c_1.props = newProps;
                         c_1.state = c_1._nextState;
                         c_1._dirty = false;
                     }
-                    c_1._force = false;
                     newVNode._dom = oldVNode._dom;
                     newVNode._children = oldVNode._children;
                     newVNode._children.forEach(function (vnode) {
@@ -122,6 +120,7 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             c_1.context = componentContext;
             c_1.props = newProps;
             c_1._parentDom = parentDom;
+            c_1._force = false;
             var renderHook = options_1.default._render, count = 0;
             if ('prototype' in newType && newType.prototype.render) {
                 c_1.state = c_1._nextState;
@@ -152,40 +151,49 @@ function diff(parentDom, newVNode, oldVNode, globalContext, isSvg, excessDomChil
             }
             var isTopLevelFragment = tmp !== null && typeof tmp != "undefined" && tmp.type === create_element_1.Fragment && tmp.key == null;
             var renderResult = isTopLevelFragment ? tmp.props.children : tmp;
-            (0, children_1.diffChildren)(parentDom, (0, util_1.isArray)(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, oldDom, isHydrating);
+            (0, children_1.diffChildren)(parentDom, (0, util_1.isArray)(renderResult) ? renderResult : [renderResult], newVNode, oldVNode, globalContext, namespace, excessDomChildren, commitQueue, oldDom, isHydrating, refQueue);
             c_1.base = newVNode._dom;
-            newVNode._hydrating = null;
+            newVNode._flags &= constants_1.RESET_MODE;
             if (c_1._renderCallbacks.length) {
                 commitQueue.push(c_1);
             }
             if (clearProcessingException) {
                 c_1._pendingError = c_1._processingException = null;
             }
-            c_1._force = false;
         }
-        else if (excessDomChildren == null &&
-            newVNode._original === oldVNode._original) {
-            newVNode._children = oldVNode._children;
-            newVNode._dom = oldVNode._dom;
+        catch (e) {
+            newVNode._original = null;
+            if (isHydrating || excessDomChildren != null) {
+                newVNode._dom = oldDom;
+                newVNode._flags |= isHydrating
+                    ? constants_1.MODE_HYDRATE | constants_1.MODE_SUSPENDED
+                    : constants_1.MODE_HYDRATE;
+                excessDomChildren[excessDomChildren.indexOf(oldDom)] = null;
+            }
+            else {
+                newVNode._dom = oldVNode._dom;
+                newVNode._children = oldVNode._children;
+            }
+            options_1.default._catchError(e, newVNode, oldVNode);
         }
-        else {
-            newVNode._dom = diffElementNodes(oldVNode._dom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, isHydrating);
-        }
-        if ((tmp = options_1.default.diffed))
-            tmp(newVNode);
     }
-    catch (e) {
-        newVNode._original = null;
-        if (isHydrating || excessDomChildren != null) {
-            newVNode._dom = oldDom;
-            newVNode._hydrating = !!isHydrating;
-            excessDomChildren[excessDomChildren.indexOf(oldDom)] = null;
-        }
-        options_1.default._catchError(e, newVNode, oldVNode);
+    else if (excessDomChildren == null &&
+        newVNode._original === oldVNode._original) {
+        newVNode._children = oldVNode._children;
+        newVNode._dom = oldVNode._dom;
     }
+    else {
+        newVNode._dom = diffElementNodes(oldVNode._dom, newVNode, oldVNode, globalContext, namespace, excessDomChildren, commitQueue, isHydrating, refQueue);
+    }
+    if ((tmp = options_1.default.diffed))
+        tmp(newVNode);
 }
 exports.diff = diff;
-function commitRoot(commitQueue, root) {
+function commitRoot(commitQueue, root, refQueue) {
+    root._nextDom = undefined;
+    for (var i = 0; i < refQueue.length; i++) {
+        applyRef(refQueue[i], refQueue[++i], refQueue[++i]);
+    }
     if (options_1.default._commit)
         options_1.default._commit(root, commitQueue);
     commitQueue.some(function (c) {
@@ -202,20 +210,30 @@ function commitRoot(commitQueue, root) {
     });
 }
 exports.commitRoot = commitRoot;
-function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessDomChildren, commitQueue, isHydrating) {
+function diffElementNodes(dom, newVNode, oldVNode, globalContext, namespace, excessDomChildren, commitQueue, isHydrating, refQueue) {
     var oldProps = oldVNode.props;
     var newProps = newVNode.props;
-    var nodeType = newVNode.type;
-    var i = 0;
+    var nodeType = (newVNode.type);
+    var i;
+    var newHtml;
+    var oldHtml;
+    var newChildren;
+    var value;
+    var inputValue;
+    var checked;
     if (nodeType === 'svg')
-        isSvg = true;
+        namespace = 'http://www.w3.org/2000/svg';
+    else if (nodeType === 'math')
+        namespace = 'http://www.w3.org/1998/Math/MathML';
+    else if (!namespace)
+        namespace = 'http://www.w3.org/1999/xhtml';
     if (excessDomChildren != null) {
-        for (; i < excessDomChildren.length; i++) {
-            var child = excessDomChildren[i];
-            if (child &&
-                'setAttribute' in child === !!nodeType &&
-                (nodeType ? child.localName === nodeType : child.nodeType === 3)) {
-                dom = child;
+        for (i = 0; i < excessDomChildren.length; i++) {
+            value = excessDomChildren[i];
+            if (value &&
+                'setAttribute' in value === !!nodeType &&
+                (nodeType ? value.localName === nodeType : value.nodeType === 3)) {
+                dom = value;
                 excessDomChildren[i] = null;
                 break;
             }
@@ -225,12 +243,7 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
         if (nodeType === null) {
             return document.createTextNode(newProps);
         }
-        if (isSvg) {
-            dom = document.createElementNS('http://www.w3.org/2000/svg', nodeType);
-        }
-        else {
-            dom = document.createElement(nodeType, newProps.is && newProps);
-        }
+        dom = document.createElementNS(namespace, nodeType, newProps.is && newProps);
         excessDomChildren = null;
         isHydrating = false;
     }
@@ -242,32 +255,65 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
     else {
         excessDomChildren = excessDomChildren && util_1.slice.call(dom.childNodes);
         oldProps = oldVNode.props || constants_1.EMPTY_OBJ;
-        var oldHtml = oldProps.dangerouslySetInnerHTML;
-        var newHtml = newProps.dangerouslySetInnerHTML;
-        if (!isHydrating) {
-            if (excessDomChildren != null) {
-                oldProps = {};
-                for (i = 0; i < dom.attributes.length; i++) {
-                    oldProps[dom.attributes[i].name] = dom.attributes[i].value;
-                }
-            }
-            if (newHtml || oldHtml) {
-                if (!newHtml ||
-                    ((!oldHtml || newHtml.__html != oldHtml.__html) &&
-                        newHtml.__html !== dom.innerHTML)) {
-                    dom.innerHTML = (newHtml && newHtml.__html) || '';
-                }
+        if (!isHydrating && excessDomChildren != null) {
+            oldProps = {};
+            for (i = 0; i < dom.attributes.length; i++) {
+                value = dom.attributes[i];
+                oldProps[value.name] = value.value;
             }
         }
-        (0, props_1.diffProps)(dom, newProps, oldProps, isSvg, isHydrating);
+        for (i in oldProps) {
+            value = oldProps[i];
+            if (i == 'children') {
+            }
+            else if (i == 'dangerouslySetInnerHTML') {
+                oldHtml = value;
+            }
+            else if (i !== 'key' && !(i in newProps)) {
+                if ((i == 'value' && 'defaultValue' in newProps) ||
+                    (i == 'checked' && 'defaultChecked' in newProps)) {
+                    continue;
+                }
+                (0, props_1.setProperty)(dom, i, null, value, namespace);
+            }
+        }
+        for (i in newProps) {
+            value = newProps[i];
+            if (i == 'children') {
+                newChildren = value;
+            }
+            else if (i == 'dangerouslySetInnerHTML') {
+                newHtml = value;
+            }
+            else if (i == 'value') {
+                inputValue = value;
+            }
+            else if (i == 'checked') {
+                checked = value;
+            }
+            else if (i !== 'key' &&
+                (!isHydrating || typeof value == 'function') &&
+                oldProps[i] !== value) {
+                (0, props_1.setProperty)(dom, i, value, oldProps[i], namespace);
+            }
+        }
         if (newHtml) {
+            if (!isHydrating &&
+                (!oldHtml ||
+                    (newHtml.__html !== oldHtml.__html &&
+                        newHtml.__html !== dom.innerHTML))) {
+                dom.innerHTML = newHtml.__html;
+            }
             newVNode._children = [];
         }
         else {
-            i = newVNode.props.children;
-            (0, children_1.diffChildren)(dom, (0, util_1.isArray)(i) ? i : [i], newVNode, oldVNode, globalContext, isSvg && nodeType !== 'foreignObject', excessDomChildren, commitQueue, excessDomChildren
+            if (oldHtml)
+                dom.innerHTML = '';
+            (0, children_1.diffChildren)(dom, (0, util_1.isArray)(newChildren) ? newChildren : [newChildren], newVNode, oldVNode, globalContext, nodeType === 'foreignObject'
+                ? 'http://www.w3.org/1999/xhtml'
+                : namespace, excessDomChildren, commitQueue, excessDomChildren
                 ? excessDomChildren[0]
-                : oldVNode._children && (0, component_1.getDomSibling)(oldVNode, 0), isHydrating);
+                : oldVNode._children && (0, component_1.getDomSibling)(oldVNode, 0), isHydrating, refQueue);
             if (excessDomChildren != null) {
                 for (i = excessDomChildren.length; i--;) {
                     if (excessDomChildren[i] != null)
@@ -276,17 +322,16 @@ function diffElementNodes(dom, newVNode, oldVNode, globalContext, isSvg, excessD
             }
         }
         if (!isHydrating) {
-            if ('value' in newProps &&
-                (i = newProps.value) !== undefined &&
-                (i !== dom.value ||
-                    (nodeType === 'progress' && !i) ||
-                    (nodeType === 'option' && i !== oldProps.value))) {
-                (0, props_1.setProperty)(dom, 'value', i, oldProps.value, false);
+            i = 'value';
+            if (inputValue !== undefined &&
+                (inputValue !== dom[i] ||
+                    (nodeType === 'progress' && !inputValue) ||
+                    (nodeType === 'option' && inputValue !== oldProps[i]))) {
+                (0, props_1.setProperty)(dom, i, inputValue, oldProps[i], namespace);
             }
-            if ('checked' in newProps &&
-                (i = newProps.checked) !== undefined &&
-                i !== dom.checked) {
-                (0, props_1.setProperty)(dom, 'checked', i, oldProps.checked, false);
+            i = 'checked';
+            if (checked !== undefined && checked !== dom[i]) {
+                (0, props_1.setProperty)(dom, i, checked, oldProps[i], namespace);
             }
         }
     }
@@ -324,7 +369,6 @@ function unmount(vnode, parentVNode, skipRemove) {
             }
         }
         r.base = r._parentDom = null;
-        vnode._component = undefined;
     }
     if ((r = vnode._children)) {
         for (var i = 0; i < r.length; i++) {
@@ -336,7 +380,7 @@ function unmount(vnode, parentVNode, skipRemove) {
     if (!skipRemove && vnode._dom != null) {
         (0, util_1.removeNode)(vnode._dom);
     }
-    vnode._parent = vnode._dom = vnode._nextDom = undefined;
+    vnode._component = vnode._parent = vnode._dom = vnode._nextDom = undefined;
 }
 exports.unmount = unmount;
 function doRender(props, state, context) {

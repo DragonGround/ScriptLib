@@ -2,6 +2,7 @@ import { assign } from './util';
 import { diff, commitRoot } from './diff/index';
 import options from './options';
 import { Fragment } from './create-element';
+import { MODE_HYDRATE } from './constants';
 
 /**
  * Base Component class. Provides `setState()` and `forceUpdate()`, which
@@ -10,21 +11,21 @@ import { Fragment } from './create-element';
  * @param {object} context The initial context from parent components'
  * getChildContext
  */
-export function Component(props, context) {
+export function BaseComponent(props, context) {
 	this.props = props;
 	this.context = context;
 }
 
 /**
  * Update component state and schedule a re-render.
- * @this {import('./internal').Component}
+ * @this {Component}
  * @param {object | ((s: object, p: object) => object)} update A hash of state
  * properties to update with new values or a function that given the current
  * state and props returns a new partial state
  * @param {() => void} [callback] A function to be called once component state is
  * updated
  */
-Component.prototype.setState = function (update, callback) {
+BaseComponent.prototype.setState = function (update, callback) {
 	// only clone state when copying to nextState the first time.
 	let s;
 	if (this._nextState != null && this._nextState !== this.state) {
@@ -47,18 +48,20 @@ Component.prototype.setState = function (update, callback) {
 	if (update == null) return;
 
 	if (this._vnode) {
-		if (callback) this._renderCallbacks.push(callback);
+		if (callback) {
+			this._stateCallbacks.push(callback);
+		}
 		enqueueRender(this);
 	}
 };
 
 /**
  * Immediately perform a synchronous re-render of the component
- * @this {import('./internal').Component}
+ * @this {Component}
  * @param {() => void} [callback] A function to be called after component is
  * re-rendered
  */
-Component.prototype.forceUpdate = function (callback) {
+BaseComponent.prototype.forceUpdate = function (callback) {
 	if (this._vnode) {
 		// Set render mode so that we can differentiate where the render request
 		// is coming from. We need this because forceUpdate should never call
@@ -77,19 +80,19 @@ Component.prototype.forceUpdate = function (callback) {
  * @param {object} state The component's current state
  * @param {object} context Context object, as returned by the nearest
  * ancestor's `getChildContext()`
- * @returns {import('./index').ComponentChildren | void}
+ * @returns {ComponentChildren | void}
  */
-Component.prototype.render = Fragment;
+BaseComponent.prototype.render = Fragment;
 
 /**
- * @param {import('./internal').VNode} vnode
+ * @param {VNode} vnode
  * @param {number | null} [childIndex]
  */
-export function getDomSibling(vnode, childIndex?) {
+export function getDomSibling(vnode, childIndex?) { // MODDED
 	if (childIndex == null) {
 		// Use childIndex==null as a signal to resume the search from the vnode's sibling
 		return vnode._parent
-			? getDomSibling(vnode._parent, vnode._parent._children.indexOf(vnode) + 1)
+			? getDomSibling(vnode._parent, vnode._index + 1)
 			: null;
 	}
 
@@ -97,7 +100,7 @@ export function getDomSibling(vnode, childIndex?) {
 	for (; childIndex < vnode._children.length; childIndex++) {
 		sibling = vnode._children[childIndex];
 
-		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null) { // MODDED
+		if (sibling !== null && typeof sibling !== "undefined" && sibling._dom !== null && typeof sibling._dom !== "undefined") { // MODDED
 			// Since updateParentDomPointers keeps _dom pointer correct,
 			// we can rely on _dom to tell us if this subtree contains a
 			// rendered DOM node, and what the first rendered DOM node is
@@ -115,47 +118,51 @@ export function getDomSibling(vnode, childIndex?) {
 
 /**
  * Trigger in-place re-rendering of a component.
- * @param {import('./internal').Component} component The component to rerender
+ * @param {Component} component The component to rerender
  */
 function renderComponent(component) {
-	let vnode = component._vnode,
-		oldDom = vnode._dom,
-		parentDom = component._parentDom;
+	let oldVNode = component._vnode,
+		oldDom = oldVNode._dom,
+		commitQueue = [],
+		refQueue = [];
 
-	if (parentDom) {
-		let commitQueue = [];
-		const oldVNode = assign({}, vnode);
-		oldVNode._original = vnode._original + 1;
+	if (component._parentDom) {
+		const newVNode = assign({}, oldVNode);
+		newVNode._original = oldVNode._original + 1;
+		if (options.vnode) options.vnode(newVNode);
 
 		diff(
-			parentDom,
-			vnode,
+			component._parentDom,
+			newVNode,
 			oldVNode,
 			component._globalContext,
-			parentDom.ownerSVGElement !== undefined,
-			vnode._hydrating != null ? [oldDom] : null,
+			component._parentDom.namespaceURI,
+			oldVNode._flags & MODE_HYDRATE ? [oldDom] : null,
 			commitQueue,
-			oldDom == null ? getDomSibling(vnode) : oldDom,
-			vnode._hydrating
+			oldDom == null ? getDomSibling(oldVNode) : oldDom,
+			!!(oldVNode._flags & MODE_HYDRATE),
+			refQueue
 		);
-		commitRoot(commitQueue, vnode);
 
-		if (vnode._dom !== oldDom) { // MODDED
-			// parentDom.removeChild(oldDom)	// MODDED
-			updateParentDomPointers(vnode);
+		newVNode._original = oldVNode._original;
+		newVNode._parent._children[newVNode._index] = newVNode;
+		commitRoot(commitQueue, newVNode, refQueue);
+
+		if (newVNode._dom != oldDom) {
+			updateParentDomPointers(newVNode);
 		}
 	}
 }
 
 /**
- * @param {import('./internal').VNode} vnode
+ * @param {VNode} vnode
  */
 function updateParentDomPointers(vnode) {
 	if ((vnode = vnode._parent) !== null && vnode._component !== null) {
 		vnode._dom = vnode._component.base = null;
 		for (let i = 0; i < vnode._children.length; i++) {
 			let child = vnode._children[i];
-			if (child !== null && child._dom !== null) {
+			if (child !== null && typeof child !== "undefined" && child._dom != null) { // MODDED
 				vnode._dom = vnode._component.base = child._dom;
 				break;
 			}
@@ -167,9 +174,9 @@ function updateParentDomPointers(vnode) {
 
 /**
  * The render queue
- * @type {Array<import('./internal').Component>}
+ * @type {Array<Component>}
  */
-let rerenderQueue: any[] = [];
+let rerenderQueue: any[] = []; // MODDED
 
 /*
  * The value of `Component.debounce` must asynchronously invoke the passed in callback. It is
@@ -182,15 +189,14 @@ let rerenderQueue: any[] = [];
 
 let prevDebounce;
 
-// MODDED
-// const defer =
-// 	typeof Promise == 'function'
-// 		? Promise.prototype.then.bind(Promise.resolve())
-// 		: setTimeout;
+const defer =
+	typeof Promise == 'function'
+		? Promise.prototype.then.bind(Promise.resolve())
+		: setTimeout;
 
 /**
  * Enqueue a rerender of a component
- * @param {import('./internal').Component} c The component to rerender
+ * @param {Component} c The component to rerender
  */
 export function enqueueRender(c) {
 	if (
@@ -201,13 +207,13 @@ export function enqueueRender(c) {
 		prevDebounce !== options.debounceRendering
 	) {
 		prevDebounce = options.debounceRendering;
-		(prevDebounce || setTimeout)(process);
+		(prevDebounce || defer)(process);
 	}
 }
 
 /**
- * @param {import('./internal').Component} a
- * @param {import('./internal').Component} b
+ * @param {Component} a
+ * @param {Component} b
  */
 const depthSort = (a, b) => a._vnode._depth - b._vnode._depth;
 

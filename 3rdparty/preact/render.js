@@ -12,14 +12,14 @@ var util_1 = require("./util");
 function render(vnode, parentDom, replaceNode) {
     if (options_1.default._root)
         options_1.default._root(vnode, parentDom);
-    var isHydrating = typeof replaceNode === 'function';
+    var isHydrating = typeof replaceNode == 'function';
     var oldVNode = isHydrating
         ? null
         : (replaceNode && replaceNode._children) || parentDom._children;
-    vnode = ((!isHydrating && replaceNode) ||
-        parentDom)._children = (0, create_element_1.createElement)(create_element_1.Fragment, null, [vnode]);
-    var commitQueue = [];
-    (0, index_1.diff)(parentDom, vnode, oldVNode || constants_1.EMPTY_OBJ, constants_1.EMPTY_OBJ, parentDom.ownerSVGElement !== undefined, !isHydrating && replaceNode
+    vnode = ((!isHydrating && replaceNode) || parentDom)._children =
+        (0, create_element_1.createElement)(create_element_1.Fragment, null, [vnode]);
+    var commitQueue = [], refQueue = [];
+    (0, index_1.diff)(parentDom, vnode, oldVNode || constants_1.EMPTY_OBJ, constants_1.EMPTY_OBJ, parentDom.namespaceURI, !isHydrating && replaceNode
         ? [replaceNode]
         : oldVNode
             ? null
@@ -29,8 +29,8 @@ function render(vnode, parentDom, replaceNode) {
         ? replaceNode
         : oldVNode
             ? oldVNode._dom
-            : parentDom.firstChild, isHydrating);
-    (0, index_1.commitRoot)(commitQueue, vnode);
+            : parentDom.firstChild, isHydrating, refQueue);
+    (0, index_1.commitRoot)(commitQueue, vnode, refQueue);
 }
 exports.render = render;
 function hydrate(vnode, parentDom) {
