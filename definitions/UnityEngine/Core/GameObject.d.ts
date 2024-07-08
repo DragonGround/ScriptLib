@@ -13,6 +13,7 @@ declare module "UnityEngine" {
         static FindWithTag(tag: string): GameObject
         static FindGameObjectWithTag(tag: string): GameObject
         static FindGameObjectsWithTag(tag: string): GameObject[]
+        static FindObjectOfType<T extends Component>(type: { new(): T }): T
         static Find(name: string): GameObject
         transform: Transform
         layer: number
